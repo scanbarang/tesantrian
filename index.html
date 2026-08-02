@@ -12,9 +12,10 @@
     
     <style>
         :root {
+            /* === TEMA TERANG (LIGHT MODE) === */
             --primary: #2563eb;
             --primary-dark: #1d4ed8;
-            --success: #059669;
+            --success: #2563eb;
             --customer-blue: #2563eb;
             --closing-red: #dc2626;
             --purple-cs: #7c3aed;
@@ -26,71 +27,74 @@
             --text-muted: #475569;
             --border: #cbd5e1;
             
-            /* Warna Kartu Giliran */
+            /* Warna Kartu Giliran Mode Terang */
             --ha-bg: #eab308;        /* Kuning */
             --ha-border: #ca8a04;
             --av-bg: #10b981;        /* Hijau Cerah */
             --av-border: #059669;
         }
 
-        /* TEMA MODE GELAP: PREMIUM MODERN NAVY & GLOW EFFECT */
+        /* === TEMA GELAP (DARK MODE) KHUSUS & BERBEDA === */
         body.dark-mode {
-            --bg-color: #050b14 !important;
-            --card-bg: #0e1726 !important;
-            --text-main: #f8fafc !important;
+            --bg-color: #0b0f19 !important;
+            --card-bg: #151c2d !important;
+            --text-main: #f1f5f9 !important;
             --text-muted: #94a3b8 !important;
-            --border: #1e293b !important;
-            --ha-bg: #ca8a04 !important;
-            --ha-border: #eab308 !important;
-            --av-bg: #059669 !important;
-            --av-border: #10b981 !important;
+            --border: #26334d !important;
+            
+            /* Warna Kartu Giliran Mode Gelap (Dibuat Lebih Kalem/Elegan) */
+            --ha-bg: #b45309 !important;        /* Kuning Gelap/Amber */
+            --ha-border: #d97706 !important;
+            --av-bg: #047857 !important;        /* Hijau Tua Elegan */
+            --av-border: #059669 !important;
         }
+
         body.dark-mode {
-            background: radial-gradient(circle at top, #0f1c3f 0%, #050b14 70%) !important;
+            background: linear-gradient(135deg, #070a12 0%, #0f172a 100%) !important;
         }
         body.dark-mode .app-container {
-            background: #0e1726 !important;
-            border-color: #1e293b !important;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(37, 99, 235, 0.15) !important;
+            background: #151c2d !important;
+            border-color: #26334d !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(15, 23, 42, 0.5) !important;
         }
         body.dark-mode select, body.dark-mode input[type="text"] {
-            background: #132238 !important;
-            color: #f8fafc !important;
-            border-color: #2a3b58 !important;
+            background: #1e293b !important;
+            color: #f1f5f9 !important;
+            border-color: #334155 !important;
         }
         body.dark-mode select:disabled {
-            background-color: #0a111c !important;
+            background-color: #0f172a !important;
             color: #64748b !important;
         }
         body.dark-mode .user-badge {
-            background: #132238 !important;
-            border-color: #1e293b !important;
-            color: #f8fafc !important;
+            background: #1e293b !important;
+            border-color: #334155 !important;
+            color: #f1f5f9 !important;
         }
         body.dark-mode .list-antrian li {
-            background: #132238 !important;
-            border-color: #1e293b !important;
-            color: #f8fafc !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            background: #1e293b !important;
+            border-color: #334155 !important;
+            color: #f1f5f9 !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
         }
         body.dark-mode .modal-box {
-            background: #0e1726 !important;
-            border-color: #2a3b58 !important;
-            color: #f8fafc !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
+            background: #151c2d !important;
+            border-color: #334155 !important;
+            color: #f1f5f9 !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9) !important;
         }
         body.dark-mode .modal-desc {
             color: #94a3b8 !important;
         }
         body.dark-mode .btn-cancel {
             background: #1e293b !important;
-            color: #f8fafc !important;
-            border: 1px solid #334155;
+            color: #f1f5f9 !important;
+            border: 1px solid #475569;
         }
         body.dark-mode .dark-mode-btn {
-            background: #132238 !important;
-            color: #f8fafc !important;
-            border-color: #2a3b58 !important;
+            background: #1e293b !important;
+            color: #f1f5f9 !important;
+            border-color: #334155 !important;
         }
 
         *, body, button, select, input {
@@ -247,7 +251,7 @@
         
         .btn-cancel { background: #e2e8f0; color: var(--text-main); }
         .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; box-shadow: none !important; animation: none !important; }
-        body.dark-mode .btn-disabled { background: #1a273e !important; color: #475569 !important; }
+        body.dark-mode .btn-disabled { background: #1f293d !important; color: #475569 !important; }
 
         .spinner {
             width: 16px; height: 16px; border: 3px solid rgba(255, 255, 255, 0.3);
@@ -315,7 +319,7 @@
         }
         body.dark-mode .announcement-popup-text {
             color: #fef3c7 !important;
-            background: #132238 !important;
+            background: #1e293b !important;
             border-color: #78350f !important;
         }
     </style>
