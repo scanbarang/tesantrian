@@ -901,8 +901,6 @@
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(resAntrian));
                     renderUIRental(resAntrian.data, resAntrian.statusAntrian, resAntrian.waktuStandbyHA, resAntrian.waktuStandbyAV, resAntrian.pengumumanSPV);
                 }
-                
-                // Sinkronisasi data master sales di background TANPA memunculkan pop-up otomatis
                 if (resSales && resSales.status === "sukses" && resSales.data) {
                     masterSalesGlobal = resSales.data;
                 }
@@ -913,50 +911,69 @@
             const namaSales = getAkunAktif().trim();
             const kategoriPilih = document.getElementById('pilih-kategori').value;
             if(!namaSales) return tampilkanModal("Perhatian", "Akun belum terikat dengan benar.");
-            
-            // VALIDASI KETAT: Periksa apakah promotor terkena sanksi TEPAT KETIKA KLIK TOMBOL DAFTAR ANTRIAN
-            const akunSaya = namaSales.toLowerCase();
-            const dataSales = masterSalesGlobal || [];
-            const sayaObj = dataSales.find(item => String(typeof item === 'object' ? item.nama : item).trim().toLowerCase() === akunSaya);
-            
-            if (sayaObj && typeof sayaObj === 'object' && sayaObj.sanksiMenit && parseInt(sayaObj.sanksiMenit) > 0) {
-                const menitHukum = parseInt(sayaObj.sanksiMenit);
-                const pesanSanksi = sayaObj.pesanSanksi || `Anda terkena penalti sanksi ${menitHukum} menit karena tidak taat aturan / tidak klik selesai melayani.`;
-                
-                // Set timer hitung mundur sanksi setelah user mengklik OK di pop-up
-                waktuPenaltiSelesaiGlobal = Date.now() + (menitHukum * 60 * 1000);
-                
-                tampilkanModal("🚨 Peringatan Sanksi Penalti", pesanSanksi);
-                return; // Batalkan proses pendaftaran antrian
-            }
 
             if (waktuPenaltiSelesaiGlobal > 0) {
                 tampilkanModal("🚨 Peringatan Sanksi Penalti", "Anda masih dalam masa penalti sanksi SPV! Silakan tunggu hingga timer sanksi selesai.");
                 return;
             }
 
-            sedangProsesAksi = true; 
-            lockStatusLokalExpiry = Date.now() + 6000;
-
             const btnAntri = document.getElementById('btn-utama-antri');
             btnAntri.disabled = true;
-            btnAntri.innerHTML = `<span class="spinner"></span> Memproses...`;
+            btnAntri.innerHTML = `<span class="spinner"></span> Memeriksa Sanksi...`;
 
-            statusSayaGlobal = "Standby";
-            const adaAkun = daftarAntrianGlobal.some(item => item.nama.trim().toLowerCase() === akunSaya);
-            if (!adaAkun) {
-                daftarAntrianGlobal.push({ nama: namaSales, status: "Standby", waktuStandby: new Date(), kategori: kategoriPilih });
-            }
-            renderUIRental(daftarAntrianGlobal, statusSistemGlobal, waktuStandbyHAGlobal, waktuStandbyAVGlobal, pengumumanTerakhirGlobal);
-
-            fetch(`${SCRIPT_URL}?aksi=daftarAntri&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategoriPilih)}`, { method: 'GET', redirect: 'follow' })
+            // AMBIL DATA TERBARU LANGSUNG DARI SERVER SEBELUM DAFTAR
+            fetch(`${SCRIPT_URL}?aksi=getMasterSales`, { method: 'GET', redirect: 'follow' })
             .then(res => res.json())
-            .then(res => {
-                sedangProsesAksi = false; 
-                muatDataAntrian(true);
+            .then(resSales => {
+                if(resSales.status === "sukses" && resSales.data) {
+                    masterSalesGlobal = resSales.data;
+                }
+
+                // VALIDASI KETAT BERDASARKAN DATA TERBARU DARI SERVER
+                const akunSaya = namaSales.toLowerCase();
+                const dataSales = masterSalesGlobal || [];
+                const sayaObj = dataSales.find(item => String(typeof item === 'object' ? item.nama : item).trim().toLowerCase() === akunSaya);
+                
+                if (sayaObj && typeof sayaObj === 'object' && sayaObj.sanksiMenit && parseInt(sayaObj.sanksiMenit) > 0) {
+                    const menitHukum = parseInt(sayaObj.sanksiMenit);
+                    const pesanSanksi = sayaObj.pesanSanksi || `Anda terkena penalti sanksi ${menitHukum} menit karena tidak taat aturan / tidak klik selesai melayani.`;
+                    
+                    // Set timer sanksi berjalan setelah user klik OK pada popup
+                    waktuPenaltiSelesaiGlobal = Date.now() + (menitHukum * 60 * 1000);
+                    
+                    btnAntri.disabled = false;
+                    btnAntri.innerHTML = "Daftar Antrian";
+                    tampilkanModal("🚨 Peringatan Sanksi Penalti", pesanSanksi);
+                    return; // Hentikan, promotor tidak bisa masuk antrian
+                }
+
+                // JIKA AMAN DARI SANKSI, LANJUTKAN PROSES DAFTAR ANTRIAN
+                sedangProsesAksi = true; 
+                lockStatusLokalExpiry = Date.now() + 6000;
+
+                btnAntri.innerHTML = `<span class="spinner"></span> Memproses...`;
+
+                statusSayaGlobal = "Standby";
+                const adaAkun = daftarAntrianGlobal.some(item => item.nama.trim().toLowerCase() === akunSaya);
+                if (!adaAkun) {
+                    daftarAntrianGlobal.push({ nama: namaSales, status: "Standby", waktuStandby: new Date(), kategori: kategoriPilih });
+                }
+                renderUIRental(daftarAntrianGlobal, statusSistemGlobal, waktuStandbyHAGlobal, waktuStandbyAVGlobal, pengumumanTerakhirGlobal);
+
+                fetch(`${SCRIPT_URL}?aksi=daftarAntri&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategoriPilih)}`, { method: 'GET', redirect: 'follow' })
+                .then(res => res.json())
+                .then(res => {
+                    sedangProsesAksi = false; 
+                    muatDataAntrian(true);
+                }).catch(() => {
+                    sedangProsesAksi = false;
+                    muatDataAntrian(true);
+                });
+
             }).catch(() => {
-                sedangProsesAksi = false;
-                muatDataAntrian(true);
+                btnAntri.disabled = false;
+                btnAntri.innerHTML = "Daftar Antrian";
+                tampilkanModal("Koneksi Gagal", "Gagal memeriksa status sanksi ke server. Coba lagi.");
             });
         }
 
