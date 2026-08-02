@@ -429,6 +429,7 @@
         const BATAS_MENIT = 60;
         let sedangProsesAksi = false;
         let lockStatusLokalExpiry = 0;
+        let waktuPenaltiSelesaiGlobal = 0; // Timestamp sanksi timer penalti aktif
 
         window.onload = function() {
             initDarkMode();
@@ -592,6 +593,29 @@
             const labelTimerAV = document.getElementById('timer-mundur-av');
             const now = new Date().getTime();
 
+            // Pengecekan Timer Hitung Mundur Sanksi Penalti SPV di Tombol Antri
+            if (waktuPenaltiSelesaiGlobal > 0) {
+                const sisaMsPenalti = waktuPenaltiSelesaiGlobal - now;
+                const btnAntri = document.getElementById('btn-utama-antri');
+                if (sisaMsPenalti > 0) {
+                    const totalDetikP = Math.floor(sisaMsPenalti / 1000);
+                    const mP = Math.floor(totalDetikP / 60);
+                    const sP = totalDetikP % 60;
+                    if (btnAntri && statusSayaGlobal === "belum_ada") {
+                        btnAntri.disabled = true;
+                        btnAntri.className = "btn-closing btn-disabled";
+                        btnAntri.innerText = `Sanksi Penalti: ${mP}:${sP < 10 ? '0' : ''}${sP}`;
+                    }
+                } else {
+                    waktuPenaltiSelesaiGlobal = 0; // Sanksi selesai
+                    if (btnAntri && statusSayaGlobal === "belum_ada") {
+                        btnAntri.disabled = false;
+                        btnAntri.className = "btn-success";
+                        btnAntri.innerText = "Daftar Antrian";
+                    }
+                }
+            }
+
             if (waktuStandbyHAGlobal) {
                 const waktuHA = new Date(waktuStandbyHAGlobal).getTime();
                 if (!isNaN(waktuHA)) {
@@ -655,7 +679,10 @@
                 try {
                     const dataSales = JSON.parse(cachedSales);
                     let html = '<option value="">-- Pilih Nama Anda --</option>';
-                    dataSales.forEach(n => html += `<option value="${n}">${n}</option>`);
+                    dataSales.forEach(item => {
+                        let nama = typeof item === 'object' ? item.nama : item;
+                        html += `<option value="${nama}">${nama}</option>`;
+                    });
                     const selectEl = document.getElementById('pilih-sales');
                     if (selectEl) selectEl.innerHTML = html;
                 } catch(e) {}
@@ -669,7 +696,10 @@
                 if(res.status === "sukses" && res.data) {
                     localStorage.setItem('ufo_master_sales_cache', JSON.stringify(res.data));
                     let html = '<option value="">-- Pilih Nama Anda --</option>';
-                    res.data.forEach(n => html += `<option value="${n}">${n}</option>`);
+                    res.data.forEach(item => {
+                        let nama = typeof item === 'object' ? item.nama : item;
+                        html += `<option value="${nama}">${nama}</option>`;
+                    });
                     const selectEl = document.getElementById('pilih-sales');
                     if (selectEl) selectEl.innerHTML = html;
                 }
@@ -768,7 +798,7 @@
             const btnKeluar = document.getElementById('btn-keluar-istirahat');
             const selectKategori = document.getElementById('pilih-kategori');
 
-            if (!sedangProsesAksi) {
+            if (!sedangProsesAksi && waktuPenaltiSelesaiGlobal <= 0) {
                 btnAntri.innerHTML = "Daftar Antrian";
                 btnAntri.className = "btn-success";
                 
@@ -835,9 +865,11 @@
                 btnKeluar.style.display = "none";
                 selectKategori.disabled = true;
             } else { 
-                btnAntri.innerText = statusSistemGlobal === "TUTUP" ? "Antrian Ditutup Oleh SPV" : "Daftar Antrian";
-                btnAntri.className = statusSistemGlobal === "TUTUP" ? "btn-closing btn-disabled" : "btn-success";
-                btnAntri.disabled = (statusSistemGlobal === "TUTUP");
+                if (waktuPenaltiSelesaiGlobal <= 0) {
+                    btnAntri.innerText = statusSistemGlobal === "TUTUP" ? "Antrian Ditutup Oleh SPV" : "Daftar Antrian";
+                    btnAntri.className = statusSistemGlobal === "TUTUP" ? "btn-closing btn-disabled" : "btn-success";
+                    btnAntri.disabled = (statusSistemGlobal === "TUTUP");
+                }
                 btnCustomer.style.display = "none";
                 btnClosing.style.display = "none";
                 btnCS.style.display = "none";
@@ -860,14 +892,31 @@
 
         function muatDataAntrian(paksaTarik = false) {
             if (sedangProsesAksi && !paksaTarik) return;
-            fetch(`${SCRIPT_URL}?aksi=getAntrian`, { method: 'GET', redirect: 'follow' })
-            .then(res => res.json())
-            .then(res => {
-                if(res && res.status === "sukses") {
-                    localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
-                    renderUIRental(res.data, res.statusAntrian, res.waktuStandbyHA, res.waktuStandbyAV, res.pengumumanSPV);
+            Promise.all([
+                fetch(`${SCRIPT_URL}?aksi=getAntrian`, { method: 'GET', redirect: 'follow' }).then(r => r.json()).catch(() => null),
+                fetch(`${SCRIPT_URL}?aksi=getMasterSales`, { method: 'GET', redirect: 'follow' }).then(r => r.json()).catch(() => null)
+            ]).then(([resAntrian, resSales]) => {
+                if (resAntrian && resAntrian.status === "sukses") {
+                    localStorage.setItem('ufo_antrian_cache', JSON.stringify(resAntrian));
+                    renderUIRental(resAntrian.data, resAntrian.statusAntrian, resAntrian.waktuStandbyHA, resAntrian.waktuStandbyAV, resAntrian.pengumumanSPV);
                 }
-            }).catch(() => {});
+                
+                // Cek Sanksi Penalti dari Sheet MasterSales secara berkala
+                if (resSales && resSales.status === "sukses" && resSales.data) {
+                    const akunSaya = getAkunAktif().trim();
+                    if (akunSaya && waktuPenaltiSelesaiGlobal <= 0) {
+                        const dataSales = resSales.data;
+                        const sayaObj = dataSales.find(item => String(item.nama).trim().toLowerCase() === akunSaya.toLowerCase());
+                        if (sayaObj && sayaObj.sanksiMenit && parseInt(sayaObj.sanksiMenit) > 0) {
+                            const menitHukum = parseInt(sayaObj.sanksiMenit);
+                            const pesanSanksi = sayaObj.pesanSanksi || `Anda terkena penalti sanksi ${menitHukum} menit karena tidak taat aturan / tidak klik selesai melayani.`;
+                            
+                            waktuPenaltiSelesaiGlobal = Date.now() + (menitHukum * 60 * 1000);
+                            tampilkanModal("🚨 Peringatan Sanksi Penalti", pesanSanksi);
+                        }
+                    }
+                }
+            });
         }
 
         function aksiUtamaAntri() {
@@ -875,6 +924,12 @@
             const kategoriPilih = document.getElementById('pilih-kategori').value;
             if(!namaSales) return tampilkanModal("Perhatian", "Akun belum terikat dengan benar.");
             
+            // Cek Sanksi Lokal
+            if (waktuPenaltiSelesaiGlobal > 0) {
+                tampilkanModal("🚨 Peringatan Sanksi Penalti", "Anda masih dalam masa penalti sanksi SPV! Silakan tunggu hingga timer sanksi selesai.");
+                return;
+            }
+
             sedangProsesAksi = true; 
             lockStatusLokalExpiry = Date.now() + 6000;
 
