@@ -28,73 +28,122 @@
             --border: #cbd5e1;
             
             /* Warna Kartu Giliran Mode Terang */
-            --ha-bg: #eab308;        /* Kuning */
+            --ha-bg: #eab308;        
             --ha-border: #ca8a04;
-            --av-bg: #10b981;        /* Hijau Cerah */
+            --av-bg: #10b981;        
             --av-border: #059669;
         }
 
-        /* === TEMA GELAP (DARK MODE) KHUSUS & BERBEDA === */
+        /* === TEMA GELAP (DARK MODE) - HITAM PEKAT & EFEK NEON BOX MALAM HARI === */
         body.dark-mode {
-            --bg-color: #0b0f19 !important;
-            --card-bg: #151c2d !important;
-            --text-main: #f1f5f9 !important;
-            --text-muted: #94a3b8 !important;
-            --border: #26334d !important;
+            --bg-color: #000000 !important;
+            --card-bg: #050507 !important;
+            --text-main: #ffffff !important;
+            --text-muted: #a1a1aa !important;
+            --border: #27272a !important;
             
-            /* Warna Kartu Giliran Mode Gelap (Dibuat Lebih Kalem/Elegan) */
-            --ha-bg: #b45309 !important;        /* Kuning Gelap/Amber */
-            --ha-border: #d97706 !important;
-            --av-bg: #047857 !important;        /* Hijau Tua Elegan */
-            --av-border: #059669 !important;
+            /* Warna Kartu Giliran & Neon Glow Mode Gelap */
+            --ha-bg: #09090b !important;
+            --ha-border: #facc15 !important;
+            --av-bg: #09090b !important;
+            --av-border: #22c55e !important;
         }
 
         body.dark-mode {
-            background: linear-gradient(135deg, #070a12 0%, #0f172a 100%) !important;
+            background: #000000 !important;
         }
+        
         body.dark-mode .app-container {
-            background: #151c2d !important;
-            border-color: #26334d !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(15, 23, 42, 0.5) !important;
+            background: #050507 !important;
+            border: 2px solid #3f3f46 !important;
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.08), inset 0 0 15px rgba(255, 255, 255, 0.02) !important;
         }
+
+        /* EFEK NEON MALAM HARI PADA HEADER */
+        body.dark-mode .gradient-header {
+            background: #09090b !important;
+            border: 2px solid #ef4444 !important;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.6), inset 0 0 10px rgba(239, 68, 68, 0.3) !important;
+        }
+        body.dark-mode .gradient-header h2 {
+            color: #f87171 !important;
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.5) !important;
+        }
+        body.dark-mode .gradient-header p {
+            color: #ffffff !important;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6) !important;
+        }
+
+        /* EFEK NEON PADA KARTU HA (KUNING NEON) */
+        body.dark-mode .card-giliran-ha {
+            background: #09090b !important;
+            border: 2px solid #facc15 !important;
+            box-shadow: 0 0 18px rgba(250, 204, 21, 0.5), inset 0 0 8px rgba(250, 204, 21, 0.2) !important;
+        }
+        body.dark-mode .card-giliran-ha .label-giliran {
+            color: #fef08a !important;
+            text-shadow: 0 0 6px rgba(250, 204, 21, 0.6);
+        }
+        body.dark-mode .card-giliran-ha .nama-giliran-aktif {
+            color: #facc15 !important;
+            text-shadow: 0 0 12px rgba(250, 204, 21, 0.9), 0 0 20px rgba(250, 204, 21, 0.5);
+        }
+
+        /* EFEK NEON PADA KARTU AV (HIJAU NEON) */
+        body.dark-mode .card-giliran-av {
+            background: #09090b !important;
+            border: 2px solid #22c55e !important;
+            box-shadow: 0 0 18px rgba(34, 197, 94, 0.5), inset 0 0 8px rgba(34, 197, 94, 0.2) !important;
+        }
+        body.dark-mode .card-giliran-av .label-giliran {
+            color: #bbf7d0 !important;
+            text-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+        }
+        body.dark-mode .card-giliran-av .nama-giliran-aktif {
+            color: #22c55e !important;
+            text-shadow: 0 0 12px rgba(34, 197, 94, 0.9), 0 0 20px rgba(34, 197, 94, 0.5);
+        }
+
         body.dark-mode select, body.dark-mode input[type="text"] {
-            background: #1e293b !important;
-            color: #f1f5f9 !important;
-            border-color: #334155 !important;
+            background: #09090b !important;
+            color: #ffffff !important;
+            border-color: #3f3f46 !important;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.05);
         }
         body.dark-mode select:disabled {
-            background-color: #0f172a !important;
-            color: #64748b !important;
+            background-color: #18181b !important;
+            color: #71717a !important;
         }
         body.dark-mode .user-badge {
-            background: #1e293b !important;
-            border-color: #334155 !important;
-            color: #f1f5f9 !important;
+            background: #09090b !important;
+            border-color: #3f3f46 !important;
+            color: #ffffff !important;
         }
         body.dark-mode .list-antrian li {
-            background: #1e293b !important;
-            border-color: #334155 !important;
-            color: #f1f5f9 !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            background: #09090b !important;
+            border-color: #3f3f46 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.03);
         }
         body.dark-mode .modal-box {
-            background: #151c2d !important;
-            border-color: #334155 !important;
-            color: #f1f5f9 !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9) !important;
+            background: #09090b !important;
+            border: 2px solid #52525b !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 15px rgba(255, 255, 255, 0.1) !important;
         }
         body.dark-mode .modal-desc {
-            color: #94a3b8 !important;
+            color: #d4d4d8 !important;
         }
         body.dark-mode .btn-cancel {
-            background: #1e293b !important;
-            color: #f1f5f9 !important;
-            border: 1px solid #475569;
+            background: #18181b !important;
+            color: #ffffff !important;
+            border: 1px solid #52525b;
         }
         body.dark-mode .dark-mode-btn {
-            background: #1e293b !important;
-            color: #f1f5f9 !important;
-            border-color: #334155 !important;
+            background: #09090b !important;
+            color: #ffffff !important;
+            border-color: #52525b !important;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
         }
 
         *, body, button, select, input {
@@ -251,7 +300,7 @@
         
         .btn-cancel { background: #e2e8f0; color: var(--text-main); }
         .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; box-shadow: none !important; animation: none !important; }
-        body.dark-mode .btn-disabled { background: #1f293d !important; color: #475569 !important; }
+        body.dark-mode .btn-disabled { background: #18181b !important; color: #52525b !important; border: 1px solid #27272a; }
 
         .spinner {
             width: 16px; height: 16px; border: 3px solid rgba(255, 255, 255, 0.3);
@@ -309,8 +358,9 @@
             border: 4px solid #f59e0b;
         }
         body.dark-mode .announcement-popup-box {
-            background: linear-gradient(135deg, #231b0e 0%, #151108 100%) !important;
-            border-color: #d97706 !important;
+            background: #09090b !important;
+            border-color: #f59e0b !important;
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.4) !important;
         }
         .announcement-popup-text {
             font-size: 16px; font-weight: 800; color: #78350f; line-height: 1.6;
@@ -319,8 +369,8 @@
         }
         body.dark-mode .announcement-popup-text {
             color: #fef3c7 !important;
-            background: #1e293b !important;
-            border-color: #78350f !important;
+            background: #18181b !important;
+            border-color: #d97706 !important;
         }
     </style>
 </head>
