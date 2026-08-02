@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard SPV - Antrian Walk-In UFO Kebonsari</title>
+    <title>Dashboard SPV - Antrian Walk-In Promotor</title>
     <!-- Menghilangkan Peringatan Favicon 404 -->
     <link rel="shortcut icon" href="#">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,8 +13,11 @@
             --primary: #2563eb;
             --primary-dark: #1d4ed8;
             --success: #059669;
-            --danger: #dc2626;
-            --warning: #d97706;
+            --customer-blue: #2563eb;
+            --closing-red: #dc2626;
+            --purple-cs: #7c3aed;
+            --teal-cs: #0d9488;
+            --amber-rest: #d97706;
             --bg-color: #f1f5f9;
             --card-bg: #ffffff;
             --text-main: #0f172a;
@@ -35,36 +38,31 @@
         }
 
         .app-container {
-            width: 100%; max-width: 600px;
+            width: 100%; max-width: 500px;
             background: var(--card-bg);
             border-radius: 24px; padding: 24px;
             border: 2px solid var(--border);
             box-shadow: 0 15px 35px -5px rgba(0,0,0,0.1);
+            text-align: center;
         }
 
-        /* HEADER GRADASI SPV */
         .gradient-header {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border-radius: 18px; padding: 22px; color: white; margin-bottom: 20px;
-            text-align: center;
             box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.3);
         }
         .gradient-header h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
         .gradient-header p { margin: 6px 0 0 0; opacity: 0.9; font-size: 13px; font-weight: 700; }
 
-        .control-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px;
-        }
-
         .input-group { margin-bottom: 16px; text-align: left; }
         .input-group label { display: block; font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
 
-        select, textarea { 
+        select, input[type="text"], textarea { 
             width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--border);
             background: #ffffff; font-size: 15px; font-weight: 600; color: var(--text-main); outline: none;
             transition: all 0.2s ease;
         }
-        select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+        select:focus, input[type="text"]:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
 
         button { 
             width: 100%; padding: 14px 12px; border-radius: 14px; 
@@ -76,51 +74,33 @@
         button:active { transform: scale(0.98); }
 
         .btn-success { background: var(--success); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-warning { background: var(--warning); color: white; }
-        .btn-primary { background: var(--primary); color: white; }
+        .btn-customer { background: var(--customer-blue); color: white; }
+        .btn-closing { background: var(--closing-red); color: white; }
+        .btn-amber { background: var(--amber-rest); color: white; }
         .btn-action { padding: 6px 10px; font-size: 11px; border-radius: 8px; width: auto; }
 
-        .section-title {
-            font-size: 13px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;
-            margin: 20px 0 10px 0; letter-spacing: 0.5px; text-align: left;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
         .table-responsive {
-            width: 100%; overflow-x: auto; margin-bottom: 16px; border-radius: 12px; border: 2px solid var(--border);
+            width: 100%; overflow-x: auto; margin-top: 10px; border-radius: 12px; border: 2px solid var(--border);
         }
-
-        table {
-            width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;
-        }
-
-        th, td {
-            padding: 10px 12px; border-bottom: 1px solid var(--border);
-        }
-
-        th {
-            background: #f8fafc; font-weight: 800; color: var(--text-muted); text-transform: uppercase; font-size: 11px;
-        }
-
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+        th { background: #f8fafc; font-weight: 800; color: var(--text-muted); text-transform: uppercase; font-size: 11px; }
         tr:last-child td { border-bottom: none; }
 
-        .badge-status {
-            padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; display: inline-block;
-        }
+        .badge-status { padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; display: inline-block; }
         .badge-penalti { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
         .badge-normal { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 11, 20, 0.75); backdrop-filter: blur(4px);
+            background: rgba(5, 11, 20, 0.85); backdrop-filter: blur(8px);
             display: flex; justify-content: center; align-items: center;
             z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.2s; padding: 16px;
         }
         .modal-overlay.active { opacity: 1; visibility: visible; }
-        .modal-box { background: white; width: 100%; max-width: 380px; padding: 24px; border-radius: 20px; text-align: center; border: 2px solid var(--border); }
+        .modal-box { background: white; width: 100%; max-width: 380px; padding: 24px; border-radius: 20px; text-align: center; border: 2px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
         .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 10px; color: var(--text-main); }
-        .modal-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; font-weight: 600; line-height: 1.4; }
+        .modal-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; font-weight: 600; }
         .modal-actions { display: flex; gap: 10px; }
         .modal-actions button { flex: 1; padding: 12px; font-size: 13px; }
     </style>
@@ -130,61 +110,60 @@
     <div class="app-container">
         <div class="gradient-header">
             <h2>Dashboard SPV</h2>
-            <p>Kontrol Sistem & Pemantauan Sanksi Promotor UFO Kebonsari</p>
+            <p>UFO Kebonsari</p>
         </div>
 
-        <!-- 1. KONTROL BUKA / TUTUP SISTEM & RESET -->
-        <div class="control-grid">
-            <button type="button" class="btn-success" onclick="ubahStatusSistem('BUKA')">Buka Sistem</button>
-            <button type="button" class="btn-danger" onclick="ubahStatusSistem('TUTUP')">Tutup Sistem</button>
+        <!-- 1. KONTROL BUKA / TUTUP SISTEM -->
+        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+            <button type="button" class="btn-success" onclick="aturStatusSistem('BUKA')">Buka Sistem</button>
+            <button type="button" class="btn-closing" onclick="aturStatusSistem('TUTUP')">Tutup Sistem</button>
         </div>
-        <button type="button" class="btn-warning" onclick="resetAntrianHariIni()" style="margin-bottom: 20px;">Reset Seluruh Antrian Hari Ini</button>
 
-        <!-- 2. KONTROL PAKSA GANTI STATUS PROMOTOR -->
+        <!-- 2. RESET ANTRIAN -->
+        <button type="button" class="btn-amber" onclick="resetAntrian()" style="margin-bottom: 20px;">Reset Seluruh Antrian Hari Ini</button>
+
+        <!-- 3. PAKSA UBAH STATUS PROMOTOR -->
         <div class="input-group">
-            <label>Paksa Ubah Status Promotor (Pilih Nama & Status)</label>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
-                <select id="select-sales-target">
-                    <option value="">-- Pilih Promotor --</option>
-                </select>
-                <select id="select-status-target">
-                    <option value="Standby">Standby</option>
-                    <option value="Melayani">Melayani</option>
-                    <option value="Selesai">Keluarkan (Selesai)</option>
-                </select>
+            <label>Paksa Ubah Status Promotor</label>
+            <select id="pilih-sales-target" style="margin-bottom: 8px;">
+                <option value="">-- Pilih Promotor --</option>
+            </select>
+            <select id="pilih-status-target" style="margin-bottom: 8px;">
+                <option value="Standby">Standby</option>
+                <option value="Melayani">Melayani</option>
+                <option value="Selesai">Keluarkan (Selesai)</option>
+            </select>
+            <button type="button" class="btn-customer" onclick="paksaUbahStatus()">Terapkan Perubahan</button>
+        </div>
+
+        <!-- 4. KIRIM PENGUMUMAN SPV -->
+        <div class="input-group" style="margin-top: 20px;">
+            <label>Kirim Pengumuman Wajib</label>
+            <textarea id="input-pengumuman-spv" placeholder="Tulis pengumuman penting untuk promotor..."></textarea>
+            <button type="button" class="btn-customer" style="margin-top: 8px;" onclick="kirimPengumuman()">Kirim Pengumuman</button>
+        </div>
+
+        <!-- 5. TABEL PEMANTAUAN SANKSI PENALTI & TOMBOL LEPAS PENALTI -->
+        <div class="input-group" style="margin-top: 24px;">
+            <label style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Pemantauan Sanksi Promotor</span>
+                <button type="button" class="btn-action btn-customer" onclick="muatDataDashboard()">Refresh</button>
+            </label>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Status Sanksi</th>
+                            <th>Keterangan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-penalti-body">
+                        <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Memuat data...</td></tr>
+                    </tbody>
+                </table>
             </div>
-            <button type="button" class="btn-primary" onclick="paksaUbahStatus()">Terapkan Perubahan Status</button>
-        </div>
-
-        <!-- 3. KIRIM PENGUMUMAN WAJIB -->
-        <div class="input-group">
-            <label>Kirim Pengumuman Wajib ke Layar Promotor</label>
-            <textarea id="input-pengumuman" placeholder="Tulis instruksi atau pengumuman penting di sini..."></textarea>
-            <button type="button" class="btn-success" style="margin-top: 8px;" onclick="kirimPengumuman()">Kirim Pengumuman</button>
-        </div>
-
-        <!-- 4. TABEL PEMANTAUAN PROMOTOR & SANKSI PENALTI -->
-        <div class="section-title">
-            <span>Pemantauan Sanksi & Promotor</span>
-            <button type="button" class="btn-action btn-primary" onclick="muatDataDashboard()">Refresh</button>
-        </div>
-
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nama Promotor</th>
-                        <th>Status Sanksi</th>
-                        <th>Keterangan Sanksi</th>
-                        <th>Aksi SPV</th>
-                    </tr>
-                </thead>
-                <tbody id="tabel-promotor-body">
-                    <tr>
-                        <td colspan="4" style="text-align: center; color: var(--text-muted);">Memuat data promotor...</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 
@@ -194,7 +173,7 @@
             <div id="modal-title" class="modal-title">Pemberitahuan</div>
             <div id="modal-desc" class="modal-desc">Isi pesan...</div>
             <div id="modal-actions" class="modal-actions">
-                <button type="button" class="btn-success" onclick="tutupModal()">OK</button>
+                <button type="button" class="btn-customer" onclick="tutupModal()">OK</button>
             </div>
         </div>
     </div>
@@ -213,7 +192,7 @@
             .then(res => {
                 if(res.status === "sukses" && res.data) {
                     renderDropdownSales(res.data);
-                    renderTabelPromotor(res.data);
+                    renderTabelPenalti(res.data);
                 }
             }).catch(() => {});
         }
@@ -224,11 +203,11 @@
                 const nama = typeof item === 'object' ? item.nama : item;
                 html += `<option value="${nama}">${nama}</option>`;
             });
-            const selectEl = document.getElementById('select-sales-target');
+            const selectEl = document.getElementById('pilih-sales-target');
             if (selectEl) selectEl.innerHTML = html;
         }
 
-        function renderTabelPromotor(dataSales) {
+        function renderTabelPenalti(dataSales) {
             let html = "";
             dataSales.forEach(item => {
                 const nama = typeof item === 'object' ? item.nama : item;
@@ -240,7 +219,7 @@
 
                 if (sanksiMenit > 0) {
                     badgeHtml = `<span class="badge-status badge-penalti">Penalti (${sanksiMenit}m)</span>`;
-                    aksiHtml = `<button type="button" class="btn-action btn-danger" onclick="lepasPenalti('${nama}')">Lepas</button>`;
+                    aksiHtml = `<button type="button" class="btn-action btn-closing" onclick="lepasPenalti('${nama}')">Lepas</button>`;
                 }
 
                 html += `
@@ -253,7 +232,7 @@
                 `;
             });
 
-            document.getElementById('tabel-promotor-body').innerHTML = html || `<tr><td colspan="4" style="text-align: center;">Tidak ada data promotor</td></tr>`;
+            document.getElementById('tabel-penalti-body').innerHTML = html || `<tr><td colspan="4" style="text-align: center;">Tidak ada data promotor</td></tr>`;
         }
 
         function lepasPenalti(namaSales) {
@@ -269,7 +248,7 @@
             });
         }
 
-        function ubahStatusSistem(statusBukaTutup) {
+        function aturStatusSistem(statusBukaTutup) {
             tampilkanModalKonfirmasi("Konfirmasi Sistem", `Ubah status sistem antrian menjadi ${statusBukaTutup}?`, function() {
                 fetch(`${SCRIPT_URL}?aksi=aturStatusSistem&status=${statusBukaTutup}`, { method: 'GET', redirect: 'follow' })
                 .then(res => res.json())
@@ -279,7 +258,7 @@
             });
         }
 
-        function resetAntrianHariIni() {
+        function resetAntrian() {
             tampilkanModalKonfirmasi("Reset Antrian", "Yakin ingin mereset seluruh antrian hari ini?", function() {
                 fetch(`${SCRIPT_URL}?aksi=resetAntrian`, { method: 'GET', redirect: 'follow' })
                 .then(res => res.json())
@@ -290,8 +269,8 @@
         }
 
         function paksaUbahStatus() {
-            const namaSales = document.getElementById('select-sales-target').value;
-            const statusTarget = document.getElementById('select-status-target').value;
+            const namaSales = document.getElementById('pilih-sales-target').value;
+            const statusTarget = document.getElementById('pilih-status-target').value;
             if(!namaSales) return tampilkanModal("Perhatian", "Silakan pilih promotor terlebih dahulu!");
 
             tampilkanModalKonfirmasi("Paksa Ubah Status", `Ubah status promotor (${namaSales}) menjadi (${statusTarget})?`, function() {
@@ -305,21 +284,21 @@
         }
 
         function kirimPengumuman() {
-            const teks = document.getElementById('input-pengumuman').value.trim();
+            const teks = document.getElementById('input-pengumuman-spv').value.trim();
             if(!teks) return tampilkanModal("Perhatian", "Teks pengumuman tidak boleh kosong!");
 
             fetch(`${SCRIPT_URL}?aksi=kirimPengumuman&teks=${encodeURIComponent(teks)}`, { method: 'GET', redirect: 'follow' })
             .then(res => res.json())
             .then(res => {
                 tampilkanModal("Berhasil", "Pengumuman wajib berhasil dikirim ke seluruh layar promotor.");
-                document.getElementById('input-pengumuman').value = "";
+                document.getElementById('input-pengumuman-spv').value = "";
             });
         }
 
         function tampilkanModal(judul, desc) {
             document.getElementById('modal-title').innerText = judul;
             document.getElementById('modal-desc').innerText = desc;
-            document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-success" onclick="tutupModal()">OK</button>`;
+            document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-customer" onclick="tutupModal()">OK</button>`;
             document.getElementById('custom-modal').classList.add('active');
         }
 
@@ -327,8 +306,8 @@
             document.getElementById('modal-title').innerText = judul;
             document.getElementById('modal-desc').innerText = desc;
             document.getElementById('modal-actions').innerHTML = `
-                <button type="button" class="btn-danger" onclick="tutupModal()" style="background:#e2e8f0; color:#0f172a;">Batal</button>
-                <button type="button" class="btn-success" id="btn-modal-ya">Ya</button>
+                <button type="button" style="background:#e2e8f0; color:#0f172a;" onclick="tutupModal()">Batal</button>
+                <button type="button" class="btn-customer" id="btn-modal-ya">Ya</button>
             `;
             document.getElementById('custom-modal').classList.add('active');
             document.getElementById('btn-modal-ya').onclick = function() { tutupModal(); callbackYa(); };
