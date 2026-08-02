@@ -677,9 +677,9 @@
             const cachedSales = localStorage.getItem('ufo_master_sales_cache');
             if (cachedSales) {
                 try {
-                    const dataSales = JSON.parse(cachedSales);
+                    masterSalesGlobal = JSON.parse(cachedSales);
                     let html = '<option value="">-- Pilih Nama Anda --</option>';
-                    dataSales.forEach(item => {
+                    masterSalesGlobal.forEach(item => {
                         let nama = typeof item === 'object' ? item.nama : item;
                         html += `<option value="${nama}">${nama}</option>`;
                     });
@@ -694,6 +694,7 @@
             .then(res => res.json())
             .then(res => {
                 if(res.status === "sukses" && res.data) {
+                    masterSalesGlobal = res.data;
                     localStorage.setItem('ufo_master_sales_cache', JSON.stringify(res.data));
                     let html = '<option value="">-- Pilih Nama Anda --</option>';
                     res.data.forEach(item => {
@@ -903,6 +904,7 @@
                 
                 // Cek Sanksi Penalti dari Sheet MasterSales secara berkala
                 if (resSales && resSales.status === "sukses" && resSales.data) {
+                    masterSalesGlobal = resSales.data;
                     const akunSaya = getAkunAktif().trim();
                     if (akunSaya && waktuPenaltiSelesaiGlobal <= 0) {
                         const dataSales = resSales.data;
@@ -924,7 +926,20 @@
             const kategoriPilih = document.getElementById('pilih-kategori').value;
             if(!namaSales) return tampilkanModal("Perhatian", "Akun belum terikat dengan benar.");
             
-            // Cek Sanksi Lokal
+            // VALIDASI KETAT: Periksa apakah promotor terkena sanksi dari data master sales lokal saat tombol diklik
+            const akunSaya = namaSales.toLowerCase();
+            const dataSales = masterSalesGlobal || [];
+            const sayaObj = dataSales.find(item => String(typeof item === 'object' ? item.nama : item).trim().toLowerCase() === akunSaya);
+            
+            if (sayaObj && typeof sayaObj === 'object' && sayaObj.sanksiMenit && parseInt(sayaObj.sanksiMenit) > 0) {
+                const menitHukum = parseInt(sayaObj.sanksiMenit);
+                const pesanSanksi = sayaObj.pesanSanksi || `Anda terkena penalti sanksi ${menitHukum} menit karena tidak taat aturan / tidak klik selesai melayani.`;
+                
+                waktuPenaltiSelesaiGlobal = Date.now() + (menitHukum * 60 * 1000);
+                tampilkanModal("🚨 Peringatan Sanksi Penalti", pesanSanksi);
+                return; // Batalkan proses pendaftaran antrian
+            }
+
             if (waktuPenaltiSelesaiGlobal > 0) {
                 tampilkanModal("🚨 Peringatan Sanksi Penalti", "Anda masih dalam masa penalti sanksi SPV! Silakan tunggu hingga timer sanksi selesai.");
                 return;
@@ -938,7 +953,7 @@
             btnAntri.innerHTML = `<span class="spinner"></span> Memproses...`;
 
             statusSayaGlobal = "Standby";
-            const adaAkun = daftarAntrianGlobal.some(item => item.nama.trim().toLowerCase() === namaSales.toLowerCase());
+            const adaAkun = daftarAntrianGlobal.some(item => item.nama.trim().toLowerCase() === akunSaya);
             if (!adaAkun) {
                 daftarAntrianGlobal.push({ nama: namaSales, status: "Standby", waktuStandby: new Date(), kategori: kategoriPilih });
             }
