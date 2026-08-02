@@ -26,11 +26,11 @@
             --text-muted: #475569;
             --border: #cbd5e1;
             
-            /* Warna Kartu Giliran */
-            --ha-bg: #2563eb;
-            --ha-border: #1d4ed8;
-            --av-bg: #ef4444;
-            --av-border: #dc2626;
+            /* Warna Kartu Giliran Sesuai Permintaan */
+            --ha-bg: #eab308;        /* Kuning */
+            --ha-border: #ca8a04;
+            --av-bg: #10b981;        /* Hijau Cerah */
+            --av-border: #059669;
         }
 
         /* TEMA MODE GELAP: PREMIUM MODERN NAVY & GLOW EFFECT */
@@ -40,10 +40,10 @@
             --text-main: #f8fafc !important;
             --text-muted: #94a3b8 !important;
             --border: #1e293b !important;
-            --ha-bg: #1d4ed8 !important;
-            --ha-border: #3b82f6 !important;
-            --av-bg: #dc2626 !important;
-            --av-border: #f87171 !important;
+            --ha-bg: #ca8a04 !important;
+            --ha-border: #eab308 !important;
+            --av-bg: #059669 !important;
+            --av-border: #10b981 !important;
         }
         body.dark-mode {
             background: radial-gradient(circle at top, #0f1c3f 0%, #050b14 70%) !important;
@@ -159,25 +159,25 @@
             display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;
         }
         
-        /* KARTU GILIRAN UTAMA HA (BIRU) */
+        /* KARTU GILIRAN UTAMA HA (KUNING) */
         .card-giliran-ha {
             background: var(--ha-bg); border: 2px solid var(--ha-border);
             border-radius: 16px; padding: 16px 12px; text-align: center; color: #ffffff;
             transition: background 0.3s ease, border-color 0.3s ease;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25);
         }
-        .card-giliran-ha .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #e0e7ff; letter-spacing: 0.5px; }
+        .card-giliran-ha .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #fefce8; letter-spacing: 0.5px; }
         .card-giliran-ha .nama-giliran-aktif { font-size: 20px; font-weight: 800; color: #ffffff; margin: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
         .card-giliran-ha .timer-mundur { color: #ffffff !important; }
 
-        /* KARTU GILIRAN UTAMA AV (MERAH CERAH) */
+        /* KARTU GILIRAN UTAMA AV (HIJAU CERAH) */
         .card-giliran-av {
             background: var(--av-bg); border: 2px solid var(--av-border);
             border-radius: 16px; padding: 16px 12px; text-align: center; color: #ffffff;
             transition: background 0.3s ease, border-color 0.3s ease;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
         }
-        .card-giliran-av .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #fee2e2; letter-spacing: 0.5px; }
+        .card-giliran-av .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #ecfdf5; letter-spacing: 0.5px; }
         .card-giliran-av .nama-giliran-aktif { font-size: 20px; font-weight: 800; color: #ffffff; margin: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
         .card-giliran-av .timer-mundur { color: #ffffff !important; }
 
