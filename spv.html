@@ -168,7 +168,6 @@
         }
         button:active { transform: scale(0.98); }
 
-        /* KELAS WARNA DENGAN EFEK MENYALA MASING-MASING */
         .btn-purple { background: var(--spv-purple); color: white; animation: glowPurple 2.5s infinite ease-in-out; }
         .btn-success { background: var(--success); color: white; animation: glowSuccess 2.5s infinite ease-in-out; }
         .btn-warning { background: #ea580c; color: white; animation: glowWarning 2.5s infinite ease-in-out; }
@@ -358,7 +357,7 @@
             muatMasterSales();
             muatDataAntrian();
             
-            setInterval(muatDataAntrian, 3000);
+            setInterval(muatDataAntrian, 3000); // <-- INTERVAL DISET 3 DETIK TEPAT SAMA DENGAN PROMOTOR
             setInterval(renderTampilanTimerSPV, 1000);
         };
 
@@ -613,7 +612,10 @@
             document.getElementById('modal-title').innerText = "Masukkan Promotor ke Antrian";
 
             let optionsSales = '<option value="">-- Pilih Promotor --</option>';
-            masterSalesGlobal.forEach(n => optionsSales += `<option value="${n}">${n}</option>`);
+            masterSalesGlobal.forEach(n => {
+                let nama = typeof n === 'object' ? n.nama : n;
+                optionsSales += `<option value="${nama}">${nama}</option>`;
+            });
 
             let htmlContent = `
                 Kategori:<br>
@@ -729,7 +731,10 @@
             document.getElementById('modal-title').innerText = judulAksi;
             
             let optionsSales = '<option value="">-- Pilih Promotor --</option>';
-            masterSalesGlobal.forEach(n => optionsSales += `<option value="${n}">${n}</option>`);
+            masterSalesGlobal.forEach(n => {
+                let nama = typeof n === 'object' ? n.nama : n;
+                optionsSales += `<option value="${nama}">${nama}</option>`;
+            });
 
             let htmlContent = `
                 Kategori:<br>
