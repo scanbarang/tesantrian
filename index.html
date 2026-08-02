@@ -26,7 +26,7 @@
             --text-muted: #475569;
             --border: #cbd5e1;
             
-            /* Warna Kartu Giliran Sesuai Permintaan */
+            /* Warna Kartu Giliran */
             --ha-bg: #eab308;        /* Kuning */
             --ha-border: #ca8a04;
             --av-bg: #10b981;        /* Hijau Cerah */
@@ -198,10 +198,10 @@
         }
         select:focus, input[type="text"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
 
-        @keyframes glowSuccess {
-            0% { box-shadow: 0 0 5px rgba(5, 150, 105, 0.4), 0 4px 12px rgba(0,0,0,0.08); }
-            50% { box-shadow: 0 0 16px rgba(5, 150, 105, 0.9), 0 4px 12px rgba(0,0,0,0.08); }
-            100% { box-shadow: 0 0 5px rgba(5, 150, 105, 0.4), 0 4px 12px rgba(0,0,0,0.08); }
+        @keyframes glowBlue {
+            0% { box-shadow: 0 0 5px rgba(37, 99, 235, 0.4), 0 4px 12px rgba(0,0,0,0.08); }
+            50% { box-shadow: 0 0 16px rgba(37, 99, 235, 0.9), 0 4px 12px rgba(0,0,0,0.08); }
+            100% { box-shadow: 0 0 5px rgba(37, 99, 235, 0.4), 0 4px 12px rgba(0,0,0,0.08); }
         }
         @keyframes glowCustomer {
             0% { box-shadow: 0 0 5px rgba(37, 99, 235, 0.4), 0 4px 12px rgba(0,0,0,0.08); }
@@ -238,7 +238,7 @@
         }
         button:active { transform: scale(0.98); }
 
-        .btn-success { background: var(--success); color: white; animation: glowSuccess 2.5s infinite ease-in-out; }
+        .btn-success { background: var(--customer-blue); color: white; animation: glowBlue 2.5s infinite ease-in-out; }
         .btn-customer { background: var(--customer-blue); color: white; animation: glowCustomer 2.5s infinite ease-in-out; }
         .btn-closing { background: var(--closing-red); color: white; animation: glowClosing 2.5s infinite ease-in-out; }
         .btn-purple { background: var(--purple-cs); color: white; animation: glowPurple 2.5s infinite ease-in-out; }
