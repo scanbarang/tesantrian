@@ -429,11 +429,14 @@
         const BATAS_MENIT = 60;
         let sedangProsesAksi = false;
         let lockStatusLokalExpiry = 0;
-        let waktuPenaltiSelesaiGlobal = 0; // Timestamp sanksi timer penalti aktif
+        let waktuPenaltiSelesaiGlobal = 0; 
 
         window.onload = function() {
             initDarkMode();
             
+            // PULIHKAN TIMER SANKSI DARI LOCALSTORAGE AGAR TIDAK HILANG SAAT REFRESH
+            muatSanksiLokal();
+
             muatMasterSalesInstant();
             muatCacheAntrianInstan();
             
@@ -454,6 +457,18 @@
             setInterval(muatDataAntrian, 3000); 
             setInterval(hitungMundurLokal, 1000); 
         };
+
+        function muatSanksiLokal() {
+            const savedPenalty = localStorage.getItem('ufo_waktu_penalti_selesai');
+            if (savedPenalty) {
+                const targetTime = parseInt(savedPenalty, 10);
+                if (targetTime > Date.now()) {
+                    waktuPenaltiSelesaiGlobal = targetTime;
+                } else {
+                    localStorage.removeItem('ufo_waktu_penalti_selesai');
+                }
+            }
+        }
 
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
@@ -608,6 +623,7 @@
                     }
                 } else {
                     waktuPenaltiSelesaiGlobal = 0; // Sanksi selesai
+                    localStorage.removeItem('ufo_waktu_penalti_selesai');
                     if (btnAntri && statusSayaGlobal === "belum_ada") {
                         btnAntri.disabled = false;
                         btnAntri.className = "btn-success";
@@ -727,7 +743,7 @@
                 
                 const lastReadAnnouncement = localStorage.getItem('ufo_last_read_announcement');
                 if (lastReadAnnouncement !== pengumumanSPV) {
-                    modalPopupPengumuman.classList.add('active'); // Munculkan pop-up wajib menutup layar
+                    modalPopupPengumuman.classList.add('active'); 
                 } else {
                     modalPopupPengumuman.classList.remove('active'); 
                 }
@@ -921,7 +937,6 @@
             btnAntri.disabled = true;
             btnAntri.innerHTML = `<span class="spinner"></span> Memeriksa Sanksi...`;
 
-            // AMBIL DATA TERBARU LANGSUNG DARI SERVER SEBELUM DAFTAR
             fetch(`${SCRIPT_URL}?aksi=getMasterSales`, { method: 'GET', redirect: 'follow' })
             .then(res => res.json())
             .then(resSales => {
@@ -929,7 +944,6 @@
                     masterSalesGlobal = resSales.data;
                 }
 
-                // VALIDASI KETAT BERDASARKAN DATA TERBARU DARI SERVER
                 const akunSaya = namaSales.toLowerCase();
                 const dataSales = masterSalesGlobal || [];
                 const sayaObj = dataSales.find(item => String(typeof item === 'object' ? item.nama : item).trim().toLowerCase() === akunSaya);
@@ -938,16 +952,16 @@
                     const menitHukum = parseInt(sayaObj.sanksiMenit);
                     const pesanSanksi = sayaObj.pesanSanksi || `Anda terkena penalti sanksi ${menitHukum} menit karena tidak taat aturan / tidak klik selesai melayani.`;
                     
-                    // Set timer sanksi berjalan setelah user klik OK pada popup
+                    // SIMPAN TIMER SANKSI KE LOCALSTORAGE AGAR AMAN SAAT REFRESH
                     waktuPenaltiSelesaiGlobal = Date.now() + (menitHukum * 60 * 1000);
+                    localStorage.setItem('ufo_waktu_penalti_selesai', waktuPenaltiSelesaiGlobal);
                     
                     btnAntri.disabled = false;
                     btnAntri.innerHTML = "Daftar Antrian";
                     tampilkanModal("🚨 Peringatan Sanksi Penalti", pesanSanksi);
-                    return; // Hentikan, promotor tidak bisa masuk antrian
+                    return; 
                 }
 
-                // JIKA AMAN DARI SANKSI, LANJUTKAN PROSES DAFTAR ANTRIAN
                 sedangProsesAksi = true; 
                 lockStatusLokalExpiry = Date.now() + 6000;
 
