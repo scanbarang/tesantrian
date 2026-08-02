@@ -902,21 +902,9 @@
                     renderUIRental(resAntrian.data, resAntrian.statusAntrian, resAntrian.waktuStandbyHA, resAntrian.waktuStandbyAV, resAntrian.pengumumanSPV);
                 }
                 
-                // Cek Sanksi Penalti dari Sheet MasterSales secara berkala
+                // Sinkronisasi data master sales di background TANPA memunculkan pop-up otomatis
                 if (resSales && resSales.status === "sukses" && resSales.data) {
                     masterSalesGlobal = resSales.data;
-                    const akunSaya = getAkunAktif().trim();
-                    if (akunSaya && waktuPenaltiSelesaiGlobal <= 0) {
-                        const dataSales = resSales.data;
-                        const sayaObj = dataSales.find(item => String(item.nama).trim().toLowerCase() === akunSaya.toLowerCase());
-                        if (sayaObj && sayaObj.sanksiMenit && parseInt(sayaObj.sanksiMenit) > 0) {
-                            const menitHukum = parseInt(sayaObj.sanksiMenit);
-                            const pesanSanksi = sayaObj.pesanSanksi || `Anda terkena penalti sanksi ${menitHukum} menit karena tidak taat aturan / tidak klik selesai melayani.`;
-                            
-                            waktuPenaltiSelesaiGlobal = Date.now() + (menitHukum * 60 * 1000);
-                            tampilkanModal("🚨 Peringatan Sanksi Penalti", pesanSanksi);
-                        }
-                    }
                 }
             });
         }
@@ -926,7 +914,7 @@
             const kategoriPilih = document.getElementById('pilih-kategori').value;
             if(!namaSales) return tampilkanModal("Perhatian", "Akun belum terikat dengan benar.");
             
-            // VALIDASI KETAT: Periksa apakah promotor terkena sanksi dari data master sales lokal saat tombol diklik
+            // VALIDASI KETAT: Periksa apakah promotor terkena sanksi TEPAT KETIKA KLIK TOMBOL DAFTAR ANTRIAN
             const akunSaya = namaSales.toLowerCase();
             const dataSales = masterSalesGlobal || [];
             const sayaObj = dataSales.find(item => String(typeof item === 'object' ? item.nama : item).trim().toLowerCase() === akunSaya);
@@ -935,7 +923,9 @@
                 const menitHukum = parseInt(sayaObj.sanksiMenit);
                 const pesanSanksi = sayaObj.pesanSanksi || `Anda terkena penalti sanksi ${menitHukum} menit karena tidak taat aturan / tidak klik selesai melayani.`;
                 
+                // Set timer hitung mundur sanksi setelah user mengklik OK di pop-up
                 waktuPenaltiSelesaiGlobal = Date.now() + (menitHukum * 60 * 1000);
+                
                 tampilkanModal("🚨 Peringatan Sanksi Penalti", pesanSanksi);
                 return; // Batalkan proses pendaftaran antrian
             }
