@@ -25,8 +25,12 @@
             --text-main: #0f172a;
             --text-muted: #475569;
             --border: #cbd5e1;
-            --card-giliran-bg: #eff6ff;
-            --card-giliran-border: #93c5fd;
+            
+            /* Warna Kartu Giliran */
+            --ha-bg: #2563eb;
+            --ha-border: #1d4ed8;
+            --av-bg: #ef4444;
+            --av-border: #dc2626;
         }
 
         /* TEMA MODE GELAP: PREMIUM MODERN NAVY & GLOW EFFECT */
@@ -36,8 +40,10 @@
             --text-main: #f8fafc !important;
             --text-muted: #94a3b8 !important;
             --border: #1e293b !important;
-            --card-giliran-bg: #132238 !important;
-            --card-giliran-border: #3b82f6 !important;
+            --ha-bg: #1d4ed8 !important;
+            --ha-border: #3b82f6 !important;
+            --av-bg: #dc2626 !important;
+            --av-border: #f87171 !important;
         }
         body.dark-mode {
             background: radial-gradient(circle at top, #0f1c3f 0%, #050b14 70%) !important;
@@ -151,20 +157,34 @@
         .card-giliran-wrapper {
             display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;
         }
-        .card-giliran-utama {
-            background: var(--card-giliran-bg); border: 2px solid var(--card-giliran-border);
-            border-radius: 16px; padding: 16px 12px; text-align: center;
-            transition: background 0.3s ease, border-color 0.3s ease;
-        }
-        .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 0.5px; }
-        .nama-giliran-aktif { font-size: 20px; font-weight: 800; color: #1e3a8a; margin: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        body.dark-mode .nama-giliran-aktif { color: #60a5fa !important; text-shadow: 0 0 10px rgba(96, 165, 250, 0.4); }
         
+        /* KARTU GILIRAN UTAMA HA (BIRU) */
+        .card-giliran-ha {
+            background: var(--ha-bg); border: 2px solid var(--ha-border);
+            border-radius: 16px; padding: 16px 12px; text-align: center; color: #ffffff;
+            transition: background 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+        .card-giliran-ha .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #e0e7ff; letter-spacing: 0.5px; }
+        .card-giliran-ha .nama-giliran-aktif { font-size: 20px; font-weight: 800; color: #ffffff; margin: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .card-giliran-ha .timer-mundur { color: #ffffff !important; }
+
+        /* KARTU GILIRAN UTAMA AV (MERAH CERAH) */
+        .card-giliran-av {
+            background: var(--av-bg); border: 2px solid var(--av-border);
+            border-radius: 16px; padding: 16px 12px; text-align: center; color: #ffffff;
+            transition: background 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+        }
+        .card-giliran-av .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #fee2e2; letter-spacing: 0.5px; }
+        .card-giliran-av .nama-giliran-aktif { font-size: 20px; font-weight: 800; color: #ffffff; margin: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .card-giliran-av .timer-mundur { color: #ffffff !important; }
+
         .timer-mundur { 
             font-size: 18px; font-weight: 800; margin-top: 4px; display: block; 
             font-variant-numeric: tabular-nums; transition: color 0.3s ease;
         }
-        .timer-warning-merah { color: var(--closing-red) !important; animation: blinkAlert 1s infinite; }
+        .timer-warning-merah { color: #fef08a !important; animation: blinkAlert 1s infinite; }
         @keyframes blinkAlert { 50% { opacity: 0.3; } }
 
         .input-group { margin-bottom: 16px; text-align: left; }
@@ -318,15 +338,15 @@
 
         <!-- KARTU GILIRAN UTAMA HA & AV -->
         <div class="card-giliran-wrapper">
-            <div class="card-giliran-utama">
+            <div class="card-giliran-ha">
                 <div class="label-giliran">Giliran HA Saat Ini</div>
                 <div id="nama-aktif-ha" class="nama-giliran-aktif">-</div>
-                <span id="timer-mundur-ha" class="timer-mundur" style="color: var(--primary);">00:00</span>
+                <span id="timer-mundur-ha" class="timer-mundur">00:00</span>
             </div>
-            <div class="card-giliran-utama" style="background: var(--card-giliran-bg); border-color: var(--card-giliran-border);">
-                <div class="label-giliran" style="color: #9333ea;">Giliran AV Saat Ini</div>
-                <div id="nama-aktif-av" class="nama-giliran-aktif" style="color: #6b21a8;">-</div>
-                <span id="timer-mundur-av" class="timer-mundur" style="color: #9333ea;">00:00</span>
+            <div class="card-giliran-av">
+                <div class="label-giliran">Giliran AV Saat Ini</div>
+                <div id="nama-aktif-av" class="nama-giliran-aktif">-</div>
+                <span id="timer-mundur-av" class="timer-mundur">00:00</span>
             </div>
         </div>
 
@@ -462,6 +482,7 @@
                 if (targetTime > Date.now()) {
                     waktuPenaltiSelesaiGlobal = targetTime;
                 } else {
+                    waktuPenaltiSelesaiGlobal = 0;
                     localStorage.removeItem('ufo_waktu_penalti_selesai');
                 }
             }
@@ -620,6 +641,8 @@
                 } else {
                     waktuPenaltiSelesaiGlobal = 0; 
                     localStorage.removeItem('ufo_waktu_penalti_selesai');
+                    
+                    // OTOMATIS KEMBALIKAN TOMBOL KE HIJAU SAAT TIMER PENALTY HABIS
                     if (btnAntri && statusSayaGlobal === "belum_ada") {
                         btnAntri.disabled = false;
                         btnAntri.className = "btn-success";
@@ -640,10 +663,8 @@
                         labelTimerHA.innerText = `${menit}:${detik < 10 ? '0' : ''}${detik}`;
                         if (totalDetik <= 60) {
                             labelTimerHA.classList.add('timer-warning-merah');
-                            labelTimerHA.style.color = "#dc2626";
                         } else {
                             labelTimerHA.classList.remove('timer-warning-merah');
-                            labelTimerHA.style.color = "#2563eb";
                         }
                     } else {
                         labelTimerHA.innerText = `Habis!`;
@@ -653,7 +674,6 @@
             } else {
                 labelTimerHA.innerText = "00:00";
                 labelTimerHA.classList.remove('timer-warning-merah');
-                labelTimerHA.style.color = "#2563eb";
             }
 
             if (waktuStandbyAVGlobal) {
@@ -668,10 +688,8 @@
                         labelTimerAV.innerText = `${menit}:${detik < 10 ? '0' : ''}${detik}`;
                         if (totalDetik <= 60) {
                             labelTimerAV.classList.add('timer-warning-merah');
-                            labelTimerAV.style.color = "#dc2626";
                         } else {
                             labelTimerAV.classList.remove('timer-warning-merah');
-                            labelTimerAV.style.color = "#9333ea";
                         }
                     } else {
                         labelTimerAV.innerText = `Habis!`;
@@ -681,7 +699,6 @@
             } else {
                 labelTimerAV.innerText = "00:00";
                 labelTimerAV.classList.remove('timer-warning-merah');
-                labelTimerAV.style.color = "#9333ea";
             }
         }
 
@@ -929,7 +946,6 @@
                 return;
             }
 
-            // CEK INSTAN DARI DATA LOKAL DI BROWSER TANPA TUNGGU FETCH (BEBAS JEDA)
             const akunSaya = namaSales.toLowerCase();
             const dataSales = masterSalesGlobal || [];
             const sayaObj = dataSales.find(item => String(typeof item === 'object' ? item.nama : item).trim().toLowerCase() === akunSaya);
@@ -942,10 +958,9 @@
                 localStorage.setItem('ufo_waktu_penalti_selesai', waktuPenaltiSelesaiGlobal);
                 
                 tampilkanModal("🚨 Peringatan Sanksi Penalti", pesanSanksi);
-                return; // Langsung munculkan pop-up tanpa jeda
+                return; 
             }
 
-            // JIKA AMAN, LANJUTKAN PROSES DAFTAR ANTRIAN
             sedangProsesAksi = true; 
             lockStatusLokalExpiry = Date.now() + 6000;
 
