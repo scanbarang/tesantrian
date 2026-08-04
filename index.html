@@ -161,8 +161,8 @@
         .modal-actions { display: flex; gap: 10px; }
         .modal-actions button { flex: 1; padding: 12px; font-size: 13px; }
 
-        /* Styling khusus modal map */
-        #map-container-modal { width: 100%; height: 240px; border-radius: 12px; margin-bottom: 14px; border: 2px solid var(--border); z-index: 1; }
+        /* Peta Modal */
+        #map-container-modal { width: 100%; height: 240px; border-radius: 12px; margin-bottom: 14px; border: 2px solid var(--border); }
     </style>
 </head>
 <body>
@@ -255,11 +255,11 @@
         </div>
     </div>
 
-    <!-- Modal Map GPS Verifikasi -->
+    <!-- Modal Map GPS Verifikasi Antrian -->
     <div id="modal-maps-gps" class="modal-overlay">
         <div class="modal-box" style="max-width: 420px;">
             <div class="modal-title">📍 Validasi Lokasi Toko</div>
-            <div class="modal-desc" style="margin-bottom: 10px; font-size: 13px;">Pastikan Anda berada di dalam area toko (Radius Maksimal 50 Meter).</div>
+            <div class="modal-desc" style="margin-bottom: 8px; font-size: 13px;">Pastikan Anda berada di dalam area toko (Maksimal Radius 50 Meter).</div>
             <div id="map-container-modal"></div>
             <div id="info-jarak-peta" style="font-size: 13px; font-weight: 800; margin-bottom: 14px; color: var(--text-muted);">Mendeteksi posisi GPS...</div>
             <div class="modal-actions">
@@ -272,14 +272,12 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLx0UculzvBRESbJY2DYf3BLf9sNz5uLU7VEZ8xyvqm2bFfKxa9Emf9LoVYxePDwpx/exec";
 
-        // Konfigurasi Koordinat Toko UFO Kebonsari
-        const TOKO_LAT = -7.312500; // Sesuaikan koordinat lintang toko Anda
-        const TOKO_LNG = 112.730000; // Sesuaikan koordinat bujur toko Anda
+        // Titik Koordinat Toko UFO Kebonsari (Silakan sesuaikan presisi lat/lng tokonya)
+        const TOKO_LAT = -7.312500; 
+        const TOKO_LNG = 112.730000; 
         const RADIUS_MAKSIMAL = 50; // dalam meter
 
         let mapInstance = null;
-        let markerUser = null;
-        let circleArea = null;
         let isGpsValid = false;
 
         let waktuStandbyHAGlobal = null;
@@ -628,7 +626,7 @@
         }
 
         function hitungJarakMeter(lat1, lon1, lat2, lon2) {
-            var R = 6371000; // Radius bumi dalam meter
+            var R = 6371000;
             var dLat = (lat2 - lat1) * Math.PI / 180;
             var dLon = (lon2 - lon1) * Math.PI / 180;
             var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -650,12 +648,14 @@
                 return;
             }
 
+            // Tampilkan modal terlebih dahulu agar DOM elemen peta siap
             document.getElementById('modal-maps-gps').classList.add('active');
             document.getElementById('info-jarak-peta').innerText = "Mengambil koordinat GPS perangkat...";
             
+            // Jeda singkat agar modal selesai merender sebelum Leaflet dijalankan
             setTimeout(() => {
                 inisialisasiPeta();
-            }, 300);
+            }, 250);
         }
 
         function tutupModalMaps() {
@@ -678,7 +678,6 @@
                     let userLng = position.coords.longitude;
                     let akurasi = position.coords.accuracy;
 
-                    // Validasi indikasi Fake GPS akurasi nol
                     if (akurasi === 0) {
                         document.getElementById('info-jarak-peta').innerHTML = "⚠️ Terindikasi Fake GPS (Akurasi 0).";
                         return;
@@ -686,37 +685,43 @@
 
                     let jarak = hitungJarakMeter(userLat, userLng, TOKO_LAT, TOKO_LNG);
 
+                    // Hapus map lama jika ada agar tidak eror dobel render
                     if (mapInstance) {
                         mapInstance.remove();
+                        mapInstance = null;
                     }
 
+                    // Buat instance map baru
                     mapInstance = L.map('map-container-modal').setView([userLat, userLng], 17);
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         maxZoom: 19,
                         attribution: '&copy; OpenStreetMap'
                     }).addTo(mapInstance);
 
-                    // Marker Toko
+                    // Marker Titik Toko
                     L.marker([TOKO_LAT, TOKO_LNG]).addTo(mapInstance)
                         .bindPopup("<b>UFO Kebonsari</b>").openPopup();
 
-                    // Lingkaran Radius Toko
+                    // Lingkaran Radius Toko (50 Meter)
                     L.circle([TOKO_LAT, TOKO_LNG], {
-                        color: 'red',
-                        fillColor: '#f03',
+                        color: '#2563eb',
+                        fillColor: '#2563eb',
                         fillOpacity: 0.2,
                         radius: RADIUS_MAKSIMAL
                     }).addTo(mapInstance);
 
-                    // Marker Posisi User
-                    markerUser = L.marker([userLat, userLng]).addTo(mapInstance)
+                    // Marker Posisi Promotor Sekarang
+                    L.marker([userLat, userLng]).addTo(mapInstance)
                         .bindPopup("<b>Posisi Anda</b>").openPopup();
+
+                    // Paksa map memperbarui ukuran layout-nya agar tile gambar jalan muncul sempurna
+                    setTimeout(() => { mapInstance.invalidateSize(); }, 100);
 
                     const btnKonfirm = document.getElementById('btn-konfirmasi-gps');
 
                     if (jarak <= RADIUS_MAKSIMAL) {
                         isGpsValid = true;
-                        document.getElementById('info-jarak-petainnerHTML = `<span style="color: #16a34a;">✔ Lokasi Valid! Jarak ${Math.round(jarak)} meter dari toko.</span>`;
+                        document.getElementById('info-jarak-peta').innerHTML = `<span style="color: #16a34a;">✔ Lokasi Valid! Jarak ${Math.round(jarak)} meter dari toko.</span>`;
                         btnKonfirm.disabled = false;
                         btnKonfirm.className = "btn-success";
                     } else {
@@ -727,7 +732,7 @@
                     }
                 },
                 (error) => {
-                    document.getElementById('info-jarak-peta').innerText = "Gagal mendeteksi GPS. Pastikan izin lokasi aktif.";
+                    document.getElementById('info-jarak-peta').innerText = "Gagal mendeteksi GPS. Pastikan izin lokasi HP Anda aktif.";
                 },
                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
@@ -846,7 +851,6 @@
             });
         }
 
-        function konfirmasiSudahBacaPengumuman() {}
         function tampilkanModal(judul, desc) {
             document.getElementById('modal-title').innerText = judul;
             document.getElementById('modal-desc').innerText = desc;
