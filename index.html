@@ -191,10 +191,10 @@
                 </select>
             </div>
 
-            <button type="button" id="btn-utama-antri" class="btn-success btn-disabled" disabled>Antrian Awal Diatur Manual</button>
+            <button type="button" id="btn-utama-antri" class="btn-success btn-disabled" disabled>Antrian Diatur Manual oleh SPV</button>
             
             <div id="keterangan-lock-box" style="display: none; margin-top: 10px; padding: 12px 14px; background: #fee2e2; border: 2px solid #fca5a5; color: #b91c1c; border-radius: 12px; font-size: 12px; font-weight: 700; text-align: left;">
-                🔒 <b>Akun Antrian Terkunci</b><br>
+                🔒 <b>Akun Di-lock oleh SPV</b><br>
                 <span id="teks-alasan-lock" style="font-weight: 600; font-size: 11px; opacity: 0.95; display: block; margin-top: 4px;">-</span>
             </div>
 
@@ -268,7 +268,7 @@
                 document.getElementById('panel-login').style.display = 'none';
                 document.getElementById('panel-menu-utama').style.display = 'block';
                 document.getElementById('label-user-aktif').innerText = cachedNama;
-                cekStatusCheckinLokal(cachedNama);
+                cekStatusCheckinServer(cachedNama);
             } else {
                 document.getElementById('panel-login').style.display = 'block';
                 document.getElementById('panel-menu-utama').style.display = 'none';
@@ -333,7 +333,7 @@
                         document.getElementById('panel-login').style.display = 'none';
                         document.getElementById('panel-menu-utama').style.display = 'block';
                         document.getElementById('label-user-aktif').innerText = resBinding.nama;
-                        cekStatusCheckinLokal(resBinding.nama);
+                        cekStatusCheckinServer(resBinding.nama);
                     } else if (resBinding.status === "bebas") {
                         localStorage.removeItem('ufo_nama_sales_aktif');
                         document.getElementById('panel-login').style.display = 'block';
@@ -368,7 +368,7 @@
                     document.getElementById('panel-login').style.display = 'none';
                     document.getElementById('panel-menu-utama').style.display = 'block';
                     document.getElementById('label-user-aktif').innerText = namaPilih;
-                    cekStatusCheckinLokal(namaPilih);
+                    cekStatusCheckinServer(namaPilih);
                     tampilkanModal("Berhasil", `HP terikat untuk: ${namaPilih}`);
                     muatDataAntrian(true);
                 } else { tampilkanModal("Akses Ditolak", res.pesan); }
@@ -420,20 +420,19 @@
 
                     if (jarakMeter > MAKS_JARAK_METER) {
                         btnCheckin.disabled = false;
-                        btnCheckin.innerText = "📍 CHECK IN";
+                        btnCheckin.className = "btn-checkin";
+                        btnCheckin.innerText = "📍 CHECK IN KEDATANGAN";
                         statusTeks.innerHTML = `<span style="color: #dc2626;">❌ Di luar area toko! (Jarak ±${Math.round(jarakMeter)}m). Maksimal ${MAKS_JARAK_METER}m.</span>`;
                         tampilkanModal("Akses Ditolak", `Anda berada di luar area toko (±${Math.round(jarakMeter)} meter dari titik toko). Mendekatlah ke area toko.`);
                         return;
                     }
 
                     statusTeks.innerHTML = "🛰️ Radius valid! Mengirim data ke server...";
-                    const tglHariIni = new Date().toISOString().split('T')[0];
 
                     fetch(`${SCRIPT_URL}?aksi=absenCheckin&namaSales=${encodeURIComponent(namaSales)}&lat=${latUser}&lng=${lngUser}&t=${Date.now()}`)
                     .then(res => res.json())
                     .then(res => {
                         const jamSekarang = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                        localStorage.setItem(`checkin_${namaSales}_${tglHariIni}`, jamSekarang);
                         
                         btnCheckin.disabled = true;
                         btnCheckin.className = "btn-checkin btn-disabled";
@@ -443,13 +442,15 @@
                     })
                     .catch(() => {
                         btnCheckin.disabled = false;
-                        btnCheckin.innerText = "📍 CHECK IN";
+                        btnCheckin.className = "btn-checkin";
+                        btnCheckin.innerText = "📍 CHECK IN KEDATANGAN";
                         statusTeks.innerHTML = `<span style="color: #dc2626;">❌ Gagal terhubung ke server. Coba lagi.</span>`;
                     });
                 },
                 function(error) {
                     btnCheckin.disabled = false;
-                    btnCheckin.innerText = "📍 CHECK IN";
+                    btnCheckin.className = "btn-checkin";
+                    btnCheckin.innerText = "📍 CHECK IN KEDATANGAN";
                     statusTeks.innerHTML = `<span style="color: #dc2626;">❌ Izin GPS ditolak oleh browser HP.</span>`;
                     tampilkanModal("GPS Ditolak", "Pastikan izin lokasi di HP Anda diaktifkan.");
                 },
@@ -457,18 +458,28 @@
             );
         }
 
-        function cekStatusCheckinLokal(nama) {
-            const tglHariIni = new Date().toISOString().split('T')[0];
-            const jamCheckin = localStorage.getItem(`checkin_${nama}_${tglHariIni}`);
-            const btnCheckin = document.getElementById('btn-checkin');
-            const statusTeks = document.getElementById('status-checkin-teks');
-
-            if (jamCheckin && btnCheckin && statusTeks) {
-                btnCheckin.disabled = true;
-                btnCheckin.className = "btn-checkin btn-disabled";
-                btnCheckin.innerHTML = `📍 SUDAH CHECK IN (${jamCheckin})`;
-                statusTeks.innerHTML = `<span style="color: #059669;">🟢 Sudah Check In hari ini pukul ${jamCheckin} WIB</span>`;
-            }
+        function cekStatusCheckinServer(nama) {
+            fetch(`${SCRIPT_URL}?aksi=getStatusCheckin&namaSales=${encodeURIComponent(nama)}&t=${Date.now()}`)
+            .then(res => res.json())
+            .then(res => {
+                const btnCheckin = document.getElementById('btn-checkin');
+                const statusTeks = document.getElementById('status-checkin-teks');
+                if (res.status === "sukses" && res.sudahCheckin) {
+                    if (btnCheckin && statusTeks) {
+                        btnCheckin.disabled = true;
+                        btnCheckin.className = "btn-checkin btn-disabled";
+                        btnCheckin.innerHTML = `📍 SUDAH CHECK IN (${res.waktu || ''})`;
+                        statusTeks.innerHTML = `<span style="color: #059669;">🟢 Sudah Check In hari ini</span>`;
+                    }
+                } else {
+                    if (btnCheckin && statusTeks) {
+                        btnCheckin.disabled = false;
+                        btnCheckin.className = "btn-checkin";
+                        btnCheckin.innerHTML = `📍 CHECK IN KEDATANGAN`;
+                        statusTeks.innerHTML = `Status: Belum Check In Hari Ini`;
+                    }
+                }
+            }).catch(() => {});
         }
 
         function muatMasterSalesInstant() {
@@ -615,6 +626,9 @@
                 if (resSales && resSales.status === "sukses" && resSales.data) {
                     masterSalesGlobal = resSales.data;
                     localStorage.setItem('ufo_master_sales_cache', JSON.stringify(resSales.data));
+                    if (namaSalesAktifGlobal) {
+                        cekStatusCheckinServer(namaSalesAktifGlobal);
+                    }
                 }
             });
         }
