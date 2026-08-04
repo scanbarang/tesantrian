@@ -238,7 +238,6 @@
 
             <button type="button" id="btn-utama-antri" class="btn-success" onclick="aksiUtamaAntri()">Daftar Antrian</button>
             
-            <!-- Kotak Keterangan Alasan Lock SPV -->
             <div id="keterangan-lock-box" style="display: none; margin-top: 10px; padding: 12px 14px; background: #fee2e2; border: 2px solid #fca5a5; color: #b91c1c; border-radius: 12px; font-size: 12px; font-weight: 700; text-align: left;">
                 🔒 <b>LOCK (Silahkan Lapor Untuk Membuka)</b><br>
                 <span id="teks-alasan-lock" style="font-weight: 600; font-size: 11px; opacity: 0.95; display: block; margin-top: 4px;">-</span>
@@ -330,6 +329,33 @@
             setInterval(hitungMundurLokal, 1000); 
         };
 
+        // --- FITUR ALARM / BEEP AUDIO (WEB AUDIO API) ---
+        function bunyiAlarmPanggilan() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                
+                // Membuat 3 nada beeps berturut-turut
+                [0, 250, 500].forEach((delay) => {
+                    setTimeout(() => {
+                        let osc = audioCtx.createOscillator();
+                        let gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Nada tinggi (A5)
+                        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 0.15);
+                    }, delay);
+                });
+            } catch(e) {
+                console.log("Audio diblokir browser sebelum ada interaksi user");
+            }
+        }
+
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
@@ -402,6 +428,7 @@
             const deviceId = getDeviceId();
             if(!namaPilih) return tampilkanModal("Perhatian", "Silakan pilih nama Anda!");
             tampilkanModalKonfirmasi("Kunci Perangkat", `Kunci HP ini atas nama (${namaPilih})?`, function() {
+                bunyiAlarmPanggilan(); // Aktivasi AudioContext awal
                 fetch(`${SCRIPT_URL}?aksi=kunciPerangkat&namaSales=${encodeURIComponent(namaPilih)}&deviceId=${encodeURIComponent(deviceId)}`)
                 .then(res => res.json())
                 .then(res => {
@@ -430,6 +457,16 @@
 
             let standbyHAObj = daftarAntrianGlobal.find(item => item.status === "Standby" && (item.kategori || "HA") === "HA");
             let namaHANow = standbyHAObj ? standbyHAObj.nama : "-";
+            
+            // Deteksi perubahan giliran HA untuk membunyikan alarm di semua HP
+            let cacheHANama = localStorage.getItem('ufo_last_ha_alarm') || "";
+            if (namaHANow !== "-" && namaHANow !== cacheHANama) {
+                localStorage.setItem('ufo_last_ha_alarm', namaHANow);
+                bunyiAlarmPanggilan();
+            } else if (namaHANow === "-") {
+                localStorage.removeItem('ufo_last_ha_alarm');
+            }
+
             if (waktuStandbyHAGlobal && standbyHAObj) {
                 let waktuServerHA = new Date(waktuStandbyHAGlobal).getTime();
                 if (namaHANow !== namaHASebelumnya || !waktuMulaiLokalHA) {
@@ -449,6 +486,16 @@
 
             let standbyAVObj = daftarAntrianGlobal.find(item => item.status === "Standby" && item.kategori === "AV");
             let namaAVNow = standbyAVObj ? standbyAVObj.nama : "-";
+
+            // Deteksi perubahan giliran AV untuk membunyikan alarm di semua HP
+            let cacheAVNama = localStorage.getItem('ufo_last_av_alarm') || "";
+            if (namaAVNow !== "-" && namaAVNow !== cacheAVNama) {
+                localStorage.setItem('ufo_last_av_alarm', namaAVNow);
+                bunyiAlarmPanggilan();
+            } else if (namaAVNow === "-") {
+                localStorage.removeItem('ufo_last_av_alarm');
+            }
+
             if (waktuStandbyAVGlobal && standbyAVObj) {
                 let waktuServerAV = new Date(waktuStandbyAVGlobal).getTime();
                 if (namaAVNow !== namaAVSebelumnya || !waktuMulaiLokalAV) {
@@ -559,7 +606,6 @@
             if(!listHtmlHA) listHtmlHA = "<li><span style='color:#64748b; font-style:italic;'>Belum ada antrian HA</span></li>";
             if(!listHtmlAV) listHtmlAV = "<li><span style='color:#64748b; font-style:italic;'>Belum ada antrian AV</span></li>";
 
-            // CEK STATUS LOCK & ALASAN DARI MASTER SALES
             let isLocked = false;
             let alasanLockSPV = "";
             if (akunSaya && masterSalesGlobal.length > 0) {
@@ -587,13 +633,11 @@
                 btnKeluar.innerHTML = "KELUAR ANTRIAN (ISTIRAHAT)"; btnKeluar.className = "btn-amber";
             }
 
-            // ATUR TAMPILAN JIKA AKUN DI-LOCK SPV
             if (isLocked) {
                 btnAntri.innerText = "Otomatis Terkunci";
                 btnAntri.className = "btn-closing btn-disabled";
                 btnAntri.disabled = true;
                 
-                // Tampilkan kotak alasan lock di bawah tombol
                 if (lockBoxEl && teksAlasanEl) {
                     lockBoxEl.style.display = "block";
                     teksAlasanEl.innerText = `Alasan: "${alasanLockSPV}"`;
@@ -605,7 +649,6 @@
                 btnKeluar.style.display = "none";
                 selectKategori.disabled = true;
             } else {
-                // Sembunyikan kotak keterangan jika akun aman
                 if (lockBoxEl) lockBoxEl.style.display = "none";
 
                 if (statusSayaGlobal === "Melayani") {
@@ -678,13 +721,14 @@
             const kategoriPilih = document.getElementById('pilih-kategori').value;
             if(!namaSales) return tampilkanModal("Perhatian", "Akun belum terikat dengan benar.");
 
-            // VALIDASI LOCK SEBELUM DAFTAR
             const sayaObj = masterSalesGlobal.find(item => String(item.nama).trim().toLowerCase() === namaSales.toLowerCase());
             if (sayaObj && String(sayaObj.statusLock).toUpperCase() === "LOCKED") {
                 const alasan = sayaObj.alasanLock ? `\n\nAlasan: "${sayaObj.alasanLock}"` : "";
                 tampilkanModal("🚨 Akses Ditolak", `Akun Anda sedang di-lock oleh SPV sehingga tidak bisa mendaftar antrian.${alasan}`);
                 return;
             }
+
+            bunyiAlarmPanggilan(); // Interaksi user untuk membuka izin AudioContext
 
             const btnAntri = document.getElementById('btn-utama-antri');
             btnAntri.disabled = true;
