@@ -76,7 +76,7 @@
         .top-controls { display: flex; justify-content: flex-end; margin-bottom: 12px; }
         .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
 
-        .gradient-header { background: linear-gradient(135deg, #dc2626 0%, #ffffff 100%); border-radius: 18px; padding: 22px; color: white; margin-bottom: 18px; box-shadow: 0 8px 20px -4px rgba(220, 38, 38, 0.3); }
+        .gradient-header { background: linear-gradient(135deg, #dc2626 0%, #ffffff 100%); border-radius: 18px; padding: 22px; color: white; margin-bottom: 18px; box-shadow: 0 8px 20px -4px rgba(220, 38, 38, 0.3); text-align: center; }
         .gradient-header h2 { margin: 0; font-size: 22px; font-weight: 800; text-shadow: 1px 1px 4px rgba(0,0,0,0.6); }
         .gradient-header p { margin: 6px 0 0 0; opacity: 0.95; font-size: 13px; font-weight: 700; text-shadow: 1px 1px 4px rgba(0,0,0,0.6); }
 
@@ -92,10 +92,6 @@
         .card-giliran-av { background: var(--av-bg); border: 2px solid var(--av-border); border-radius: 16px; padding: 16px 12px; text-align: center; color: #ffffff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
         .card-giliran-av .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #ecfdf5; }
         .card-giliran-av .nama-giliran-aktif { font-size: 20px; font-weight: 800; color: #ffffff; margin: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
-        .timer-mundur { font-size: 18px; font-weight: 800; margin-top: 4px; display: block; font-variant-numeric: tabular-nums; color: #ffffff !important; }
-        .timer-warning-merah { color: #fef08a !important; animation: blinkAlert 1s infinite; }
-        @keyframes blinkAlert { 50% { opacity: 0.3; } }
 
         .input-group { margin-bottom: 16px; text-align: left; }
         .input-group label { display: block; font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
@@ -147,7 +143,8 @@
         </div>
 
         <div class="gradient-header">
-            <h2>Antrian Walk-In Promotor UFO Kebonsari</h2>
+            <h2>Antrian Walk-In Promotor</h2>
+            <p>UFO Kebonsari Malang</p>
         </div>
 
         <div id="badge-status-sistem" class="status-badge-sistem status-open">
@@ -158,12 +155,10 @@
             <div class="card-giliran-ha">
                 <div class="label-giliran">Giliran HA Saat Ini</div>
                 <div id="nama-aktif-ha" class="nama-giliran-aktif">-</div>
-                <span id="timer-mundur-ha" class="timer-mundur">00:00</span>
             </div>
             <div class="card-giliran-av">
                 <div class="label-giliran">Giliran AV Saat Ini</div>
                 <div id="nama-aktif-av" class="nama-giliran-aktif">-</div>
-                <span id="timer-mundur-av" class="timer-mundur">00:00</span>
             </div>
         </div>
 
@@ -173,7 +168,7 @@
                 <label>Pilih Nama Anda (Kunci Perangkat)</label>
                 <select id="pilih-sales"><option value="">-- Pilih Nama Anda --</option></select>
             </div>
-            <button type="button" class="btn-customer" onclick="simpanAkunHP()">Simpan & Kunci di HP Ini</button>
+            <button type="button" id="btn-simpan-hp" class="btn-customer" onclick="simpanAkunHP()">Simpan & Kunci di HP Ini</button>
         </div>
 
         <!-- PANEL MENU UTAMA PROMOTOR -->
@@ -254,14 +249,11 @@
             }).catch(() => {});
         }
 
-        let waktuStandbyHAGlobal = null;
-        let waktuStandbyAVGlobal = null;
         let daftarAntrianGlobal = [];
         let masterSalesGlobal = [];
         let statusSayaGlobal = "belum_ada"; 
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
-        const BATAS_MENIT = 60;
         let sedangProsesAksi = false;
 
         window.onload = function() {
@@ -285,7 +277,6 @@
             cekServerBg();
             muatMasterSales();
             setInterval(muatDataAntrian, 1000); 
-            setInterval(hitungMundurLokal, 1000); 
         };
 
         function toggleDarkMode() {
@@ -324,7 +315,7 @@
             if (cachedAntrian) {
                 try {
                     const parsed = JSON.parse(cachedAntrian);
-                    renderUIRental(parsed.data, parsed.statusAntrian, parsed.waktuStandbyHA, parsed.waktuStandbyAV, parsed.pengumumanSPV);
+                    renderUIRental(parsed.data, parsed.statusAntrian, parsed.pengumumanSPV);
                 } catch(e) {}
             }
         }
@@ -351,7 +342,7 @@
                 }
                 if (resAntrian && resAntrian.status === "sukses") {
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(resAntrian));
-                    renderUIRental(resAntrian.data, resAntrian.statusAntrian, resAntrian.waktuStandbyHA, resAntrian.waktuStandbyAV, resAntrian.pengumumanSPV);
+                    renderUIRental(resAntrian.data, resAntrian.statusAntrian, resAntrian.pengumumanSPV);
                 }
             });
         }
@@ -359,11 +350,18 @@
         function simpanAkunHP() {
             const namaPilih = document.getElementById('pilih-sales').value;
             const deviceId = getDeviceId();
+            const btnSimpan = document.getElementById('btn-simpan-hp');
+
             if(!namaPilih) return tampilkanModal("Perhatian", "Silakan pilih nama Anda!");
             
+            btnSimpan.disabled = true;
+            btnSimpan.innerHTML = `<span class="spinner"></span> Menyimpan & Mengunci HP...`;
+
             fetch(`${SCRIPT_URL}?aksi=kunciPerangkat&namaSales=${encodeURIComponent(namaPilih)}&deviceId=${encodeURIComponent(deviceId)}`)
             .then(res => res.json())
             .then(res => {
+                btnSimpan.disabled = false;
+                btnSimpan.innerText = "Simpan & Kunci di HP Ini";
                 if(res.status === "sukses") {
                     namaSalesAktifGlobal = namaPilih;
                     localStorage.setItem('ufo_nama_sales_aktif', namaPilih);
@@ -374,6 +372,10 @@
                     tampilkanModal("Berhasil", `HP terikat untuk: ${namaPilih}`);
                     muatDataAntrian(true);
                 } else { tampilkanModal("Akses Ditolak", res.pesan); }
+            }).catch(() => {
+                btnSimpan.disabled = false;
+                btnSimpan.innerText = "Simpan & Kunci di HP Ini";
+                tampilkanModal("Error", "Gagal terhubung ke server.");
             });
         }
 
@@ -469,32 +471,6 @@
             }
         }
 
-        function hitungMundurLokal() {
-            const labelTimerHA = document.getElementById('timer-mundur-ha');
-            const labelTimerAV = document.getElementById('timer-mundur-av');
-            const now = new Date().getTime();
-
-            let standbyHAObj = daftarAntrianGlobal.find(item => item.status === "Standby" && (item.kategori || "HA") === "HA");
-            if (waktuStandbyHAGlobal && standbyHAObj) {
-                let sisaMs = (BATAS_MENIT * 60 * 1000) - (now - new Date(waktuStandbyHAGlobal).getTime());
-                if (sisaMs > 0) {
-                    let m = Math.floor(sisaMs / 60000), s = Math.floor((sisaMs % 60000) / 1000);
-                    labelTimerHA.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-                    labelTimerHA.classList.toggle('timer-warning-merah', sisaMs <= 60000);
-                } else { labelTimerHA.innerText = "Habis!"; labelTimerHA.classList.add('timer-warning-merah'); }
-            } else { labelTimerHA.innerText = "00:00"; labelTimerHA.classList.remove('timer-warning-merah'); }
-
-            let standbyAVObj = daftarAntrianGlobal.find(item => item.status === "Standby" && item.kategori === "AV");
-            if (waktuStandbyAVGlobal && standbyAVObj) {
-                let sisaMs = (BATAS_MENIT * 60 * 1000) - (now - new Date(waktuStandbyAVGlobal).getTime());
-                if (sisaMs > 0) {
-                    let m = Math.floor(sisaMs / 60000), s = Math.floor((sisaMs % 60000) / 1000);
-                    labelTimerAV.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-                    labelTimerAV.classList.toggle('timer-warning-merah', sisaMs <= 60000);
-                } else { labelTimerAV.innerText = "Habis!"; labelTimerAV.classList.add('timer-warning-merah'); }
-            } else { labelTimerAV.innerText = "00:00"; labelTimerAV.classList.remove('timer-warning-merah'); }
-        }
-
         function muatMasterSalesInstant() {
             const cached = localStorage.getItem('ufo_master_sales_cache');
             if (cached) { masterSalesGlobal = JSON.parse(cached); updateDaftarSales(masterSalesGlobal); }
@@ -519,11 +495,9 @@
             if (selectEl) selectEl.innerHTML = html;
         }
 
-        function renderUIRental(dataAntrian, statusSistem, waktuStandbyHA, waktuStandbyAV, pengumumanSPV) {
+        function renderUIRental(dataAntrian, statusSistem, pengumumanSPV) {
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
-            waktuStandbyHAGlobal = waktuStandbyHA || null;
-            waktuStandbyAVGlobal = waktuStandbyAV || null;
             const akunSaya = getAkunAktif().trim();
 
             const badge = document.getElementById('badge-status-sistem');
@@ -636,7 +610,7 @@
             ]).then(([resAntrian, resSales]) => {
                 if (resAntrian && resAntrian.status === "sukses") {
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(resAntrian));
-                    renderUIRental(resAntrian.data, resAntrian.statusAntrian, resAntrian.waktuStandbyHA, resAntrian.waktuStandbyAV, resAntrian.pengumumanSPV);
+                    renderUIRental(resAntrian.data, resAntrian.statusAntrian, resAntrian.pengumumanSPV);
                 }
                 if (resSales && resSales.status === "sukses" && resSales.data) {
                     masterSalesGlobal = resSales.data;
