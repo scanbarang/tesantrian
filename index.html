@@ -329,33 +329,6 @@
             setInterval(hitungMundurLokal, 1000); 
         };
 
-        // --- FITUR ALARM / BEEP AUDIO (WEB AUDIO API) ---
-        function bunyiAlarmPanggilan() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-                
-                // Membuat 3 nada beeps berturut-turut
-                [0, 250, 500].forEach((delay) => {
-                    setTimeout(() => {
-                        let osc = audioCtx.createOscillator();
-                        let gain = audioCtx.createGain();
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Nada tinggi (A5)
-                        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        osc.start();
-                        osc.stop(audioCtx.currentTime + 0.15);
-                    }, delay);
-                });
-            } catch(e) {
-                console.log("Audio diblokir browser sebelum ada interaksi user");
-            }
-        }
-
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
@@ -428,7 +401,6 @@
             const deviceId = getDeviceId();
             if(!namaPilih) return tampilkanModal("Perhatian", "Silakan pilih nama Anda!");
             tampilkanModalKonfirmasi("Kunci Perangkat", `Kunci HP ini atas nama (${namaPilih})?`, function() {
-                bunyiAlarmPanggilan(); // Aktivasi AudioContext awal
                 fetch(`${SCRIPT_URL}?aksi=kunciPerangkat&namaSales=${encodeURIComponent(namaPilih)}&deviceId=${encodeURIComponent(deviceId)}`)
                 .then(res => res.json())
                 .then(res => {
@@ -457,16 +429,6 @@
 
             let standbyHAObj = daftarAntrianGlobal.find(item => item.status === "Standby" && (item.kategori || "HA") === "HA");
             let namaHANow = standbyHAObj ? standbyHAObj.nama : "-";
-            
-            // Deteksi perubahan giliran HA untuk membunyikan alarm di semua HP
-            let cacheHANama = localStorage.getItem('ufo_last_ha_alarm') || "";
-            if (namaHANow !== "-" && namaHANow !== cacheHANama) {
-                localStorage.setItem('ufo_last_ha_alarm', namaHANow);
-                bunyiAlarmPanggilan();
-            } else if (namaHANow === "-") {
-                localStorage.removeItem('ufo_last_ha_alarm');
-            }
-
             if (waktuStandbyHAGlobal && standbyHAObj) {
                 let waktuServerHA = new Date(waktuStandbyHAGlobal).getTime();
                 if (namaHANow !== namaHASebelumnya || !waktuMulaiLokalHA) {
@@ -486,16 +448,6 @@
 
             let standbyAVObj = daftarAntrianGlobal.find(item => item.status === "Standby" && item.kategori === "AV");
             let namaAVNow = standbyAVObj ? standbyAVObj.nama : "-";
-
-            // Deteksi perubahan giliran AV untuk membunyikan alarm di semua HP
-            let cacheAVNama = localStorage.getItem('ufo_last_av_alarm') || "";
-            if (namaAVNow !== "-" && namaAVNow !== cacheAVNama) {
-                localStorage.setItem('ufo_last_av_alarm', namaAVNow);
-                bunyiAlarmPanggilan();
-            } else if (namaAVNow === "-") {
-                localStorage.removeItem('ufo_last_av_alarm');
-            }
-
             if (waktuStandbyAVGlobal && standbyAVObj) {
                 let waktuServerAV = new Date(waktuStandbyAVGlobal).getTime();
                 if (namaAVNow !== namaAVSebelumnya || !waktuMulaiLokalAV) {
@@ -727,8 +679,6 @@
                 tampilkanModal("🚨 Akses Ditolak", `Akun Anda sedang di-lock oleh SPV sehingga tidak bisa mendaftar antrian.${alasan}`);
                 return;
             }
-
-            bunyiAlarmPanggilan(); // Interaksi user untuk membuka izin AudioContext
 
             const btnAntri = document.getElementById('btn-utama-antri');
             btnAntri.disabled = true;
