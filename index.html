@@ -18,6 +18,7 @@
             --purple-cs: #7c3aed;
             --teal-cs: #0d9488;
             --amber-rest: #d97706;
+            --whatsapp-green: #25d366;
             --checkin-green: #059669;
             --bg-color: #f1f5f9;
             --card-bg: #ffffff;
@@ -88,10 +89,12 @@
         .card-giliran-ha { background: var(--ha-bg); border: 2px solid var(--ha-border); border-radius: 16px; padding: 16px 12px; text-align: center; color: #ffffff; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25); }
         .card-giliran-ha .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #fefce8; }
         .card-giliran-ha .nama-giliran-aktif { font-size: 20px; font-weight: 800; color: #ffffff; margin: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-giliran-ha .timer-giliran { font-size: 13px; font-weight: 700; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 8px; display: inline-block; margin-top: 4px; }
         
         .card-giliran-av { background: var(--av-bg); border: 2px solid var(--av-border); border-radius: 16px; padding: 16px 12px; text-align: center; color: #ffffff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
         .card-giliran-av .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #ecfdf5; }
         .card-giliran-av .nama-giliran-aktif { font-size: 20px; font-weight: 800; color: #ffffff; margin: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-giliran-av .timer-giliran { font-size: 13px; font-weight: 700; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 8px; display: inline-block; margin-top: 4px; }
 
         .input-group { margin-bottom: 16px; text-align: left; }
         .input-group label { display: block; font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
@@ -109,6 +112,7 @@
         .btn-teal { background: var(--teal-cs); color: white; }
         .btn-amber { background: var(--amber-rest); color: white; }
         .btn-checkin { background: var(--checkin-green); color: white; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3); }
+        .btn-whatsapp { background: var(--whatsapp-green); color: white; margin-top: 12px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
         
         .btn-cancel { background: #e2e8f0; color: var(--text-main); }
         .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; box-shadow: none !important; }
@@ -155,10 +159,12 @@
             <div class="card-giliran-ha">
                 <div class="label-giliran">Giliran HA Saat Ini</div>
                 <div id="nama-aktif-ha" class="nama-giliran-aktif">-</div>
+                <div id="timer-ha" class="timer-giliran" style="display: none;">⏱️ 60:00</div>
             </div>
             <div class="card-giliran-av">
                 <div class="label-giliran">Giliran AV Saat Ini</div>
                 <div id="nama-aktif-av" class="nama-giliran-aktif">-</div>
+                <div id="timer-av" class="timer-giliran" style="display: none;">⏱️ 60:00</div>
             </div>
         </div>
 
@@ -202,6 +208,11 @@
             <button type="button" id="btn-selesai-closing" class="btn-closing" onclick="aksiSelesaiClosing()" style="display: none; margin-top: 10px;">SELESAI MELAYANI (DEAL / CLOSING)</button>
             <button type="button" id="btn-utama-cs" class="btn-purple" onclick="aksiToggleCS()" style="display: none; margin-top: 12px;">DIPANGGIL CS/GUDANG (KUNCI POSISI)</button>
             <button type="button" id="btn-keluar-istirahat" class="btn-amber" onclick="bukaModalKeluarIstirahat()" style="display: none; margin-top: 12px;">KELUAR ANTRIAN (ISTIRAHAT)</button>
+            
+            <!-- TOMBOL LAPORAN WHATSAPP -->
+            <button type="button" class="btn-whatsapp" onclick="kirimLaporanWhatsApp()">
+                💬 KIRIM LAPORAN WHATSAPP
+            </button>
         </div>
 
         <div style="margin-top: 24px; text-align: left;">
@@ -228,7 +239,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLx0UculzvBRESbJY2DYf3BLf9sNz5uLU7VEZ8xyvqm2bFfKxa9Emf9LoVYxePDwpx/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRAVavq87AMEX40cM3-3SsIMP89CeW6kJT_MSpxxILasQ4gohb_sMKtG50zt8kpyye/exec";
 
         // ==========================================================
         // KOORDINAT TITIK TOKO & RADIUS (DINAMIS DARI SPV)
@@ -255,6 +266,9 @@
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
         let sedangProsesAksi = false;
+        
+        let sisaDetikHAGlobal = null;
+        let sisaDetikAVGlobal = null;
 
         window.onload = function() {
             initDarkMode();
@@ -277,6 +291,7 @@
             cekServerBg();
             muatMasterSales();
             setInterval(muatDataAntrian, 1000); 
+            setInterval(jalankanTimerLokal, 1000);
         };
 
         function toggleDarkMode() {
@@ -315,9 +330,41 @@
             if (cachedAntrian) {
                 try {
                     const parsed = JSON.parse(cachedAntrian);
+                    if (parsed.sisaDetikHA !== undefined) sisaDetikHAGlobal = parsed.sisaDetikHA;
+                    if (parsed.sisaDetikAV !== undefined) sisaDetikAVGlobal = parsed.sisaDetikAV;
                     renderUIRental(parsed.data, parsed.statusAntrian, parsed.pengumumanSPV);
                 } catch(e) {}
             }
+        }
+
+        function jalankanTimerLokal() {
+            if (sisaDetikHAGlobal !== null && sisaDetikHAGlobal > 0) {
+                sisaDetikHAGlobal--;
+                updateTampilanTimer('timer-ha', sisaDetikHAGlobal);
+            } else if (sisaDetikHAGlobal === 0) {
+                updateTampilanTimer('timer-ha', 0);
+            }
+
+            if (sisaDetikAVGlobal !== null && sisaDetikAVGlobal > 0) {
+                sisaDetikAVGlobal--;
+                updateTampilanTimer('timer-av', sisaDetikAVGlobal);
+            } else if (sisaDetikAVGlobal === 0) {
+                updateTampilanTimer('timer-av', 0);
+            }
+        }
+
+        function updateTampilanTimer(elementId, totalDetik) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            if (totalDetik === null || totalDetik <= 0) {
+                el.style.display = "none";
+                return;
+            }
+            el.style.display = "inline-block";
+            const menit = Math.floor(totalDetik / 60);
+            const detik = totalDetik % 60;
+            const formatStr = `${String(menit).padStart(2, '0')}:${String(detik).padStart(2, '0')}`;
+            el.innerText = `⏱️ ${formatStr}`;
         }
 
         function cekServerBg() {
@@ -342,6 +389,8 @@
                 }
                 if (resAntrian && resAntrian.status === "sukses") {
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(resAntrian));
+                    if (resAntrian.sisaDetikHA !== undefined) sisaDetikHAGlobal = resAntrian.sisaDetikHA;
+                    if (resAntrian.sisaDetikAV !== undefined) sisaDetikAVGlobal = resAntrian.sisaDetikAV;
                     renderUIRental(resAntrian.data, resAntrian.statusAntrian, resAntrian.pengumumanSPV);
                 }
             });
@@ -480,6 +529,21 @@
                     }
                 }
             }).catch(() => {});
+        }
+
+        function kirimLaporanWhatsApp() {
+            const namaSales = getAkunAktif();
+            const tglHariIni = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            
+            let pesan = `*LAPORAN HARIAN PROMOTOR*%0A`;
+            pesan += `📅 Hari/Tanggal: ${tglHariIni}%0A`;
+            pesan += `👤 Nama Promotor: *${namaSales}*%0A`;
+            pesan += `🏢 Lokasi: UFO Kebonsari Malang%0A%0A`;
+            pesan += `*Status:* Hadir & Standby Melayani Customer Walk-In.%0A`;
+            pesan += `Terima kasih.`;
+
+            const urlWA = `https://api.whatsapp.com/send?text=${pesan}`;
+            window.open(urlWA, '_blank');
         }
 
         function muatMasterSalesInstant() {
@@ -621,6 +685,8 @@
             ]).then(([resAntrian, resSales]) => {
                 if (resAntrian && resAntrian.status === "sukses") {
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(resAntrian));
+                    if (resAntrian.sisaDetikHA !== undefined) sisaDetikHAGlobal = resAntrian.sisaDetikHA;
+                    if (resAntrian.sisaDetikAV !== undefined) sisaDetikAVGlobal = resAntrian.sisaDetikAV;
                     renderUIRental(resAntrian.data, resAntrian.statusAntrian, resAntrian.pengumumanSPV);
                 }
                 if (resSales && resSales.status === "sukses" && resSales.data) {
