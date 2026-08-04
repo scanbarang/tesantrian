@@ -8,9 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
+    <!-- Leaflet CSS & JS untuk Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <style>
         :root {
-            /* === TEMA TERANG (LIGHT MODE) === */
             --primary: #2563eb;
             --primary-dark: #1d4ed8;
             --success: #2563eb;
@@ -25,14 +28,12 @@
             --text-muted: #475569;
             --border: #cbd5e1;
             
-            /* Warna Kartu Giliran Mode Terang */
             --ha-bg: #eab308;        
             --ha-border: #ca8a04;
             --av-bg: #10b981;        
             --av-border: #059669;
         }
 
-        /* === TEMA GELAP (DARK MODE) === */
         body.dark-mode {
             --bg-color: #000000 !important;
             --card-bg: #050507 !important;
@@ -70,35 +71,27 @@
             border: 2px solid #facc15 !important;
             box-shadow: 0 0 18px rgba(250, 204, 21, 0.5), inset 0 0 8px rgba(250, 204, 21, 0.2) !important;
         }
-        body.dark-mode .card-giliran-ha .label-giliran {
-            color: #fef08a !important; text-shadow: 0 0 6px rgba(250, 204, 21, 0.6);
-        }
-        body.dark-mode .card-giliran-ha .nama-giliran-aktif {
-            color: #facc15 !important; text-shadow: 0 0 12px rgba(250, 204, 21, 0.9), 0 0 20px rgba(250, 204, 21, 0.5);
-        }
+        body.dark-mode .card-giliran-ha .label-giliran { color: #fef08a !important; }
+        body.dark-mode .card-giliran-ha .nama-giliran-aktif { color: #facc15 !important; }
 
         body.dark-mode .card-giliran-av {
             background: #09090b !important;
             border: 2px solid #22c55e !important;
             box-shadow: 0 0 18px rgba(34, 197, 94, 0.5), inset 0 0 8px rgba(34, 197, 94, 0.2) !important;
         }
-        body.dark-mode .card-giliran-av .label-giliran {
-            color: #bbf7d0 !important; text-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
-        }
-        body.dark-mode .card-giliran-av .nama-giliran-aktif {
-            color: #22c55e !important; text-shadow: 0 0 12px rgba(34, 197, 94, 0.9), 0 0 20px rgba(34, 197, 94, 0.5);
-        }
+        body.dark-mode .card-giliran-av .label-giliran { color: #bbf7d0 !important; }
+        body.dark-mode .card-giliran-av .nama-giliran-aktif { color: #22c55e !important; }
 
         body.dark-mode select, body.dark-mode input[type="text"] {
-            background: #09090b !important; color: #ffffff !important; border-color: #3f3f46 !important; box-shadow: 0 0 8px rgba(255, 255, 255, 0.05);
+            background: #09090b !important; color: #ffffff !important; border-color: #3f3f46 !important;
         }
         body.dark-mode select:disabled { background-color: #18181b !important; color: #71717a !important; }
         body.dark-mode .user-badge { background: #09090b !important; border-color: #3f3f46 !important; color: #ffffff !important; }
-        body.dark-mode .list-antrian li { background: #09090b !important; border-color: #3f3f46 !important; color: #ffffff !important; box-shadow: 0 0 8px rgba(255, 255, 255, 0.03); }
-        body.dark-mode .modal-box { background: #09090b !important; border: 2px solid #52525b !important; color: #ffffff !important; box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 15px rgba(255, 255, 255, 0.1) !important; }
+        body.dark-mode .list-antrian li { background: #09090b !important; border-color: #3f3f46 !important; color: #ffffff !important; }
+        body.dark-mode .modal-box { background: #09090b !important; border: 2px solid #52525b !important; color: #ffffff !important; }
         body.dark-mode .modal-desc { color: #d4d4d8 !important; }
         body.dark-mode .btn-cancel { background: #18181b !important; color: #ffffff !important; border: 1px solid #52525b; }
-        body.dark-mode .dark-mode-btn { background: #09090b !important; color: #ffffff !important; border-color: #52525b !important; box-shadow: 0 0 8px rgba(255, 255, 255, 0.1); }
+        body.dark-mode .dark-mode-btn { background: #09090b !important; color: #ffffff !important; border-color: #52525b !important; }
         body.dark-mode #keterangan-lock-box { background: #18181b !important; border-color: #7f1d1d !important; color: #fca5a5 !important; }
 
         *, body, button, select, input { font-family: 'Plus Jakarta Sans', sans-serif !important; box-sizing: border-box; }
@@ -106,8 +99,7 @@
         .app-container { width: 100%; max-width: 500px; background: var(--card-bg); border-radius: 24px; padding: 24px; border: 2px solid var(--border); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.1); text-align: center; transition: all 0.3s ease; }
 
         .top-controls { display: flex; justify-content: flex-end; margin-bottom: 12px; }
-        .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); transition: all 0.2s ease; }
-        .dark-mode-btn:hover { transform: translateY(-1px); }
+        .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
 
         .gradient-header { background: linear-gradient(135deg, #dc2626 0%, #ffffff 100%); border-radius: 18px; padding: 22px; color: white; margin-bottom: 18px; box-shadow: 0 8px 20px -4px rgba(220, 38, 38, 0.3); }
         .gradient-header h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; text-shadow: 1px 1px 4px rgba(0,0,0,0.6); }
@@ -118,59 +110,48 @@
         .status-closed { background: #fee2e2; color: #b91c1c; border: 2px solid #fca5a5; }
 
         .card-giliran-wrapper { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-        .card-giliran-ha { background: var(--ha-bg); border: 2px solid var(--ha-border); border-radius: 16px; padding: 16px 12px; text-align: center; color: #ffffff; transition: background 0.3s ease, border-color 0.3s ease; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25); }
-        .card-giliran-ha .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #fefce8; letter-spacing: 0.5px; }
-        .card-giliran-ha .nama-giliran-aktif { font-size: 20px; font-weight: 800; color: #ffffff; margin: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .card-giliran-ha { background: var(--ha-bg); border: 2px solid var(--ha-border); border-radius: 16px; padding: 16px 12px; text-align: center; color: #ffffff; }
+        .card-giliran-ha .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #fefce8; }
+        .card-giliran-ha .nama-giliran-aktif { font-size: 20px; font-weight: 800; color: #ffffff; margin: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        .card-giliran-av { background: var(--av-bg); border: 2px solid var(--av-border); border-radius: 16px; padding: 16px 12px; text-align: center; color: #ffffff; transition: background 0.3s ease, border-color 0.3s ease; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
-        .card-giliran-av .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #ecfdf5; letter-spacing: 0.5px; }
-        .card-giliran-av .nama-giliran-aktif { font-size: 20px; font-weight: 800; color: #ffffff; margin: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .card-giliran-av { background: var(--av-bg); border: 2px solid var(--av-border); border-radius: 16px; padding: 16px 12px; text-align: center; color: #ffffff; }
+        .card-giliran-av .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #ecfdf5; }
+        .card-giliran-av .nama-giliran-aktif { font-size: 20px; font-weight: 800; color: #ffffff; margin: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        .timer-mundur { font-size: 18px; font-weight: 800; margin-top: 4px; display: block; font-variant-numeric: tabular-nums; transition: color 0.3s ease; color: #ffffff !important; }
+        .timer-mundur { font-size: 18px; font-weight: 800; margin-top: 4px; display: block; color: #ffffff !important; }
         .timer-warning-merah { color: #fef08a !important; animation: blinkAlert 1s infinite; }
         @keyframes blinkAlert { 50% { opacity: 0.3; } }
 
         .input-group { margin-bottom: 16px; text-align: left; }
-        .input-group label { display: block; font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
+        .input-group label { display: block; font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
 
-        select, input[type="text"] { width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--border); background: #ffffff; font-size: 15px; font-weight: 600; color: var(--text-main); outline: none; transition: all 0.2s ease; }
-        select:focus, input[type="text"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
-
-        @keyframes glowBlue { 0%, 100% { box-shadow: 0 0 5px rgba(37, 99, 235, 0.4); } 50% { box-shadow: 0 0 16px rgba(37, 99, 235, 0.9); } }
-        @keyframes glowClosing { 0%, 100% { box-shadow: 0 0 5px rgba(220, 38, 38, 0.4); } 50% { box-shadow: 0 0 16px rgba(220, 38, 38, 0.9); } }
-        @keyframes glowPurple { 0%, 100% { box-shadow: 0 0 5px rgba(124, 58, 237, 0.4); } 50% { box-shadow: 0 0 16px rgba(124, 58, 237, 0.9); } }
-        @keyframes glowTeal { 0%, 100% { box-shadow: 0 0 5px rgba(13, 148, 136, 0.4); } 50% { box-shadow: 0 0 16px rgba(13, 148, 136, 0.9); } }
-        @keyframes glowAmber { 0%, 100% { box-shadow: 0 0 5px rgba(217, 119, 6, 0.4); } 50% { box-shadow: 0 0 16px rgba(217, 119, 6, 0.9); } }
-
-        button { width: 100%; padding: 14px 12px; border-radius: 14px; font-size: 13px; font-weight: 800; cursor: pointer; border: none; text-transform: uppercase; transition: all 0.2s ease; display: inline-flex; justify-content: center; align-items: center; gap: 8px; letter-spacing: 0.3px; line-height: 1.3; text-align: center; white-space: normal; word-break: break-word; }
+        select, input[type="text"] { width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--border); background: #ffffff; font-size: 15px; font-weight: 600; color: var(--text-main); outline: none; }
+        
+        button { width: 100%; padding: 14px 12px; border-radius: 14px; font-size: 13px; font-weight: 800; cursor: pointer; border: none; text-transform: uppercase; transition: all 0.2s ease; display: inline-flex; justify-content: center; align-items: center; gap: 8px; }
         button:active { transform: scale(0.98); }
 
-        .btn-success { background: var(--customer-blue); color: white; animation: glowBlue 2.5s infinite ease-in-out; }
-        .btn-customer { background: var(--customer-blue); color: white; animation: glowBlue 2.5s infinite ease-in-out; }
-        .btn-closing { background: var(--closing-red); color: white; animation: glowClosing 2.5s infinite ease-in-out; }
-        .btn-purple { background: var(--purple-cs); color: white; animation: glowPurple 2.5s infinite ease-in-out; }
-        .btn-teal { background: var(--teal-cs); color: white; animation: glowTeal 2.5s infinite ease-in-out; }
-        .btn-amber { background: var(--amber-rest); color: white; animation: glowAmber 2.5s infinite ease-in-out; }
-        
+        .btn-success { background: var(--customer-blue); color: white; }
+        .btn-customer { background: var(--customer-blue); color: white; }
+        .btn-closing { background: var(--closing-red); color: white; }
+        .btn-purple { background: var(--purple-cs); color: white; }
+        .btn-teal { background: var(--teal-cs); color: white; }
+        .btn-amber { background: var(--amber-rest); color: white; }
         .btn-cancel { background: #e2e8f0; color: var(--text-main); }
-        .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; box-shadow: none !important; animation: none !important; }
-        body.dark-mode .btn-disabled { background: #18181b !important; color: #52525b !important; border: 1px solid #27272a; }
+        .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; }
 
         .spinner { width: 16px; height: 16px; border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #ffffff; animation: spin 0.8s linear infinite; display: inline-block; flex-shrink: 0; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         .user-badge { background: #f8fafc; border: 2px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 18px; text-align: left; font-size: 14px; font-weight: 600; }
         .list-antrian { list-style: none; padding: 0; margin: 8px 0 0 0; text-align: left; }
-        .list-antrian li { padding: 12px 14px; background: #ffffff; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 2px solid var(--border); font-size: 14px; font-weight: 700; transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+        .list-antrian li { padding: 12px 14px; background: #ffffff; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 2px solid var(--border); font-size: 14px; font-weight: 700; }
         
         .badge-status-item { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
         .badge-standby { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
         .badge-melayani { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
         .badge-cs { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
 
-        @keyframes blinkWhatsApp { 0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 5px rgba(37, 211, 102, 0.4); } 50% { opacity: 0.7; transform: scale(0.97); box-shadow: 0 0 16px rgba(37, 211, 102, 0.9); } }
-        .wa-report-btn { margin-top: 12px; background: #25d366; border: 2px solid #1ebe57; color: white; font-size: 13px; padding: 14px; border-radius: 12px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 800; letter-spacing: 0.5px; animation: blinkWhatsApp 2s infinite ease-in-out; }
-        .wa-report-btn:hover { background: #20ba5a; animation: none; }
+        .wa-report-btn { margin-top: 12px; background: #25d366; border: 2px solid #1ebe57; color: white; font-size: 13px; padding: 14px; border-radius: 12px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 800; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 11, 20, 0.85); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.2s; padding: 16px; }
         .modal-overlay.active { opacity: 1; visibility: visible; }
@@ -180,10 +161,8 @@
         .modal-actions { display: flex; gap: 10px; }
         .modal-actions button { flex: 1; padding: 12px; font-size: 13px; }
 
-        .announcement-popup-box { background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%); border: 4px solid #f59e0b; }
-        body.dark-mode .announcement-popup-box { background: #09090b !important; border-color: #f59e0b !important; box-shadow: 0 0 25px rgba(245, 158, 11, 0.4) !important; }
-        .announcement-popup-text { font-size: 16px; font-weight: 800; color: #78350f; line-height: 1.6; background: rgba(255, 255, 255, 0.9); padding: 16px; border-radius: 12px; border: 2px solid #fde68a; margin-bottom: 20px; text-align: left; max-height: 250px; overflow-y: auto; }
-        body.dark-mode .announcement-popup-text { color: #fef3c7 !important; background: #18181b !important; border-color: #d97706 !important; }
+        /* Styling khusus modal map */
+        #map-container-modal { width: 100%; height: 240px; border-radius: 12px; margin-bottom: 14px; border: 2px solid var(--border); z-index: 1; }
     </style>
 </head>
 <body>
@@ -236,7 +215,7 @@
                 </select>
             </div>
 
-            <button type="button" id="btn-utama-antri" class="btn-success" onclick="aksiUtamaAntri()">Daftar Antrian</button>
+            <button type="button" id="btn-utama-antri" class="btn-success" onclick="bukaModalMapsGPS()">Daftar Antrian</button>
             
             <div id="keterangan-lock-box" style="display: none; margin-top: 10px; padding: 12px 14px; background: #fee2e2; border: 2px solid #fca5a5; color: #b91c1c; border-radius: 12px; font-size: 12px; font-weight: 700; text-align: left;">
                 🔒 <b>LOCK (Silahkan Lapor Untuk Membuka)</b><br>
@@ -251,21 +230,21 @@
 
         <div style="margin-top: 24px; text-align: left;">
             <div style="margin-bottom: 20px;">
-                <span style="font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Live Urutan HA</span>
+                <span style="font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Live Urutan HA</span>
                 <ul id="item-antrian-list-ha" class="list-antrian"><li><span>Memuat data...</span></li></ul>
             </div>
             <div>
-                <span style="font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Live Urutan AV</span>
+                <span style="font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Live Urutan AV</span>
                 <ul id="item-antrian-list-av" class="list-antrian"><li><span>Memuat data...</span></li></ul>
             </div>
         </div>
 
         <a href="https://wa.me/6289524391002" target="_blank" class="wa-report-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
             Laporkan via WhatsApp
         </a>
     </div>
 
+    <!-- Modal Umum -->
     <div id="custom-modal" class="modal-overlay">
         <div class="modal-box">
             <div id="modal-title" class="modal-title">Pemberitahuan</div>
@@ -276,18 +255,32 @@
         </div>
     </div>
 
-    <div id="modal-pengumuman-spv" class="modal-overlay">
-        <div class="modal-box announcement-popup-box">
-            <div class="modal-title" style="color: #b45309;">🚨 PENGUMUMAN PENTING</div>
-            <div id="teks-pengumuman-popup" class="announcement-popup-text">-</div>
+    <!-- Modal Map GPS Verifikasi -->
+    <div id="modal-maps-gps" class="modal-overlay">
+        <div class="modal-box" style="max-width: 420px;">
+            <div class="modal-title">📍 Validasi Lokasi Toko</div>
+            <div class="modal-desc" style="margin-bottom: 10px; font-size: 13px;">Pastikan Anda berada di dalam area toko (Radius Maksimal 50 Meter).</div>
+            <div id="map-container-modal"></div>
+            <div id="info-jarak-peta" style="font-size: 13px; font-weight: 800; margin-bottom: 14px; color: var(--text-muted);">Mendeteksi posisi GPS...</div>
             <div class="modal-actions">
-                <button type="button" class="btn-customer" style="background: #d97706;" onclick="konfirmasiSudahBacaPengumuman()">Saya Mengerti & Mengikuti</button>
+                <button type="button" class="btn-cancel" onclick="tutupModalMaps()">Batal</button>
+                <button type="button" id="btn-konfirmasi-gps" class="btn-success btn-disabled" disabled onclick="eksekusiDaftarAntriGPS()">Konfirmasi Masuk Antrian</button>
             </div>
         </div>
     </div>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLx0UculzvBRESbJY2DYf3BLf9sNz5uLU7VEZ8xyvqm2bFfKxa9Emf9LoVYxePDwpx/exec";
+
+        // Konfigurasi Koordinat Toko UFO Kebonsari
+        const TOKO_LAT = -7.312500; // Sesuaikan koordinat lintang toko Anda
+        const TOKO_LNG = 112.730000; // Sesuaikan koordinat bujur toko Anda
+        const RADIUS_MAKSIMAL = 50; // dalam meter
+
+        let mapInstance = null;
+        let markerUser = null;
+        let circleArea = null;
+        let isGpsValid = false;
 
         let waktuStandbyHAGlobal = null;
         let waktuStandbyAVGlobal = null;
@@ -296,7 +289,6 @@
         let statusSayaGlobal = "belum_ada"; 
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
-        let pengumumanTerakhirGlobal = "";
         const BATAS_MENIT = 60;
         let sedangProsesAksi = false;
         let lockStatusLokalExpiry = 0;
@@ -506,15 +498,6 @@
             badge.innerText = statusSistemGlobal === "BUKA" ? "STATUS ANTRIAN: OPEN" : "STATUS ANTRIAN: CLOSED";
             badge.className = statusSistemGlobal === "BUKA" ? "status-badge-sistem status-open" : "status-badge-sistem status-closed";
 
-            const modalPopupPengumuman = document.getElementById('modal-pengumuman-spv');
-            if (pengumumanSPV && pengumumanSPV.trim() !== "") {
-                document.getElementById('teks-pengumuman-popup').innerText = pengumumanSPV;
-                const lastReadAnnouncement = localStorage.getItem('ufo_last_read_announcement');
-                if (lastReadAnnouncement !== pengumumanSPV) modalPopupPengumuman.classList.add('active'); 
-                else modalPopupPengumuman.classList.remove('active'); 
-                pengumumanTerakhirGlobal = pengumumanSPV;
-            } else { modalPopupPengumuman.classList.remove('active'); }
-
             let listHtmlHA = "", listHtmlAV = "", namaHANow = "-", namaAVNow = "-";
             statusSayaGlobal = "belum_ada"; 
             let apakahSayaUrutanPertamaHA = false, apakahSayaUrutanPertamaAV = false;
@@ -644,41 +627,118 @@
             document.getElementById('item-antrian-list-av').innerHTML = listHtmlAV;
         }
 
-        function konfirmasiSudahBacaPengumuman() {
-            if (pengumumanTerakhirGlobal) {
-                localStorage.setItem('ufo_last_read_announcement', pengumumanTerakhirGlobal);
-                document.getElementById('modal-pengumuman-spv').classList.remove('active');
-            }
+        function hitungJarakMeter(lat1, lon1, lat2, lon2) {
+            var R = 6371000; // Radius bumi dalam meter
+            var dLat = (lat2 - lat1) * Math.PI / 180;
+            var dLon = (lon2 - lon1) * Math.PI / 180;
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
         }
 
-        function muatDataAntrian(paksaTarik = false) {
-            if (sedangProsesAksi && !paksaTarik) return;
-            Promise.all([
-                fetch(`${SCRIPT_URL}?aksi=getAntrian&t=${Date.now()}`).then(r => r.json()).catch(() => null),
-                fetch(`${SCRIPT_URL}?aksi=getMasterSales&t=${Date.now()}`).then(r => r.json()).catch(() => null)
-            ]).then(([resAntrian, resSales]) => {
-                if (resAntrian && resAntrian.status === "sukses") {
-                    localStorage.setItem('ufo_antrian_cache', JSON.stringify(resAntrian));
-                    renderUIRental(resAntrian.data, resAntrian.statusAntrian, resAntrian.waktuStandbyHA, resAntrian.waktuStandbyAV, resAntrian.pengumumanSPV);
-                }
-                if (resSales && resSales.status === "sukses" && resSales.data) {
-                    masterSalesGlobal = resSales.data;
-                    localStorage.setItem('ufo_master_sales_cache', JSON.stringify(resSales.data));
-                }
-            });
-        }
-
-        function aksiUtamaAntri() {
+        // --- MODAL & MAPS GPS VALIDASI ---
+        function bukaModalMapsGPS() {
             const namaSales = getAkunAktif().trim();
-            const kategoriPilih = document.getElementById('pilih-kategori').value;
             if(!namaSales) return tampilkanModal("Perhatian", "Akun belum terikat dengan benar.");
 
             const sayaObj = masterSalesGlobal.find(item => String(item.nama).trim().toLowerCase() === namaSales.toLowerCase());
             if (sayaObj && String(sayaObj.statusLock).toUpperCase() === "LOCKED") {
                 const alasan = sayaObj.alasanLock ? `\n\nAlasan: "${sayaObj.alasanLock}"` : "";
-                tampilkanModal("🚨 Akses Ditolak", `Akun Anda sedang di-lock oleh SPV sehingga tidak bisa mendaftar antrian.${alasan}`);
+                tampilkanModal("🚨 Akses Ditolak", `Akun Anda sedang di-lock oleh SPV.${alasan}`);
                 return;
             }
+
+            document.getElementById('modal-maps-gps').classList.add('active');
+            document.getElementById('info-jarak-peta').innerText = "Mengambil koordinat GPS perangkat...";
+            
+            setTimeout(() => {
+                inisialisasiPeta();
+            }, 300);
+        }
+
+        function tutupModalMaps() {
+            document.getElementById('modal-maps-gps').classList.remove('active');
+            if (mapInstance) {
+                mapInstance.remove();
+                mapInstance = null;
+            }
+        }
+
+        function inisialisasiPeta() {
+            if (!navigator.geolocation) {
+                document.getElementById('info-jarak-peta').innerText = "Browser tidak mendukung GPS.";
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    let userLat = position.coords.latitude;
+                    let userLng = position.coords.longitude;
+                    let akurasi = position.coords.accuracy;
+
+                    // Validasi indikasi Fake GPS akurasi nol
+                    if (akurasi === 0) {
+                        document.getElementById('info-jarak-peta').innerHTML = "⚠️ Terindikasi Fake GPS (Akurasi 0).";
+                        return;
+                    }
+
+                    let jarak = hitungJarakMeter(userLat, userLng, TOKO_LAT, TOKO_LNG);
+
+                    if (mapInstance) {
+                        mapInstance.remove();
+                    }
+
+                    mapInstance = L.map('map-container-modal').setView([userLat, userLng], 17);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '&copy; OpenStreetMap'
+                    }).addTo(mapInstance);
+
+                    // Marker Toko
+                    L.marker([TOKO_LAT, TOKO_LNG]).addTo(mapInstance)
+                        .bindPopup("<b>UFO Kebonsari</b>").openPopup();
+
+                    // Lingkaran Radius Toko
+                    L.circle([TOKO_LAT, TOKO_LNG], {
+                        color: 'red',
+                        fillColor: '#f03',
+                        fillOpacity: 0.2,
+                        radius: RADIUS_MAKSIMAL
+                    }).addTo(mapInstance);
+
+                    // Marker Posisi User
+                    markerUser = L.marker([userLat, userLng]).addTo(mapInstance)
+                        .bindPopup("<b>Posisi Anda</b>").openPopup();
+
+                    const btnKonfirm = document.getElementById('btn-konfirmasi-gps');
+
+                    if (jarak <= RADIUS_MAKSIMAL) {
+                        isGpsValid = true;
+                        document.getElementById('info-jarak-petainnerHTML = `<span style="color: #16a34a;">✔ Lokasi Valid! Jarak ${Math.round(jarak)} meter dari toko.</span>`;
+                        btnKonfirm.disabled = false;
+                        btnKonfirm.className = "btn-success";
+                    } else {
+                        isGpsValid = false;
+                        document.getElementById('info-jarak-peta').innerHTML = `<span style="color: #dc2626;">❌ Anda di luar area toko (${Math.round(jarak)} meter). Masuk ke radius 50m!</span>`;
+                        btnKonfirm.disabled = true;
+                        btnKonfirm.className = "btn-success btn-disabled";
+                    }
+                },
+                (error) => {
+                    document.getElementById('info-jarak-peta').innerText = "Gagal mendeteksi GPS. Pastikan izin lokasi aktif.";
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+
+        function eksekusiDaftarAntriGPS() {
+            if (!isGpsValid) return;
+            tutupModalMaps();
+
+            const namaSales = getAkunAktif().trim();
+            const kategoriPilih = document.getElementById('pilih-kategori').value;
 
             const btnAntri = document.getElementById('btn-utama-antri');
             btnAntri.disabled = true;
@@ -690,7 +750,7 @@
             statusSayaGlobal = "Standby";
             const adaAkun = daftarAntrianGlobal.some(item => String(item.nama).trim().toLowerCase() === namaSales.toLowerCase());
             if (!adaAkun) daftarAntrianGlobal.push({ nama: namaSales, status: "Standby", waktuStandby: new Date(), kategori: kategoriPilih });
-            renderUIRental(daftarAntrianGlobal, statusSistemGlobal, waktuStandbyHAGlobal, waktuStandbyAVGlobal, pengumumanTerakhirGlobal);
+            renderUIRental(daftarAntrianGlobal, statusSistemGlobal, waktuStandbyHAGlobal, waktuStandbyAVGlobal);
 
             fetch(`${SCRIPT_URL}?aksi=daftarAntri&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategoriPilih)}&t=${Date.now()}`)
             .then(res => res.json())
@@ -698,6 +758,23 @@
                 if(res.status === "gagal") tampilkanModal("Pemberitahuan", res.pesan);
                 sedangProsesAksi = false; lockStatusLokalExpiry = 0; muatDataAntrian(true);
             }).catch(() => { sedangProsesAksi = false; lockStatusLokalExpiry = 0; muatDataAntrian(true); });
+        }
+
+        function muatDataAntrian(paksaTarik = false) {
+            if (sedangProsesAksi && !paksaTarik) return;
+            Promise.all([
+                fetch(`${SCRIPT_URL}?aksi=getAntrian&t=${Date.now()}`).then(r => r.json()).catch(() => null),
+                fetch(`${SCRIPT_URL}?aksi=getMasterSales&t=${Date.now()}`).then(r => r.json()).catch(() => null)
+            ]).then(([resAntrian, resSales]) => {
+                if (resAntrian && resAntrian.status === "sukses") {
+                    localStorage.setItem('ufo_antrian_cache', JSON.stringify(resAntrian));
+                    renderUIRental(resAntrian.data, resAntrian.statusAntrian, resAntrian.waktuStandbyHA, resAntrian.waktuStandbyAV);
+                }
+                if (resSales && resSales.status === "sukses" && resSales.data) {
+                    masterSalesGlobal = resSales.data;
+                    localStorage.setItem('ufo_master_sales_cache', JSON.stringify(resSales.data));
+                }
+            });
         }
 
         function aksiUtamaCustomer() {
@@ -769,6 +846,7 @@
             });
         }
 
+        function konfirmasiSudahBacaPengumuman() {}
         function tampilkanModal(judul, desc) {
             document.getElementById('modal-title').innerText = judul;
             document.getElementById('modal-desc').innerText = desc;
