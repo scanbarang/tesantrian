@@ -181,7 +181,7 @@
                 <button type="button" class="btn-danger" style="background: #991b1b;" onclick="bukaModalResetTotal()">RESET SEMUA ANTRIAN</button>
             </div>
 
-            <!-- MENU TERPISAH 1: MANAJEMEN STATUS AKUN PROMOTOR -->
+            <!-- MENU 4: MANAJEMEN STATUS AKUN PROMOTOR -->
             <div class="section-title">4. Manajemen Status Akun Promotor (Lock / Unlock)</div>
             <div class="table-responsive">
                 <table>
@@ -198,8 +198,11 @@
                 </table>
             </div>
 
-            <!-- MENU TERPISAH 2: MANAJEMEN ABSEN CHECK-IN KEDATANGAN -->
+            <!-- MENU 5: MANAJEMEN ABSEN CHECK-IN KEDATANGAN -->
             <div class="section-title">5. Manajemen Absen Check-in Kedatangan Promotor</div>
+            <button type="button" class="btn-warning" style="background: #b45309; margin-bottom: 12px;" onclick="resetSemuaAbsenPromotor()">
+                🔄 RESET SEMUA ABSEN HARI INI
+            </button>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -213,6 +216,24 @@
                         <tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Memuat data absen...</td></tr>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- MENU 6: PENGATURAN TITIK LOKASI & RADIUS TOKO -->
+            <div class="section-title">6. Pengaturan Titik Lokasi & Radius Toko</div>
+            <div style="background: #f8fafc; border: 2px solid var(--border); border-radius: 14px; padding: 16px; text-align: left;">
+                <div class="input-group">
+                    <label>Latitude Toko</label>
+                    <input type="text" id="spv-lat-toko" placeholder="-7.9666">
+                </div>
+                <div class="input-group">
+                    <label>Longitude Toko</label>
+                    <input type="text" id="spv-lng-toko" placeholder="112.6326">
+                </div>
+                <div class="input-group">
+                    <label>Maksimal Radius Check-in (Meter)</label>
+                    <input type="number" id="spv-radius-toko" placeholder="150">
+                </div>
+                <button type="button" class="btn-purple" onclick="simpanPengaturanTokoSpv()">💾 Simpan Titik & Radius Toko</button>
             </div>
 
             <button type="button" class="btn-cancel" style="margin-top: 20px; font-weight: 800;" onclick="logoutSPV()">🔒 Kunci Panel SPV</button>
@@ -254,6 +275,7 @@
                 document.getElementById('input-pin-spv').value = savedPinSPV;
                 document.getElementById('login-spv-box').style.display = 'none';
                 document.getElementById('controls-spv-box').style.display = 'block';
+                muatPengaturanTokoSPV();
             } else {
                 document.getElementById('login-spv-box').style.display = 'block';
                 document.getElementById('controls-spv-box').style.display = 'none';
@@ -286,8 +308,36 @@
                     document.getElementById('login-spv-box').style.display = 'none';
                     document.getElementById('controls-spv-box').style.display = 'block';
                     muatAbsenHarian();
+                    muatPengaturanTokoSPV();
                 } else { tampilkanModal("Gagal Login", res.pesan); }
             }).catch(() => { btn.disabled = false; btn.innerHTML = textAsli; tampilkanModal("Gagal", "Terjadi gangguan jaringan."); });
+        }
+
+        function muatPengaturanTokoSPV() {
+            fetch(`${SCRIPT_URL}?aksi=getPengaturanToko&t=${Date.now()}`)
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === "sukses") {
+                    document.getElementById('spv-lat-toko').value = res.latToko;
+                    document.getElementById('spv-lng-toko').value = res.lngToko;
+                    document.getElementById('spv-radius-toko').value = res.radiusMeter;
+                }
+            }).catch(() => {});
+        }
+
+        function simpanPengaturanTokoSpv() {
+            const pin = getActivePinSPV();
+            const lat = document.getElementById('spv-lat-toko').value.trim();
+            const lng = document.getElementById('spv-lng-toko').value.trim();
+            const radius = document.getElementById('spv-radius-toko').value.trim();
+
+            if(!lat || !lng || !radius) return tampilkanModal("Perhatian", "Semua kolom koordinat dan radius harus diisi!");
+
+            fetch(`${SCRIPT_URL}?aksi=spvSimpanPengaturanToko&pin=${encodeURIComponent(pin)}&lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&radius=${encodeURIComponent(radius)}&t=${Date.now()}`)
+            .then(res => res.json())
+            .then(res => {
+                tampilkanModal(res.status === "sukses" ? "Berhasil" : "Perhatian", res.pesan);
+            }).catch(() => { tampilkanModal("Gagal", "Gagal menyimpan pengaturan."); });
         }
 
         function logoutSPV() {
@@ -348,7 +398,6 @@
             document.getElementById('item-antrian-list-av').innerHTML = listHtmlAV;
         }
 
-        // TABEL MENU 1: STATUS AKUN (LOCK / UNLOCK)
         function renderTabelStatusAkunSPV(dataSales) {
             let html = "";
             if (!dataSales || dataSales.length === 0) {
@@ -374,7 +423,6 @@
             if(tbody) tbody.innerHTML = html;
         }
 
-        // TABEL MENU 2: ABSEN CHECK-IN KEDATANGAN
         function muatAbsenHarian() {
             fetch(`${SCRIPT_URL}?aksi=getAbsenHarian&t=${Date.now()}`)
             .then(res => res.json())
@@ -414,27 +462,27 @@
             const pin = getActivePinSPV();
             if(!pin) return alert("PIN SPV tidak ditemukan!");
 
-            tampilkanModalKonfirmasi("Reset Absen Promotor", `Reset data check-in untuk (${namaSales})? Promotor akan bisa melakukan check-in ulang dari HP mereka.`, function() {
-                const btnId = `btn-absen-${safeId(namaSales)}`;
-                const btnEl = document.getElementById(btnId);
-                let textAsli = "";
-
-                if (btnEl) {
-                    textAsli = btnEl.innerHTML;
-                    btnEl.disabled = true;
-                    btnEl.innerHTML = `<span class="spinner" style="width:12px; height:12px; border-width:2px;"></span> Memproses...`;
-                }
-
+            tampilkanModalKonfirmasi("Reset Absen Promotor", `Reset data check-in untuk (${namaSales})?`, function() {
                 fetch(`${SCRIPT_URL}?aksi=spvResetAbsen&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
                 .then(res => res.json())
                 .then(res => {
-                    if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = textAsli; }
                     tampilkanModal(res.status === "sukses" ? "Berhasil" : "Perhatian", res.pesan);
                     muatAbsenHarian();
-                }).catch(() => {
-                    if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = textAsli; }
-                    tampilkanModal("Gagal", "Gagal terhubung ke server.");
-                });
+                }).catch(() => { tampilkanModal("Gagal", "Gagal terhubung ke server."); });
+            });
+        }
+
+        function resetSemuaAbsenPromotor() {
+            const pin = getActivePinSPV();
+            if(!pin) return alert("PIN SPV tidak ditemukan!");
+
+            tampilkanModalKonfirmasi("Reset Semua Absen", "⚠️ Yakin ingin mereset SEMUA data check-in promotor hari ini?", function() {
+                fetch(`${SCRIPT_URL}?aksi=spvResetSemuaAbsen&pin=${encodeURIComponent(pin)}&t=${Date.now()}`)
+                .then(res => res.json())
+                .then(res => {
+                    tampilkanModal(res.status === "sukses" ? "Berhasil" : "Perhatian", res.pesan);
+                    muatAbsenHarian();
+                }).catch(() => { tampilkanModal("Gagal", "Gagal terhubung ke server."); });
             });
         }
 
@@ -475,7 +523,7 @@
             const pin = getActivePinSPV();
             if(!pin) return alert("PIN SPV tidak ditemukan!");
             
-            tampilkanModalKonfirmasi("Buka Kunci Promotor", `Buka kunci akun (${namaSales}) agar bisa antri kembali?`, function() {
+            tampilkanModalKonfirmasi("Buka Kunci Promotor", `Buka kunci akun (${namaSales})?`, function() {
                 fetch(`${SCRIPT_URL}?aksi=spvUnlockPromotor&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
                 .then(res => res.json())
                 .then(res => {
