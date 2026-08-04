@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Antrian & Absensi Promotor - UFO Kebonsari</title>
+    <title>Antrian Walk-In Promotor UFO Kebonsari</title>
     <link rel="shortcut icon" href="#">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -147,8 +147,7 @@
         </div>
 
         <div class="gradient-header">
-            <h2>Antrian & Absensi Promotor</h2>
-            <p>UFO Kebonsari</p>
+            <h2>Antrian Walk-In Promotor UFO Kebonsari</h2>
         </div>
 
         <div id="badge-status-sistem" class="status-badge-sistem status-open">
@@ -183,11 +182,11 @@
                 <span style="color: var(--text-muted);">Promotor:</span> <strong id="label-user-aktif" style="color:var(--primary-dark); font-size: 15px;">-</strong>
             </div>
 
-            <!-- TOMBOL CHECKIN ABSEN KEDATANGAN DENGAN IKON MODERN & TANPA TIMER -->
+            <!-- TOMBOL CHECK IN KEDATANGAN -->
             <button type="button" id="btn-checkin" class="btn-checkin" onclick="kirimAbsenCheckin()">
-                📍 CHECKIN KEDATANGAN
+                📍 CHECK IN KEDATANGAN
             </button>
-            <div id="status-checkin-teks" style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 16px;">Status: Belum Checkin Hari Ini</div>
+            <div id="status-checkin-teks" style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 16px;">Status: Belum Check In Hari Ini</div>
 
             <div class="input-group">
                 <label>Pilih Kategori Antrian</label>
@@ -419,7 +418,7 @@
 
                     if (jarakMeter > MAKS_JARAK_METER) {
                         btnCheckin.disabled = false;
-                        btnCheckin.innerText = "📍 CHECKIN KEDATANGAN";
+                        btnCheckin.innerText = "📍 CHECK IN";
                         statusTeks.innerHTML = `<span style="color: #dc2626;">❌ Di luar area toko! (Jarak ±${Math.round(jarakMeter)}m). Maksimal ${MAKS_JARAK_METER}m.</span>`;
                         tampilkanModal("Akses Ditolak", `Anda berada di luar area toko (±${Math.round(jarakMeter)} meter dari titik toko). Mendekatlah ke area toko.`);
                         return;
@@ -436,19 +435,19 @@
                         
                         btnCheckin.disabled = true;
                         btnCheckin.className = "btn-checkin btn-disabled";
-                        btnCheckin.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg> SUDAH CHECKIN (${jamSekarang})`;
-                        statusTeks.innerHTML = `<span style="color: #059669;">🟢 Berhasil Checkin pada ${jamSekarang} WIB (Aman di dalam area toko)</span>`;
-                        tampilkanModal("Checkin Berhasil", "Kehadiran dan titik lokasi toko Anda telah tercatat dengan aman.");
+                        btnCheckin.innerHTML = `📍 SUDAH CHECK IN (${jamSekarang})`;
+                        statusTeks.innerHTML = `<span style="color: #059669;">🟢 Berhasil Check In pada ${jamSekarang} WIB (Aman di dalam area toko)</span>`;
+                        tampilkanModal("Check In Berhasil", "Kehadiran dan titik lokasi toko Anda telah tercatat dengan aman.");
                     })
                     .catch(() => {
                         btnCheckin.disabled = false;
-                        btnCheckin.innerText = "📍 CHECKIN KEDATANGAN";
+                        btnCheckin.innerText = "📍 CHECK IN";
                         statusTeks.innerHTML = `<span style="color: #dc2626;">❌ Gagal terhubung ke server. Coba lagi.</span>`;
                     });
                 },
                 function(error) {
                     btnCheckin.disabled = false;
-                    btnCheckin.innerText = "📍 CHECKIN KEDATANGAN";
+                    btnCheckin.innerText = "📍 CHECK IN";
                     statusTeks.innerHTML = `<span style="color: #dc2626;">❌ Izin GPS ditolak oleh browser HP.</span>`;
                     tampilkanModal("GPS Ditolak", "Pastikan izin lokasi di HP Anda diaktifkan.");
                 },
@@ -465,8 +464,8 @@
             if (jamCheckin && btnCheckin && statusTeks) {
                 btnCheckin.disabled = true;
                 btnCheckin.className = "btn-checkin btn-disabled";
-                btnCheckin.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg> SUDAH CHECKIN (${jamCheckin})`;
-                statusTeks.innerHTML = `<span style="color: #059669;">🟢 Sudah Checkin hari ini pukul ${jamCheckin} WIB</span>`;
+                btnCheckin.innerHTML = `📍 SUDAH CHECK IN (${jamCheckin})`;
+                statusTeks.innerHTML = `<span style="color: #059669;">🟢 Sudah Check In hari ini pukul ${jamCheckin} WIB</span>`;
             }
         }
 
