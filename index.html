@@ -183,9 +183,9 @@
                 <span style="color: var(--text-muted);">Promotor:</span> <strong id="label-user-aktif" style="color:var(--primary-dark); font-size: 15px;">-</strong>
             </div>
 
-            <!-- TOMBOL CHECKIN ABSEN KEDATANGAN DENGAN KUNCI RADIUS MAPS -->
+            <!-- TOMBOL CHECKIN ABSEN KEDATANGAN DENGAN IKON MODERN & TANPA TIMER -->
             <button type="button" id="btn-checkin" class="btn-checkin" onclick="kirimAbsenCheckin()">
-                📍 CHECKIN KEDATANGAN (Kirim Jam & Maps)
+                📍 CHECKIN KEDATANGAN
             </button>
             <div id="status-checkin-teks" style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 16px;">Status: Belum Checkin Hari Ini</div>
 
@@ -237,11 +237,11 @@
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRAVavq87AMEX40cM3-3SsIMP89CeW6kJT_MSpxxILasQ4gohb_sMKtG50zt8kpyye/exec";
 
         // ==========================================================
-        // SILAHKAN MASUKKAN KOORDINAT TITIK TOKO UFO KEBONSARI DI SINI
+        // KOORDINAT TITIK TOKO UFO KEBONSARI (SILAHKAN SESUAIKAN)
         // ==========================================================
-        const LAT_TOKO = -8.021101;   // Masukkan Latitude Toko Anda
-        const LNG_TOKO = 112.618985;  // Masukkan Longitude Toko Anda
-        const MAKS_JARAK_METER = 50; // Toleransi maksimal jarak dalam meter (misal 150 meter)
+        const LAT_TOKO = -7.9666;   
+        const LNG_TOKO = 112.6326;  
+        const MAKS_JARAK_METER = 150; 
 
         let waktuStandbyHAGlobal = null;
         let waktuStandbyAVGlobal = null;
@@ -370,9 +370,8 @@
             return namaSalesAktifGlobal;
         }
 
-        // --- RUMUS PENGHITUNG JARAK GPS (HAVERSINE FORMULA) ---
         function hitungJarakMeter(lat1, lon1, lat2, lon2) {
-            const R = 6371000; // Radius bumi dalam meter
+            const R = 6371000;
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = 
@@ -383,7 +382,6 @@
             return R * c;
         }
 
-        // --- FUNGSI CHECKIN ABSEN DENGAN KUNCI RADIUS TOKO ---
         function kirimAbsenCheckin() {
             const namaSales = getAkunAktif().trim();
             const btnCheckin = document.getElementById('btn-checkin');
@@ -396,7 +394,7 @@
             }
 
             btnCheckin.disabled = true;
-            btnCheckin.innerHTML = `<span class="spinner"></span> Memeriksa Radius Lokasi Toko...`;
+            btnCheckin.innerHTML = `<span class="spinner"></span> Memeriksa Radius Toko...`;
             statusTeks.innerHTML = "🛰️ Mengunci koordinat GPS Maps Anda...";
 
             navigator.geolocation.getCurrentPosition(
@@ -404,14 +402,13 @@
                     const latUser = position.coords.latitude;
                     const lngUser = position.coords.longitude;
 
-                    // Validasi Jarak Radius Toko
                     const jarakMeter = hitungJarakMeter(latUser, lngUser, LAT_TOKO, LNG_TOKO);
 
                     if (jarakMeter > MAKS_JARAK_METER) {
                         btnCheckin.disabled = false;
-                        btnCheckin.innerText = "📍 CHECKIN KEDATANGAN (Kirim Jam & Maps)";
+                        btnCheckin.innerText = "📍 CHECKIN KEDATANGAN";
                         statusTeks.innerHTML = `<span style="color: #dc2626;">❌ Di luar area toko! (Jarak ±${Math.round(jarakMeter)}m). Maksimal ${MAKS_JARAK_METER}m.</span>`;
-                        tampilkanModal("Akses Ditolak", `Anda berada di luar area toko (±${Math.round(jarakMeter)} meter dari titik toko). Mendekatlah ke area toko untuk melakukan checkin.`);
+                        tampilkanModal("Akses Ditolak", `Anda berada di luar area toko (±${Math.round(jarakMeter)} meter dari titik toko). Mendekatlah ke area toko.`);
                         return;
                     }
 
@@ -426,19 +423,20 @@
                         
                         btnCheckin.disabled = true;
                         btnCheckin.className = "btn-checkin btn-disabled";
-                        btnCheckin.innerText = `✅ SUDAH CHECKIN (${jamSekarang})`;
+                        // IKON CENTANG MODERN SVG
+                        btnCheckin.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg> SUDAH CHECKIN (${jamSekarang})`;
                         statusTeks.innerHTML = `<span style="color: #059669;">🟢 Berhasil Checkin pada ${jamSekarang} WIB (Aman di dalam area toko)</span>`;
                         tampilkanModal("Checkin Berhasil", "Kehadiran dan titik lokasi toko Anda telah tercatat dengan aman.");
                     })
                     .catch(() => {
                         btnCheckin.disabled = false;
-                        btnCheckin.innerText = "📍 CHECKIN KEDATANGAN (Kirim Jam & Maps)";
+                        btnCheckin.innerText = "📍 CHECKIN KEDATANGAN";
                         statusTeks.innerHTML = `<span style="color: #dc2626;">❌ Gagal terhubung ke server. Coba lagi.</span>`;
                     });
                 },
                 function(error) {
                     btnCheckin.disabled = false;
-                    btnCheckin.innerText = "📍 CHECKIN KEDATANGAN (Kirim Jam & Maps)";
+                    btnCheckin.innerText = "📍 CHECKIN KEDATANGAN";
                     statusTeks.innerHTML = `<span style="color: #dc2626;">❌ Izin GPS ditolak oleh browser HP.</span>`;
                     tampilkanModal("GPS Ditolak", "Pastikan izin lokasi di HP Anda diaktifkan.");
                 },
@@ -455,7 +453,8 @@
             if (jamCheckin && btnCheckin && statusTeks) {
                 btnCheckin.disabled = true;
                 btnCheckin.className = "btn-checkin btn-disabled";
-                btnCheckin.innerText = `✅ SUDAH CHECKIN (${jamCheckin})`;
+                // IKON CENTANG MODERN SVG
+                btnCheckin.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg> SUDAH CHECKIN (${jamCheckin})`;
                 statusTeks.innerHTML = `<span style="color: #059669;">🟢 Sudah Checkin hari ini pukul ${jamCheckin} WIB</span>`;
             }
         }
