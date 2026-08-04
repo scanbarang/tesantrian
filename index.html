@@ -183,7 +183,7 @@
                 <span style="color: var(--text-muted);">Promotor:</span> <strong id="label-user-aktif" style="color:var(--primary-dark); font-size: 15px;">-</strong>
             </div>
 
-            <!-- TOMBOL CHECKIN ABSEN KEDATANGAN -->
+            <!-- TOMBOL CHECKIN ABSEN KEDATANGAN DENGAN IKON MODERN & TANPA TIMER -->
             <button type="button" id="btn-checkin" class="btn-checkin" onclick="kirimAbsenCheckin()">
                 📍 CHECKIN KEDATANGAN
             </button>
@@ -243,7 +243,6 @@
         let LNG_TOKO = 112.6326;  
         let MAKS_JARAK_METER = 150; 
 
-        // Fungsi untuk mengambil pengaturan titik GPS & radius terbaru dari server SPV
         function muatPengaturanToko() {
             fetch(`${SCRIPT_URL}?aksi=getPengaturanToko&t=${Date.now()}`)
             .then(res => res.json())
