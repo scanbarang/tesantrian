@@ -283,7 +283,6 @@
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
         let pengumumanTerakhirGlobal = "";
-        let isLocalActionPending = false; // Flag mutlak untuk mengunci tombol agar tidak berkedip/reset dari background polling
 
         window.onload = function() {
             initDarkMode();
@@ -463,9 +462,6 @@
         }
 
         function renderUIRental(dataAntrian, statusSistem, pengumumanSPV) {
-            // Jika sedang ada aksi lokal baru diklik, cegah render background interval agar tombol tidak berkedip/reset
-            if (isLocalActionPending) return;
-
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
             const akunSaya = getAkunAktif().trim();
@@ -493,24 +489,17 @@
                 daftarAntrianGlobal.forEach((item) => {
                     let sub = item.subkategori ? String(item.subkategori).trim() : "";
                     
+                    // PEMETAAN EKSAK YANG BENAR
                     let targetListKey = "Mesin Cuci";
-                    if (sub === "Mesin Cuci") {
-                        targetListKey = "Mesin Cuci";
-                    } else if (sub === "Lemari Es") {
-                        targetListKey = "Lemari Es";
-                    } else if (sub === "AC") {
-                        targetListKey = "AC";
-                    } else if (sub === "Water Dispenser") {
-                        targetListKey = "Water Dispenser";
-                    } else if (sub === "Small Appliance") {
-                        targetListKey = "Small Appliance";
-                    } else if (sub === "TV LED / Smart TV") {
-                        targetListKey = "TV LED / Smart TV";
-                    } else if (sub === "Audio / Soundbar") {
-                        targetListKey = "Audio / Soundbar";
-                    } else if (sub === "Kamera / Lainnya") {
-                        targetListKey = "Kamera / Lainnya";
-                    } else {
+                    if (sub === "Mesin Cuci") targetListKey = "Mesin Cuci";
+                    else if (sub === "Lemari Es") targetListKey = "Lemari Es";
+                    else if (sub === "AC") targetListKey = "AC";
+                    else if (sub === "Water Dispenser") targetListKey = "Water Dispenser";
+                    else if (sub === "Small Appliance") targetListKey = "Small Appliance";
+                    else if (sub === "TV LED / Smart TV") targetListKey = "TV LED / Smart TV";
+                    else if (sub === "Audio / Soundbar") targetListKey = "Audio / Soundbar";
+                    else if (sub === "Kamera / Lainnya") targetListKey = "Kamera / Lainnya";
+                    else {
                         targetListKey = (item.kategori === "AV") ? "TV LED / Smart TV" : "Mesin Cuci";
                     }
 
@@ -641,11 +630,10 @@
         }
 
         function muatDataAntrian(paksaTarik = false) {
-            if (isLocalActionPending) return; // Jangan tarik data dari server jika sedang proses klik lokal agar tidak saling tabrak
             fetch(`${SCRIPT_URL}?aksi=getAntrian&t=${Date.now()}`)
             .then(r => r.json())
             .then(res => {
-                if (res && res.status === "sukses" && !isLocalActionPending) {
+                if (res && res.status === "sukses") {
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
                     renderUIRental(res.data, res.statusAntrian, res.pengumumanSPV);
                 }
@@ -656,18 +644,11 @@
             const namaSales = getAkunAktif().trim();
             if (!namaSales) return;
 
-            // Kunci interaksi background agar tombol langsung terkunci permanen sesuai status pilihan
-            isLocalActionPending = true;
-
-            if (subKategoriBaru) {
-                localStorage.setItem('ufo_temp_subkategori_aktif', subKategoriBaru);
-            }
-            let subKategoriAktifFinal = subKategoriBaru || localStorage.getItem('ufo_temp_subkategori_aktif') || document.getElementById('pilih-subkategori').value || "Mesin Cuci";
             let kategoriAktifFinal = kategoriBaru || document.getElementById('pilih-kategori').value || "HA";
+            let subKategoriAktifFinal = subKategoriBaru || document.getElementById('pilih-subkategori').value || "Mesin Cuci";
 
             if (targetStatusSimulasi === "belum_ada") {
                 daftarAntrianGlobal = daftarAntrianGlobal.filter(item => String(item.nama).trim().toLowerCase() !== namaSales.toLowerCase());
-                localStorage.removeItem('ufo_temp_subkategori_aktif');
             } else {
                 let ketemu = false;
                 daftarAntrianGlobal.forEach(item => {
@@ -688,10 +669,7 @@
                 }
             }
 
-            // Render UI instan dengan membuka kunci flag sementara untuk eksekusi render ini
-            isLocalActionPending = false;
             renderUIRental(daftarAntrianGlobal, statusSistemGlobal, pengumumanTerakhirGlobal);
-            isLocalActionPending = true; // Kunci lagi agar background tidak mengubah tampilan sebelum server merespons
 
             let urlParam = `${SCRIPT_URL}?aksi=${aksiServer}&namaSales=${encodeURIComponent(namaSales)}`;
             urlParam += `&kategori=${encodeURIComponent(kategoriAktifFinal)}`;
@@ -702,12 +680,9 @@
                 if (res && res.status === "sukses" && res.data) {
                     daftarAntrianGlobal = res.data;
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
+                    renderUIRental(res.data, res.statusAntrian, res.pengumumanSPV);
                 }
-                isLocalActionPending = false; // Lepas kunci setelah server sukses merespons
-                renderUIRental(daftarAntrianGlobal, statusSistemGlobal, pengumumanTerakhirGlobal);
-            }).catch(() => {
-                isLocalActionPending = false; // Lepas kunci jika error koneksi
-            });
+            }).catch(() => {});
         }
 
         function aksiUtamaAntri() {
