@@ -218,15 +218,20 @@
             <button type="button" id="btn-keluar-istirahat" class="btn-amber" onclick="bukaModalKeluarIstirahat()" style="display: none; margin-top: 12px;">KELUAR ANTRIAN (ISTIRAHAT)</button>
         </div>
 
-        <!-- Live Urutan Terpisah Per Subkategori -->
+        <!-- Live Urutan Terpisah (HA 1, HA 2, dan AV) -->
         <div style="margin-top: 24px; text-align: left;">
-            <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase;">Live Urutan Kategori HA</div>
+            <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase;">Live Urutan HA 1 (Lantai 1)</div>
             
             <span class="sub-section-title">Mesin Cuci</span>
             <ul id="list-Mesin Cuci" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
             <span class="sub-section-title">Lemari Es (Kulkas)</span>
             <ul id="list-Lemari Es" class="list-antrian"><li><span>Memuat...</span></li></ul>
+
+            <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 24px; margin-bottom: 12px; text-transform: uppercase;">Live Urutan HA 2 (Lantai 2)</div>
+
+            <span class="sub-section-title">Freezer Box / Showcase</span>
+            <ul id="list-Freezer Box / Showcase" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
             <span class="sub-section-title">AC (Air Conditioner)</span>
             <ul id="list-AC" class="list-antrian"><li><span>Memuat...</span></li></ul>
@@ -239,14 +244,8 @@
 
             <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 24px; margin-bottom: 12px; text-transform: uppercase;">Live Urutan Kategori AV</div>
 
-            <span class="sub-section-title">TV LED / Smart TV</span>
-            <ul id="list-TV LED / Smart TV" class="list-antrian"><li><span>Memuat...</span></li></ul>
-
-            <span class="sub-section-title">Audio / Soundbar / Speaker</span>
-            <ul id="list-Audio / Soundbar" class="list-antrian"><li><span>Memuat...</span></li></ul>
-
-            <span class="sub-section-title">Kamera / Perangkat Lainnya AV</span>
-            <ul id="list-Kamera / Lainnya" class="list-antrian"><li><span>Memuat...</span></li></ul>
+            <span class="sub-section-title">Audio Video (Umum)</span>
+            <ul id="list-AV" class="list-antrian"><li><span>Memuat...</span></li></ul>
         </div>
 
         <a href="https://wa.me/6289524391002" target="_blank" class="wa-report-btn">
@@ -283,7 +282,7 @@
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
         let pengumumanTerakhirGlobal = "";
-        let localActionActive = false; // Flag mutlak anti-kedip tanpa timer agar langsung terkunci sempurna
+        let localActionActive = false;
 
         window.onload = function() {
             initDarkMode();
@@ -317,15 +316,14 @@
                 optionsHtml = `
                     <option value="Mesin Cuci">Mesin Cuci</option>
                     <option value="Lemari Es">Lemari Es (Kulkas)</option>
+                    <option value="Freezer Box / Showcase">Freezer Box / Showcase</option>
                     <option value="AC">AC (Air Conditioner)</option>
                     <option value="Water Dispenser">Water Dispenser</option>
                     <option value="Small Appliance">Small Appliance / Lainnya</option>
                 `;
             } else if (kategori === "AV") {
                 optionsHtml = `
-                    <option value="TV LED / Smart TV">TV LED / Smart TV</option>
-                    <option value="Audio / Soundbar">Audio / Soundbar / Speaker</option>
-                    <option value="Kamera / Lainnya">Kamera / Perangkat Lainnya</option>
+                    <option value="AV">Audio Video (Umum)</option>
                 `;
             }
             subSelect.innerHTML = optionsHtml;
@@ -463,7 +461,7 @@
         }
 
         function renderUIRental(dataAntrian, statusSistem, pengumumanSPV) {
-            if (localActionActive) return; // Mencegah polling background mereset/mengubah tampilan saat aksi instan aktif
+            if (localActionActive) return;
 
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
@@ -482,36 +480,34 @@
                 pengumumanTerakhirGlobal = pengumumanSPV;
             } else { modalPopupPengumuman.classList.remove('active'); }
 
-            let listMesinCuci = "", listLemariEs = "", listAC = "", listDispenser = "", listSmallApp = "";
-            let listTV = "", listAudio = "", listKamera = "";
+            let listMesinCuci = "", listLemariEs = "", listFreezer = "", listAC = "", listDispenser = "", listSmallApp = "";
+            let listAV = "";
 
-            let urutMC = 1, urutLE = 1, urutAC = 1, urutDisp = 1, urutSmall = 1;
-            let urutTV = 1, urutAudio = 1, urutKamera = 1;
+            let urutMC = 1, urutLE = 1, urutFreezer = 1, urutAC = 1, urutDisp = 1, urutSmall = 1;
+            let urutAV = 1;
 
             if (daftarAntrianGlobal.length > 0) {
                 daftarAntrianGlobal.forEach((item) => {
                     let sub = item.subkategori ? String(item.subkategori).trim() : "";
+                    let kat = item.kategori ? String(item.kategori).trim() : "HA";
                     
-                    // PEMETAAN KATEGORI & SUBKATEGORI SECARA MUTLAK (MENANGANI KECOCOKAN TEKS APAPUN DENGAN AMAN)
                     let targetListKey = "Mesin Cuci";
                     if (sub.includes("Mesin Cuci")) {
                         targetListKey = "Mesin Cuci";
                     } else if (sub.includes("Lemari Es") || sub.includes("Kulkas")) {
                         targetListKey = "Lemari Es";
+                    } else if (sub.includes("Freezer") || sub.includes("Showcase")) {
+                        targetListKey = "Freezer Box / Showcase";
                     } else if (sub.includes("AC") || sub.includes("Air Conditioner")) {
                         targetListKey = "AC";
                     } else if (sub.includes("Water Dispenser") || sub.includes("Dispenser")) {
                         targetListKey = "Water Dispenser";
                     } else if (sub.includes("Small Appliance")) {
                         targetListKey = "Small Appliance";
-                    } else if (sub.includes("TV LED") || sub.includes("Smart TV") || sub === "TV") {
-                        targetListKey = "TV LED / Smart TV";
-                    } else if (sub.includes("Audio") || sub.includes("Soundbar") || sub.includes("Speaker")) {
-                        targetListKey = "Audio / Soundbar";
-                    } else if (sub.includes("Kamera") || sub.includes("Perangkat Lainnya")) {
-                        targetListKey = "Kamera / Lainnya";
+                    } else if (kat === "AV") {
+                        targetListKey = "AV";
                     } else {
-                        targetListKey = (item.kategori === "AV") ? "TV LED / Smart TV" : "Mesin Cuci";
+                        targetListKey = "Mesin Cuci";
                     }
 
                     let itemHtml = "";
@@ -519,41 +515,38 @@
                         let urut = 1;
                         if (targetListKey === "Mesin Cuci") urut = urutMC++;
                         else if (targetListKey === "Lemari Es") urut = urutLE++;
+                        else if (targetListKey === "Freezer Box / Showcase") urut = urutFreezer++;
                         else if (targetListKey === "AC") urut = urutAC++;
                         else if (targetListKey === "Water Dispenser") urut = urutDisp++;
                         else if (targetListKey === "Small Appliance") urut = urutSmall++;
-                        else if (targetListKey === "TV LED / Smart TV") urut = urutTV++;
-                        else if (targetListKey === "Audio / Soundbar") urut = urutAudio++;
-                        else if (targetListKey === "Kamera / Lainnya") urut = urutKamera++;
+                        else if (targetListKey === "AV") urut = urutAV++;
 
                         let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-giliran-anda">Giliran Anda</span>` : `<span class="badge-status-item badge-standby">Standby</span>`;
                         itemHtml = `<li><b>${urut}. ${item.nama}</b> ${badgeHtml}</li>`;
                     } else if (item.status === "Melayani") {
                         itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-melayani">Melayani</span></li>`;
                     } else if (item.status === "Dipanggil CS/GUDANG" || item.status === "Dipanggil CS") {
-                        itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-cs">Di CS/Gudang</span></li>`;
+                        itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-cs">Dipanggil CS/Gudang</span></li>`;
                     }
 
                     if (targetListKey === "Mesin Cuci") listMesinCuci += itemHtml;
                     else if (targetListKey === "Lemari Es") listLemariEs += itemHtml;
+                    else if (targetListKey === "Freezer Box / Showcase") listFreezer += itemHtml;
                     else if (targetListKey === "AC") listAC += itemHtml;
                     else if (targetListKey === "Water Dispenser") listDispenser += itemHtml;
                     else if (targetListKey === "Small Appliance") listSmallApp += itemHtml;
-                    else if (targetListKey === "TV LED / Smart TV") listTV += itemHtml;
-                    else if (targetListKey === "Audio / Soundbar") listAudio += itemHtml;
-                    else if (targetListKey === "Kamera / Lainnya") listKamera += itemHtml;
+                    else if (targetListKey === "AV") listAV += itemHtml;
                 });
             }
 
             const kosongHtml = "<li><span style='color:#64748b; font-style:italic;'>Belum ada antrian</span></li>";
             document.getElementById('list-Mesin Cuci').innerHTML = listMesinCuci || kosongHtml;
             document.getElementById('list-Lemari Es').innerHTML = listLemariEs || kosongHtml;
+            document.getElementById('list-Freezer Box / Showcase').innerHTML = listFreezer || kosongHtml;
             document.getElementById('list-AC').innerHTML = listAC || kosongHtml;
             document.getElementById('list-Water Dispenser').innerHTML = listDispenser || kosongHtml;
             document.getElementById('list-Small Appliance').innerHTML = listSmallApp || kosongHtml;
-            document.getElementById('list-TV LED / Smart TV').innerHTML = listTV || kosongHtml;
-            document.getElementById('list-Audio / Soundbar').innerHTML = listAudio || kosongHtml;
-            document.getElementById('list-Kamera / Lainnya').innerHTML = listKamera || kosongHtml;
+            document.getElementById('list-AV').innerHTML = listAV || kosongHtml;
 
             let statusSayaNyata = cekStatusSayaDariArray(daftarAntrianGlobal);
 
@@ -607,11 +600,11 @@
                     let subSayaAktif = "";
                     let itemPromotor = daftarAntrianGlobal.find(it => String(it.nama).trim().toLowerCase() === akunSaya.toLowerCase());
                     if(itemPromotor) {
-                        subSayaAktif = itemPromotor.subkategori ? String(itemPromotor.subkategori).trim() : (itemPromotor.kategori === "AV" ? "TV LED / Smart TV" : "Mesin Cuci");
+                        subSayaAktif = itemPromotor.subkategori ? String(itemPromotor.subkategori).trim() : (itemPromotor.kategori === "AV" ? "AV" : "Mesin Cuci");
                     }
 
                     let listSubStandby = daftarAntrianGlobal.filter(it => {
-                        let s = it.subkategori ? String(it.subkategori).trim() : (it.kategori === "AV" ? "TV LED / Smart TV" : "Mesin Cuci");
+                        let s = it.subkategori ? String(it.subkategori).trim() : (it.kategori === "AV" ? "AV" : "Mesin Cuci");
                         return it.status === "Standby" && s === subSayaAktif;
                     });
                     
@@ -656,7 +649,6 @@
             const namaSales = getAkunAktif().trim();
             if (!namaSales) return;
 
-            // Kunci interaksi background agar tombol langsung terkunci stabil tanpa kedip
             localActionActive = true;
 
             let kategoriAktifFinal = kategoriBaru || document.getElementById('pilih-kategori').value || "HA";
@@ -684,10 +676,9 @@
                 }
             }
 
-            // Render UI instan lokal dengan membuka flag sesaat
             localActionActive = false;
             renderUIRental(daftarAntrianGlobal, statusSistemGlobal, pengumumanTerakhirGlobal);
-            localActionActive = true; // Kunci lagi agar background tidak menimpa
+            localActionActive = true;
 
             let urlParam = `${SCRIPT_URL}?aksi=${aksiServer}&namaSales=${encodeURIComponent(namaSales)}`;
             urlParam += `&kategori=${encodeURIComponent(kategoriAktifFinal)}`;
@@ -699,10 +690,10 @@
                     daftarAntrianGlobal = res.data;
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
                 }
-                localActionActive = false; // Buka kunci setelah server merespons
+                localActionActive = false;
                 renderUIRental(daftarAntrianGlobal, statusSistemGlobal, pengumumanTerakhirGlobal);
             }).catch(() => {
-                localActionActive = false; // Buka kunci jika error
+                localActionActive = false;
             });
         }
 
