@@ -283,6 +283,7 @@
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
         let pengumumanTerakhirGlobal = "";
+        let lockUIStateUntil = 0; // Waktu penguncian instan agar polling background tidak menimpa tombol yang baru diklik
 
         window.onload = function() {
             initDarkMode();
@@ -462,6 +463,9 @@
         }
 
         function renderUIRental(dataAntrian, statusSistem, pengumumanSPV) {
+            // Jika tombol baru saja diklik, abaikan polling background agar tombol terkunci mulus tanpa kedip/reset
+            if (Date.now() < lockUIStateUntil) return;
+
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
             const akunSaya = getAkunAktif().trim();
@@ -489,7 +493,6 @@
                 daftarAntrianGlobal.forEach((item) => {
                     let sub = item.subkategori ? String(item.subkategori).trim() : "";
                     
-                    // PEMETAAN EKSAK YANG BENAR
                     let targetListKey = "Mesin Cuci";
                     if (sub === "Mesin Cuci") targetListKey = "Mesin Cuci";
                     else if (sub === "Lemari Es") targetListKey = "Lemari Es";
@@ -630,10 +633,11 @@
         }
 
         function muatDataAntrian(paksaTarik = false) {
+            if (Date.now() < lockUIStateUntil) return; // Jangan timpa jika tombol baru saja ditekan
             fetch(`${SCRIPT_URL}?aksi=getAntrian&t=${Date.now()}`)
             .then(r => r.json())
             .then(res => {
-                if (res && res.status === "sukses") {
+                if (res && res.status === "sukses" && Date.now() >= lockUIStateUntil) {
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
                     renderUIRental(res.data, res.statusAntrian, res.pengumumanSPV);
                 }
@@ -643,6 +647,9 @@
         function eksekusiAksiInstan(aksiServer, targetStatusSimulasi, kategoriBaru = null, subKategoriBaru = null) {
             const namaSales = getAkunAktif().trim();
             if (!namaSales) return;
+
+            // Kunci UI selama 5 detik penuh agar server sempat merespons tanpa terpental/berkedip kembali ke menu awal
+            lockUIStateUntil = Date.now() + 5000;
 
             let kategoriAktifFinal = kategoriBaru || document.getElementById('pilih-kategori').value || "HA";
             let subKategoriAktifFinal = subKategoriBaru || document.getElementById('pilih-subkategori').value || "Mesin Cuci";
@@ -669,7 +676,10 @@
                 }
             }
 
+            // Paksa render instan menggunakan status lokal yang baru
+            lockUIStateUntil = 0;
             renderUIRental(daftarAntrianGlobal, statusSistemGlobal, pengumumanTerakhirGlobal);
+            lockUIStateUntil = Date.now() + 5000; // Kunci lagi agar polling background tidak mereset tombol
 
             let urlParam = `${SCRIPT_URL}?aksi=${aksiServer}&namaSales=${encodeURIComponent(namaSales)}`;
             urlParam += `&kategori=${encodeURIComponent(kategoriAktifFinal)}`;
@@ -680,9 +690,12 @@
                 if (res && res.status === "sukses" && res.data) {
                     daftarAntrianGlobal = res.data;
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
-                    renderUIRental(res.data, res.statusAntrian, res.pengumumanSPV);
                 }
-            }).catch(() => {});
+                lockUIStateUntil = 0; // Buka kunci setelah server merespons dengan sukses
+                renderUIRental(daftarAntrianGlobal, statusSistemGlobal, pengumumanTerakhirGlobal);
+            }).catch(() => {
+                lockUIStateUntil = 0; // Buka kunci jika terjadi gangguan koneksi
+            });
         }
 
         function aksiUtamaAntri() {
