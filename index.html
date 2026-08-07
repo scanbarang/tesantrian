@@ -283,6 +283,7 @@
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
         let pengumumanTerakhirGlobal = "";
+        let isLocalActionPending = false; // Flag mutlak untuk mengunci tombol agar tidak berkedip/reset dari background polling
 
         window.onload = function() {
             initDarkMode();
@@ -462,6 +463,9 @@
         }
 
         function renderUIRental(dataAntrian, statusSistem, pengumumanSPV) {
+            // Jika sedang ada aksi lokal baru diklik, cegah render background interval agar tombol tidak berkedip/reset
+            if (isLocalActionPending) return;
+
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
             const akunSaya = getAkunAktif().trim();
@@ -489,16 +493,24 @@
                 daftarAntrianGlobal.forEach((item) => {
                     let sub = item.subkategori ? String(item.subkategori).trim() : "";
                     
-                    // Pemetaan kategori/subkategori yang sangat presisi agar tidak pernah meleset
                     let targetListKey = "Mesin Cuci";
-                    if (sub === "Lemari Es" || sub.includes("Kulkas")) targetListKey = "Lemari Es";
-                    else if (sub === "AC" || sub.includes("Air Conditioner")) targetListKey = "AC";
-                    else if (sub === "Water Dispenser" || sub.includes("Dispenser")) targetListKey = "Water Dispenser";
-                    else if (sub === "Small Appliance" || sub.includes("Small")) targetListKey = "Small Appliance";
-                    else if (sub === "TV LED / Smart TV" || sub.includes("TV")) targetListKey = "TV LED / Smart TV";
-                    else if (sub === "Audio / Soundbar" || sub.includes("Audio") || sub.includes("Soundbar") || sub.includes("Speaker")) targetListKey = "Audio / Soundbar";
-                    else if (sub === "Kamera / Lainnya" || sub.includes("Kamera")) targetListKey = "Kamera / Lainnya";
-                    else {
+                    if (sub === "Mesin Cuci") {
+                        targetListKey = "Mesin Cuci";
+                    } else if (sub === "Lemari Es") {
+                        targetListKey = "Lemari Es";
+                    } else if (sub === "AC") {
+                        targetListKey = "AC";
+                    } else if (sub === "Water Dispenser") {
+                        targetListKey = "Water Dispenser";
+                    } else if (sub === "Small Appliance") {
+                        targetListKey = "Small Appliance";
+                    } else if (sub === "TV LED / Smart TV") {
+                        targetListKey = "TV LED / Smart TV";
+                    } else if (sub === "Audio / Soundbar") {
+                        targetListKey = "Audio / Soundbar";
+                    } else if (sub === "Kamera / Lainnya") {
+                        targetListKey = "Kamera / Lainnya";
+                    } else {
                         targetListKey = (item.kategori === "AV") ? "TV LED / Smart TV" : "Mesin Cuci";
                     }
 
@@ -512,7 +524,7 @@
                         else if (targetListKey === "Small Appliance") urut = urutSmall++;
                         else if (targetListKey === "TV LED / Smart TV") urut = urutTV++;
                         else if (targetListKey === "Audio / Soundbar") urut = urutAudio++;
-                        else urut = urutKamera++;
+                        else if (targetListKey === "Kamera / Lainnya") urut = urutKamera++;
 
                         let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-giliran-anda">Giliran Anda</span>` : `<span class="badge-status-item badge-standby">Standby</span>`;
                         itemHtml = `<li><b>${urut}. ${item.nama}</b> ${badgeHtml}</li>`;
@@ -529,7 +541,7 @@
                     else if (targetListKey === "Small Appliance") listSmallApp += itemHtml;
                     else if (targetListKey === "TV LED / Smart TV") listTV += itemHtml;
                     else if (targetListKey === "Audio / Soundbar") listAudio += itemHtml;
-                    else listKamera += itemHtml;
+                    else if (targetListKey === "Kamera / Lainnya") listKamera += itemHtml;
                 });
             }
 
@@ -629,10 +641,11 @@
         }
 
         function muatDataAntrian(paksaTarik = false) {
+            if (isLocalActionPending) return; // Jangan tarik data dari server jika sedang proses klik lokal agar tidak saling tabrak
             fetch(`${SCRIPT_URL}?aksi=getAntrian&t=${Date.now()}`)
             .then(r => r.json())
             .then(res => {
-                if (res && res.status === "sukses") {
+                if (res && res.status === "sukses" && !isLocalActionPending) {
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
                     renderUIRental(res.data, res.statusAntrian, res.pengumumanSPV);
                 }
@@ -642,6 +655,9 @@
         function eksekusiAksiInstan(aksiServer, targetStatusSimulasi, kategoriBaru = null, subKategoriBaru = null) {
             const namaSales = getAkunAktif().trim();
             if (!namaSales) return;
+
+            // Kunci interaksi background agar tombol langsung terkunci permanen sesuai status pilihan
+            isLocalActionPending = true;
 
             if (subKategoriBaru) {
                 localStorage.setItem('ufo_temp_subkategori_aktif', subKategoriBaru);
@@ -672,7 +688,10 @@
                 }
             }
 
+            // Render UI instan dengan membuka kunci flag sementara untuk eksekusi render ini
+            isLocalActionPending = false;
             renderUIRental(daftarAntrianGlobal, statusSistemGlobal, pengumumanTerakhirGlobal);
+            isLocalActionPending = true; // Kunci lagi agar background tidak mengubah tampilan sebelum server merespons
 
             let urlParam = `${SCRIPT_URL}?aksi=${aksiServer}&namaSales=${encodeURIComponent(namaSales)}`;
             urlParam += `&kategori=${encodeURIComponent(kategoriAktifFinal)}`;
@@ -684,7 +703,11 @@
                     daftarAntrianGlobal = res.data;
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
                 }
-            }).catch(() => {});
+                isLocalActionPending = false; // Lepas kunci setelah server sukses merespons
+                renderUIRental(daftarAntrianGlobal, statusSistemGlobal, pengumumanTerakhirGlobal);
+            }).catch(() => {
+                isLocalActionPending = false; // Lepas kunci jika error koneksi
+            });
         }
 
         function aksiUtamaAntri() {
