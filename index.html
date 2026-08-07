@@ -283,7 +283,6 @@
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
         let pengumumanTerakhirGlobal = "";
-        let sedangAdaAksiServer = false;
 
         window.onload = function() {
             initDarkMode();
@@ -373,13 +372,11 @@
         }
 
         function cekServerBg() {
-            if (sedangAdaAksiServer) return;
             const deviceId = getDeviceId();
             Promise.all([
                 fetch(`${SCRIPT_URL}?aksi=cekBinding&deviceId=${encodeURIComponent(deviceId)}`).then(r => r.json()).catch(() => null),
                 fetch(`${SCRIPT_URL}?aksi=getAntrian`).then(r => r.json()).catch(() => null)
             ]).then(([resBinding, resAntrian]) => {
-                if (sedangAdaAksiServer) return;
                 if (resBinding) {
                     if (resBinding.status === "terkunci" && resBinding.nama) {
                         namaSalesAktifGlobal = resBinding.nama;
@@ -406,11 +403,9 @@
             if(!namaPilih) return tampilkanModal("Perhatian", "Silakan pilih nama Anda!");
             
             tampilkanModalKonfirmasi("Kunci Perangkat", `Kunci HP ini atas nama (${namaPilih})?`, function() {
-                sedangAdaAksiServer = true;
                 fetch(`${SCRIPT_URL}?aksi=kunciPerangkat&namaSales=${encodeURIComponent(namaPilih)}&deviceId=${encodeURIComponent(deviceId)}`)
                 .then(res => res.json())
                 .then(res => {
-                    sedangAdaAksiServer = false;
                     if(res.status === "sukses") {
                         namaSalesAktifGlobal = namaPilih;
                         localStorage.setItem('ufo_nama_sales_aktif', namaPilih);
@@ -420,7 +415,6 @@
                         muatDataAntrian(true);
                     } else { tampilkanModal("Akses Ditolak", res.pesan); }
                 }).catch(() => {
-                    sedangAdaAksiServer = false;
                     tampilkanModal("Gagal", "Koneksi ke server bermasalah.");
                 });
             });
@@ -442,7 +436,6 @@
         }
 
         function muatMasterSales() {
-            if (sedangAdaAksiServer) return;
             fetch(`${SCRIPT_URL}?aksi=getMasterSales&t=${Date.now()}`)
             .then(res => res.json())
             .then(res => {
@@ -469,8 +462,6 @@
         }
 
         function renderUIRental(dataAntrian, statusSistem, pengumumanSPV) {
-            if (sedangAdaAksiServer) return;
-
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
             const akunSaya = getAkunAktif().trim();
@@ -628,12 +619,9 @@
         }
 
         function muatDataAntrian(paksaTarik = false) {
-            if (sedangAdaAksiServer && !paksaTarik) return;
-
             fetch(`${SCRIPT_URL}?aksi=getAntrian&t=${Date.now()}`)
             .then(r => r.json())
             .then(res => {
-                if (sedangAdaAksiServer && !paksaTarik) return;
                 if (res && res.status === "sukses") {
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
                     renderUIRental(res.data, res.statusAntrian, res.pengumumanSPV);
@@ -645,8 +633,7 @@
             const namaSales = getAkunAktif().trim();
             if (!namaSales) return;
 
-            sedangAdaAksiServer = true;
-
+            // Update UI secara instan terlebih dahulu (tanpa loading/spinner)
             if (targetStatusSimulasi === "belum_ada") {
                 daftarAntrianGlobal = daftarAntrianGlobal.filter(item => String(item.nama).trim().toLowerCase() !== namaSales.toLowerCase());
             } else {
@@ -676,19 +663,12 @@
             if (subKategoriBaru) urlParam += `&subkategori=${encodeURIComponent(subKategoriBaru)}`;
             urlParam += `&t=${Date.now()}`;
 
-            fetch(urlParam)
-            .then(res => res.json())
-            .then(res => {
-                setTimeout(() => {
-                    sedangAdaAksiServer = false;
-                    muatDataAntrian(true);
-                }, 400);
-            }).catch(() => {
-                setTimeout(() => {
-                    sedangAdaAksiServer = false;
-                    muatDataAntrian(true);
-                }, 400);
-            });
+            // Kirim ke server secara latar belakang (background)
+            fetch(urlParam).then(res => res.json()).then(res => {
+                if (res && res.status === "sukses") {
+                    renderUIRental(res.data, res.statusAntrian, res.pengumumanSPV);
+                }
+            }).catch(() => {});
         }
 
         function aksiUtamaAntri() {
