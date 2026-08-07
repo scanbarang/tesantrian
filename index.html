@@ -283,7 +283,7 @@
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
         let pengumumanTerakhirGlobal = "";
-        let lockUIStateUntil = 0; // Waktu penguncian instan agar polling background tidak menimpa tombol yang baru diklik
+        let localActionActive = false; // Flag mutlak anti-kedip tanpa timer agar langsung terkunci sempurna
 
         window.onload = function() {
             initDarkMode();
@@ -463,8 +463,7 @@
         }
 
         function renderUIRental(dataAntrian, statusSistem, pengumumanSPV) {
-            // Jika tombol baru saja diklik, abaikan polling background agar tombol terkunci mulus tanpa kedip/reset
-            if (Date.now() < lockUIStateUntil) return;
+            if (localActionActive) return; // Mencegah polling background mereset/mengubah tampilan saat aksi instan aktif
 
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
@@ -493,16 +492,25 @@
                 daftarAntrianGlobal.forEach((item) => {
                     let sub = item.subkategori ? String(item.subkategori).trim() : "";
                     
+                    // PEMETAAN KATEGORI & SUBKATEGORI SECARA MUTLAK (MENANGANI KECOCOKAN TEKS APAPUN DENGAN AMAN)
                     let targetListKey = "Mesin Cuci";
-                    if (sub === "Mesin Cuci") targetListKey = "Mesin Cuci";
-                    else if (sub === "Lemari Es") targetListKey = "Lemari Es";
-                    else if (sub === "AC") targetListKey = "AC";
-                    else if (sub === "Water Dispenser") targetListKey = "Water Dispenser";
-                    else if (sub === "Small Appliance") targetListKey = "Small Appliance";
-                    else if (sub === "TV LED / Smart TV") targetListKey = "TV LED / Smart TV";
-                    else if (sub === "Audio / Soundbar") targetListKey = "Audio / Soundbar";
-                    else if (sub === "Kamera / Lainnya") targetListKey = "Kamera / Lainnya";
-                    else {
+                    if (sub.includes("Mesin Cuci")) {
+                        targetListKey = "Mesin Cuci";
+                    } else if (sub.includes("Lemari Es") || sub.includes("Kulkas")) {
+                        targetListKey = "Lemari Es";
+                    } else if (sub.includes("AC") || sub.includes("Air Conditioner")) {
+                        targetListKey = "AC";
+                    } else if (sub.includes("Water Dispenser") || sub.includes("Dispenser")) {
+                        targetListKey = "Water Dispenser";
+                    } else if (sub.includes("Small Appliance")) {
+                        targetListKey = "Small Appliance";
+                    } else if (sub.includes("TV LED") || sub.includes("Smart TV") || sub === "TV") {
+                        targetListKey = "TV LED / Smart TV";
+                    } else if (sub.includes("Audio") || sub.includes("Soundbar") || sub.includes("Speaker")) {
+                        targetListKey = "Audio / Soundbar";
+                    } else if (sub.includes("Kamera") || sub.includes("Perangkat Lainnya")) {
+                        targetListKey = "Kamera / Lainnya";
+                    } else {
                         targetListKey = (item.kategori === "AV") ? "TV LED / Smart TV" : "Mesin Cuci";
                     }
 
@@ -633,11 +641,11 @@
         }
 
         function muatDataAntrian(paksaTarik = false) {
-            if (Date.now() < lockUIStateUntil) return; // Jangan timpa jika tombol baru saja ditekan
+            if (localActionActive) return; 
             fetch(`${SCRIPT_URL}?aksi=getAntrian&t=${Date.now()}`)
             .then(r => r.json())
             .then(res => {
-                if (res && res.status === "sukses" && Date.now() >= lockUIStateUntil) {
+                if (res && res.status === "sukses" && !localActionActive) {
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
                     renderUIRental(res.data, res.statusAntrian, res.pengumumanSPV);
                 }
@@ -648,8 +656,8 @@
             const namaSales = getAkunAktif().trim();
             if (!namaSales) return;
 
-            // Kunci UI selama 5 detik penuh agar server sempat merespons tanpa terpental/berkedip kembali ke menu awal
-            lockUIStateUntil = Date.now() + 5000;
+            // Kunci interaksi background agar tombol langsung terkunci stabil tanpa kedip
+            localActionActive = true;
 
             let kategoriAktifFinal = kategoriBaru || document.getElementById('pilih-kategori').value || "HA";
             let subKategoriAktifFinal = subKategoriBaru || document.getElementById('pilih-subkategori').value || "Mesin Cuci";
@@ -676,10 +684,10 @@
                 }
             }
 
-            // Paksa render instan menggunakan status lokal yang baru
-            lockUIStateUntil = 0;
+            // Render UI instan lokal dengan membuka flag sesaat
+            localActionActive = false;
             renderUIRental(daftarAntrianGlobal, statusSistemGlobal, pengumumanTerakhirGlobal);
-            lockUIStateUntil = Date.now() + 5000; // Kunci lagi agar polling background tidak mereset tombol
+            localActionActive = true; // Kunci lagi agar background tidak menimpa
 
             let urlParam = `${SCRIPT_URL}?aksi=${aksiServer}&namaSales=${encodeURIComponent(namaSales)}`;
             urlParam += `&kategori=${encodeURIComponent(kategoriAktifFinal)}`;
@@ -691,10 +699,10 @@
                     daftarAntrianGlobal = res.data;
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
                 }
-                lockUIStateUntil = 0; // Buka kunci setelah server merespons dengan sukses
+                localActionActive = false; // Buka kunci setelah server merespons
                 renderUIRental(daftarAntrianGlobal, statusSistemGlobal, pengumumanTerakhirGlobal);
             }).catch(() => {
-                lockUIStateUntil = 0; // Buka kunci jika terjadi gangguan koneksi
+                localActionActive = false; // Buka kunci jika error
             });
         }
 
