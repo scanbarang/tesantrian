@@ -487,6 +487,7 @@
 
             if (daftarAntrianGlobal.length > 0) {
                 daftarAntrianGlobal.forEach((item) => {
+                    // Normalisasi pencocokan subkategori secara akurat
                     let sub = item.subkategori ? String(item.subkategori).trim() : "";
                     if (!sub) {
                         sub = (item.kategori === "AV") ? "TV LED / Smart TV" : "Mesin Cuci";
@@ -495,13 +496,13 @@
                     let itemHtml = "";
                     if (item.status === "Standby") {
                         let urut = 1;
-                        if (sub === "Mesin Cuci") urut = urutMC++;
-                        else if (sub === "Lemari Es") urut = urutLE++;
-                        else if (sub === "AC") urut = urutAC++;
-                        else if (sub === "Water Dispenser") urut = urutDisp++;
-                        else if (sub === "Small Appliance") urut = urutSmall++;
-                        else if (sub === "TV LED / Smart TV") urut = urutTV++;
-                        else if (sub === "Audio / Soundbar") urut = urutAudio++;
+                        if (sub.includes("Mesin Cuci")) urut = urutMC++;
+                        else if (sub.includes("Lemari Es")) urut = urutLE++;
+                        else if (sub.includes("AC")) urut = urutAC++;
+                        else if (sub.includes("Dispenser")) urut = urutDisp++;
+                        else if (sub.includes("Small Appliance")) urut = urutSmall++;
+                        else if (sub.includes("TV")) urut = urutTV++;
+                        else if (sub.includes("Audio") || sub.includes("Soundbar")) urut = urutAudio++;
                         else urut = urutKamera++;
 
                         let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-giliran-anda">Giliran Anda</span>` : `<span class="badge-status-item badge-standby">Standby</span>`;
@@ -512,13 +513,13 @@
                         itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-cs">Di CS/Gudang</span></li>`;
                     }
 
-                    if (sub === "Mesin Cuci") listMesinCuci += itemHtml;
-                    else if (sub === "Lemari Es") listLemariEs += itemHtml;
-                    else if (sub === "AC") listAC += itemHtml;
-                    else if (sub === "Water Dispenser") listDispenser += itemHtml;
-                    else if (sub === "Small Appliance") listSmallApp += itemHtml;
-                    else if (sub === "TV LED / Smart TV") listTV += itemHtml;
-                    else if (sub === "Audio / Soundbar") listAudio += itemHtml;
+                    if (sub.includes("Mesin Cuci")) listMesinCuci += itemHtml;
+                    else if (sub.includes("Lemari Es")) listLemariEs += itemHtml;
+                    else if (sub.includes("AC")) listAC += itemHtml;
+                    else if (sub.includes("Dispenser")) listDispenser += itemHtml;
+                    else if (sub.includes("Small Appliance")) listSmallApp += itemHtml;
+                    else if (sub.includes("TV")) listTV += itemHtml;
+                    else if (sub.includes("Audio") || sub.includes("Soundbar")) listAudio += itemHtml;
                     else listKamera += itemHtml;
                 });
             }
@@ -662,7 +663,6 @@
             if (subKategoriBaru) urlParam += `&subkategori=${encodeURIComponent(subKategoriBaru)}`;
             urlParam += `&t=${Date.now()}`;
 
-            // Menggunakan fetch murni tanpa blocking render agar tombol tetap super instan seperti semula
             fetch(urlParam).then(res => res.json()).then(res => {
                 if (res && res.status === "sukses") {
                     renderUIRental(res.data, res.statusAntrian, res.pengumumanSPV);
