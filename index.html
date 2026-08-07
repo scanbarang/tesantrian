@@ -633,7 +633,6 @@
             const namaSales = getAkunAktif().trim();
             if (!namaSales) return;
 
-            // Update UI secara instan terlebih dahulu (tanpa loading/spinner)
             if (targetStatusSimulasi === "belum_ada") {
                 daftarAntrianGlobal = daftarAntrianGlobal.filter(item => String(item.nama).trim().toLowerCase() !== namaSales.toLowerCase());
             } else {
@@ -663,7 +662,6 @@
             if (subKategoriBaru) urlParam += `&subkategori=${encodeURIComponent(subKategoriBaru)}`;
             urlParam += `&t=${Date.now()}`;
 
-            // Kirim ke server secara latar belakang (background)
             fetch(urlParam).then(res => res.json()).then(res => {
                 if (res && res.status === "sukses") {
                     renderUIRental(res.data, res.statusAntrian, res.pengumumanSPV);
