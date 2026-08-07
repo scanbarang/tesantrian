@@ -487,7 +487,6 @@
 
             if (daftarAntrianGlobal.length > 0) {
                 daftarAntrianGlobal.forEach((item) => {
-                    // Normalisasi pencocokan subkategori secara akurat
                     let sub = item.subkategori ? String(item.subkategori).trim() : "";
                     if (!sub) {
                         sub = (item.kategori === "AV") ? "TV LED / Smart TV" : "Mesin Cuci";
@@ -496,13 +495,14 @@
                     let itemHtml = "";
                     if (item.status === "Standby") {
                         let urut = 1;
-                        if (sub.includes("Mesin Cuci")) urut = urutMC++;
-                        else if (sub.includes("Lemari Es")) urut = urutLE++;
-                        else if (sub.includes("AC")) urut = urutAC++;
-                        else if (sub.includes("Dispenser")) urut = urutDisp++;
-                        else if (sub.includes("Small Appliance")) urut = urutSmall++;
-                        else if (sub.includes("TV")) urut = urutTV++;
-                        else if (sub.includes("Audio") || sub.includes("Soundbar")) urut = urutAudio++;
+                        // Pencocokan ketat untuk menghindari salah kategori (cth: Audio tidak masuk TV)
+                        if (sub === "Mesin Cuci") urut = urutMC++;
+                        else if (sub === "Lemari Es") urut = urutLE++;
+                        else if (sub === "AC") urut = urutAC++;
+                        else if (sub === "Water Dispenser") urut = urutDisp++;
+                        else if (sub === "Small Appliance") urut = urutSmall++;
+                        else if (sub === "TV LED / Smart TV") urut = urutTV++;
+                        else if (sub === "Audio / Soundbar") urut = urutAudio++;
                         else urut = urutKamera++;
 
                         let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-giliran-anda">Giliran Anda</span>` : `<span class="badge-status-item badge-standby">Standby</span>`;
@@ -513,13 +513,13 @@
                         itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-cs">Di CS/Gudang</span></li>`;
                     }
 
-                    if (sub.includes("Mesin Cuci")) listMesinCuci += itemHtml;
-                    else if (sub.includes("Lemari Es")) listLemariEs += itemHtml;
-                    else if (sub.includes("AC")) listAC += itemHtml;
-                    else if (sub.includes("Dispenser")) listDispenser += itemHtml;
-                    else if (sub.includes("Small Appliance")) listSmallApp += itemHtml;
-                    else if (sub.includes("TV")) listTV += itemHtml;
-                    else if (sub.includes("Audio") || sub.includes("Soundbar")) listAudio += itemHtml;
+                    if (sub === "Mesin Cuci") listMesinCuci += itemHtml;
+                    else if (sub === "Lemari Es") listLemariEs += itemHtml;
+                    else if (sub === "AC") listAC += itemHtml;
+                    else if (sub === "Water Dispenser") listDispenser += itemHtml;
+                    else if (sub === "Small Appliance") listSmallApp += itemHtml;
+                    else if (sub === "TV LED / Smart TV") listTV += itemHtml;
+                    else if (sub === "Audio / Soundbar") listAudio += itemHtml;
                     else listKamera += itemHtml;
                 });
             }
@@ -634,15 +634,24 @@
             const namaSales = getAkunAktif().trim();
             if (!namaSales) return;
 
+            // 1. Simpan pilihan subkategori saat ini ke localStorage agar saat render ulang tidak ke-reset/berkedip salah
+            if (subKategoriBaru) {
+                localStorage.setItem('ufo_temp_subkategori_aktif', subKategoriBaru);
+            }
+            let subKategoriAktifFinal = subKategoriBaru || localStorage.getItem('ufo_temp_subkategori_aktif') || "Mesin Cuci";
+            let kategoriAktifFinal = kategoriBaru || document.getElementById('pilih-kategori').value || "HA";
+
+            // 2. Perbarui state lokal secara instan tanpa menunggu fetch
             if (targetStatusSimulasi === "belum_ada") {
                 daftarAntrianGlobal = daftarAntrianGlobal.filter(item => String(item.nama).trim().toLowerCase() !== namaSales.toLowerCase());
+                localStorage.removeItem('ufo_temp_subkategori_aktif');
             } else {
                 let ketemu = false;
                 daftarAntrianGlobal.forEach(item => {
                     if (String(item.nama).trim().toLowerCase() === namaSales.toLowerCase()) {
                         item.status = targetStatusSimulasi;
-                        if (kategoriBaru) item.kategori = kategoriBaru;
-                        if (subKategoriBaru) item.subkategori = subKategoriBaru;
+                        item.kategori = kategoriAktifFinal;
+                        item.subkategori = subKategoriAktifFinal;
                         ketemu = true;
                     }
                 });
@@ -650,22 +659,26 @@
                     daftarAntrianGlobal.push({ 
                         nama: namaSales, 
                         status: targetStatusSimulasi, 
-                        kategori: kategoriBaru || "HA", 
-                        subkategori: subKategoriBaru || "Mesin Cuci" 
+                        kategori: kategoriAktifFinal, 
+                        subkategori: subKategoriAktifFinal 
                     });
                 }
             }
 
+            // 3. Render langsung ke layar secara instan (mengunci state agar tidak berkedip)
             renderUIRental(daftarAntrianGlobal, statusSistemGlobal, pengumumanTerakhirGlobal);
 
             let urlParam = `${SCRIPT_URL}?aksi=${aksiServer}&namaSales=${encodeURIComponent(namaSales)}`;
-            if (kategoriBaru) urlParam += `&kategori=${encodeURIComponent(kategoriBaru)}`;
-            if (subKategoriBaru) urlParam += `&subkategori=${encodeURIComponent(subKategoriBaru)}`;
+            urlParam += `&kategori=${encodeURIComponent(kategoriAktifFinal)}`;
+            urlParam += `&subkategori=${encodeURIComponent(subKategoriAktifFinal)}`;
             urlParam += `&t=${Date.now()}`;
 
+            // Kirim ke server di latar belakang secara diam-diam
             fetch(urlParam).then(res => res.json()).then(res => {
-                if (res && res.status === "sukses") {
-                    renderUIRental(res.data, res.statusAntrian, res.pengumumanSPV);
+                if (res && res.status === "sukses" && res.data) {
+                    // Update data dari server tanpa merusak state lokal yang sedang aktif agar tidak berkedip
+                    daftarAntrianGlobal = res.data;
+                    localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
                 }
             }).catch(() => {});
         }
@@ -695,7 +708,7 @@
                 tampilkanModalKonfirmasi("Status Dipanggil CS/GUDANG", "Dipanggil oleh CS/GUDANG? Posisi antrian Anda akan dikunci.", function() {
                     eksekusiAksiInstan('panggilCS', 'Dipanggil CS/GUDANG');
                 });
-            } else if (statusSekarang === "Dipanggil CS/GUDANG" || statusSekarang === "Dipanggil CS") {
+            } else if (statusSekarang === "Dipanggil CS/GUDANG" || statusSimulasi === "Dipanggil CS") {
                 tampilkanModalKonfirmasi("Selesai Urusan CS/GUDANG", "Urusan CS/GUDANG sudah selesai? Kembali aktif di antrian.", function() {
                     eksekusiAksiInstan('selesaiCS', 'Standby');
                 });
