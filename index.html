@@ -218,7 +218,7 @@
             <button type="button" id="btn-keluar-istirahat" class="btn-amber" onclick="bukaModalKeluarIstirahat()" style="display: none; margin-top: 12px;">KELUAR ANTRIAN (ISTIRAHAT)</button>
         </div>
 
-        <!-- Live Urutan Sesuai Susunan Baru -->
+        <!-- Live Urutan Sesuai Permintaan -->
         <div style="margin-top: 24px; text-align: left;">
             <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase;">LIVE URUTAN HA (Lantai 1)</div>
             
@@ -233,12 +233,12 @@
 
             <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 24px; margin-bottom: 12px; text-transform: uppercase;">LIVE URUTAN HA (Lantai 2)</div>
 
-            <span class="sub-section-title">FREEZER BOX / SHOWCASE / Barang HA Lantai 2 lainnya</span>
+            <span class="sub-section-title">FREEZER BOX / SHOWCASE</span>
             <ul id="list-Frezeer Box / Showcase" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
             <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 24px; margin-bottom: 12px; text-transform: uppercase;">LIVE URUTAN KATEGORI AV</div>
 
-            <span class="sub-section-title">AUDIO VIDEO</span>
+            <span class="sub-section-title">AUDIO VIDEO (UMUM)</span>
             <ul id="list-AV" class="list-antrian"><li><span>Memuat...</span></li></ul>
         </div>
 
@@ -304,21 +304,22 @@
         function updateSubKategori() {
             const kategori = document.getElementById('pilih-kategori').value;
             const subSelect = document.getElementById('pilih-subkategori');
+            const groupSub = document.getElementById('group-subkategori');
             let optionsHtml = "";
 
             if (kategori === "HA") {
+                groupSub.style.display = "block";
                 optionsHtml = `
                     <option value="Mesin Cuci">Mesin Cuci</option>
                     <option value="Lemari Es">Lemari Es</option>
                     <option value="AC">AC</option>
                     <option value="Frezeer Box / Showcase">Frezeer Box / Showcase</option>
                 `;
+                subSelect.innerHTML = optionsHtml;
             } else if (kategori === "AV") {
-                optionsHtml = `
-                    <option value="AV">Audio Video (Umum)</option>
-                `;
+                groupSub.style.display = "none";
+                subSelect.innerHTML = `<option value="AV">AV</option>`;
             }
-            subSelect.innerHTML = optionsHtml;
         }
 
         function toggleDarkMode() {
@@ -481,7 +482,9 @@
                     let kat = item.kategori ? String(item.kategori).trim() : "HA";
                     
                     let targetListKey = "Mesin Cuci";
-                    if (sub.includes("Mesin Cuci")) {
+                    if (kat === "AV") {
+                        targetListKey = "AV";
+                    } else if (sub.includes("Mesin Cuci")) {
                         targetListKey = "Mesin Cuci";
                     } else if (sub.includes("Lemari Es")) {
                         targetListKey = "Lemari Es";
@@ -489,8 +492,6 @@
                         targetListKey = "AC";
                     } else if (sub.includes("Frezeer Box / Showcase")) {
                         targetListKey = "Frezeer Box / Showcase";
-                    } else if (kat === "AV") {
-                        targetListKey = "AV";
                     } else {
                         targetListKey = "Mesin Cuci";
                     }
@@ -576,15 +577,18 @@
                     btnAntri.innerText = "Anda Sudah Di Antrian"; btnAntri.className = "btn-success btn-disabled"; btnAntri.disabled = true;
                     btnCustomer.style.display = "block"; btnClosing.style.display = "none";
                     
-                    let subSayaAktif = "";
-                    let itemPromotor = daftarAntrianGlobal.find(it => String(it.nama).trim().toLowerCase() === akunSaya.toLowerCase());
-                    if(itemPromotor) {
-                        subSayaAktif = itemPromotor.subkategori ? String(itemPromotor.subkategori).trim() : (itemPromotor.kategori === "AV" ? "AV" : "Mesin Cuci");
-                    }
+                    let promotorSaya = daftarAntrianGlobal.find(it => String(it.nama).trim().toLowerCase() === akunSaya.toLowerCase());
+                    let kategoriSaya = promotorSaya ? (promotorSaya.kategori || "HA") : "HA";
+                    let subSayaAktif = promotorSaya ? (promotorSaya.subkategori || "Mesin Cuci") : "Mesin Cuci";
 
                     let listSubStandby = daftarAntrianGlobal.filter(it => {
-                        let s = it.subkategori ? String(it.subkategori).trim() : (it.kategori === "AV" ? "AV" : "Mesin Cuci");
-                        return it.status === "Standby" && s === subSayaAktif;
+                        let katIt = it.kategori || "HA";
+                        let subIt = it.subkategori || "Mesin Cuci";
+                        if (katIt === "AV") {
+                            return it.status === "Standby" && katIt === "AV";
+                        } else {
+                            return it.status === "Standby" && katIt === kategoriSaya && subIt === subSayaAktif;
+                        }
                     });
                     
                     let apakahSayaPertamaDiSub = listSubStandby.length > 0 && String(listSubStandby[0].nama).trim().toLowerCase() === akunSaya.toLowerCase();
@@ -631,7 +635,12 @@
             localActionActive = true;
 
             let kategoriAktifFinal = kategoriBaru || document.getElementById('pilih-kategori').value || "HA";
-            let subKategoriAktifFinal = subKategoriBaru || document.getElementById('pilih-subkategori').value || "Mesin Cuci";
+            let subKategoriAktifFinal = "";
+            if (kategoriAktifFinal === "AV") {
+                subKategoriAktifFinal = "AV";
+            } else {
+                subKategoriAktifFinal = subKategoriBaru || document.getElementById('pilih-subkategori').value || "Mesin Cuci";
+            }
 
             if (targetStatusSimulasi === "belum_ada") {
                 daftarAntrianGlobal = daftarAntrianGlobal.filter(item => String(item.nama).trim().toLowerCase() !== namaSales.toLowerCase());
@@ -678,7 +687,7 @@
 
         function aksiUtamaAntri() {
             const kategoriPilih = document.getElementById('pilih-kategori').value;
-            const subKategoriPilih = document.getElementById('pilih-subkategori').value;
+            const subKategoriPilih = kategoriPilih === "AV" ? "AV" : document.getElementById('pilih-subkategori').value;
             eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih, subKategoriPilih);
         }
 
