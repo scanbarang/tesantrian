@@ -662,6 +662,7 @@
             if (subKategoriBaru) urlParam += `&subkategori=${encodeURIComponent(subKategoriBaru)}`;
             urlParam += `&t=${Date.now()}`;
 
+            // Menggunakan fetch murni tanpa blocking render agar tombol tetap super instan seperti semula
             fetch(urlParam).then(res => res.json()).then(res => {
                 if (res && res.status === "sukses") {
                     renderUIRental(res.data, res.statusAntrian, res.pengumumanSPV);
