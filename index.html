@@ -22,11 +22,6 @@
             --text-main: #0f172a;
             --text-muted: #475569;
             --border: #cbd5e1;
-            
-            --ha-bg: #eab308;        
-            --ha-border: #ca8a04;
-            --av-bg: #10b981;        
-            --av-border: #059669;
         }
 
         body.dark-mode {
@@ -228,30 +223,30 @@
             <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase;">Live Urutan Kategori HA</div>
             
             <span class="sub-section-title">Mesin Cuci</span>
-            <ul id="list-mesin-cuci" class="list-antrian"><li><span>Memuat...</span></li></ul>
+            <ul id="list-Mesin Cuci" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
             <span class="sub-section-title">Lemari Es (Kulkas)</span>
-            <ul id="list-lemari-es" class="list-antrian"><li><span>Memuat...</span></li></ul>
+            <ul id="list-Lemari Es" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
             <span class="sub-section-title">AC (Air Conditioner)</span>
-            <ul id="list-ac" class="list-antrian"><li><span>Memuat...</span></li></ul>
+            <ul id="list-AC" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
             <span class="sub-section-title">Water Dispenser</span>
-            <ul id="list-dispenser" class="list-antrian"><li><span>Memuat...</span></li></ul>
+            <ul id="list-Water Dispenser" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
             <span class="sub-section-title">Small Appliance / Lainnya HA</span>
-            <ul id="list-small-app" class="list-antrian"><li><span>Memuat...</span></li></ul>
+            <ul id="list-Small Appliance" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
             <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 24px; margin-bottom: 12px; text-transform: uppercase;">Live Urutan Kategori AV</div>
 
             <span class="sub-section-title">TV LED / Smart TV</span>
-            <ul id="list-tv" class="list-antrian"><li><span>Memuat...</span></li></ul>
+            <ul id="list-TV LED / Smart TV" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
             <span class="sub-section-title">Audio / Soundbar / Speaker</span>
-            <ul id="list-audio" class="list-antrian"><li><span>Memuat...</span></li></ul>
+            <ul id="list-Audio / Soundbar" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
             <span class="sub-section-title">Kamera / Perangkat Lainnya AV</span>
-            <ul id="list-kamera" class="list-antrian"><li><span>Memuat...</span></li></ul>
+            <ul id="list-Kamera / Lainnya" class="list-antrian"><li><span>Memuat...</span></li></ul>
         </div>
 
         <a href="https://wa.me/6289524391002" target="_blank" class="wa-report-btn">
@@ -501,9 +496,12 @@
 
             if (daftarAntrianGlobal.length > 0) {
                 daftarAntrianGlobal.forEach((item) => {
-                    let sub = item.subkategori ? item.subkategori : "Mesin Cuci"; 
-                    let itemHtml = "";
+                    let sub = item.subkategori ? String(item.subkategori).trim() : "";
+                    if (!sub) {
+                        sub = (item.kategori === "AV") ? "TV LED / Smart TV" : "Mesin Cuci";
+                    }
 
+                    let itemHtml = "";
                     if (item.status === "Standby") {
                         let urut = 1;
                         if (sub === "Mesin Cuci") urut = urutMC++;
@@ -535,14 +533,14 @@
             }
 
             const kosongHtml = "<li><span style='color:#64748b; font-style:italic;'>Belum ada antrian</span></li>";
-            document.getElementById('list-mesin-cuci').innerHTML = listMesinCuci || kosongHtml;
-            document.getElementById('list-lemari-es').innerHTML = listLemariEs || kosongHtml;
-            document.getElementById('list-ac').innerHTML = listAC || kosongHtml;
-            document.getElementById('list-dispenser').innerHTML = listDispenser || kosongHtml;
-            document.getElementById('list-small-app').innerHTML = listSmallApp || kosongHtml;
-            document.getElementById('list-tv').innerHTML = listTV || kosongHtml;
-            document.getElementById('list-audio').innerHTML = listAudio || kosongHtml;
-            document.getElementById('list-kamera').innerHTML = listKamera || kosongHtml;
+            document.getElementById('list-Mesin Cuci').innerHTML = listMesinCuci || kosongHtml;
+            document.getElementById('list-Lemari Es').innerHTML = listLemariEs || kosongHtml;
+            document.getElementById('list-AC').innerHTML = listAC || kosongHtml;
+            document.getElementById('list-Water Dispenser').innerHTML = listDispenser || kosongHtml;
+            document.getElementById('list-Small Appliance').innerHTML = listSmallApp || kosongHtml;
+            document.getElementById('list-TV LED / Smart TV').innerHTML = listTV || kosongHtml;
+            document.getElementById('list-Audio / Soundbar').innerHTML = listAudio || kosongHtml;
+            document.getElementById('list-Kamera / Lainnya').innerHTML = listKamera || kosongHtml;
 
             let statusSayaNyata = cekStatusSayaDariArray(daftarAntrianGlobal);
 
@@ -595,9 +593,15 @@
                     
                     let subSayaAktif = "";
                     let itemPromotor = daftarAntrianGlobal.find(it => String(it.nama).trim().toLowerCase() === akunSaya.toLowerCase());
-                    if(itemPromotor) subSayaAktif = itemPromotor.subkategori;
+                    if(itemPromotor) {
+                        subSayaAktif = itemPromotor.subkategori ? String(itemPromotor.subkategori).trim() : (itemPromotor.kategori === "AV" ? "TV LED / Smart TV" : "Mesin Cuci");
+                    }
 
-                    let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && it.subkategori === subSayaAktif);
+                    let listSubStandby = daftarAntrianGlobal.filter(it => {
+                        let s = it.subkategori ? String(it.subkategori).trim() : (it.kategori === "AV" ? "TV LED / Smart TV" : "Mesin Cuci");
+                        return it.status === "Standby" && s === subSayaAktif;
+                    });
+                    
                     let apakahSayaPertamaDiSub = listSubStandby.length > 0 && String(listSubStandby[0].nama).trim().toLowerCase() === akunSaya.toLowerCase();
 
                     btnCustomer.disabled = !apakahSayaPertamaDiSub; 
@@ -637,7 +641,7 @@
             }).catch(() => {});
         }
 
-        function eksekusiAksiMutlak(aksiServer, targetStatusSimulasi, kategoriBaru = null, subKategoriBaru = null) {
+        function eksekusiAksiInstan(aksiServer, targetStatusSimulasi, kategoriBaru = null, subKategoriBaru = null) {
             const namaSales = getAkunAktif().trim();
             if (!namaSales) return;
 
@@ -656,7 +660,12 @@
                     }
                 });
                 if (!ketemu) {
-                    daftarAntrianGlobal.push({ nama: namaSales, status: targetStatusSimulasi, kategori: kategoriBaru || "HA", subkategori: subKategoriBaru || "Mesin Cuci" });
+                    daftarAntrianGlobal.push({ 
+                        nama: namaSales, 
+                        status: targetStatusSimulasi, 
+                        kategori: kategoriBaru || "HA", 
+                        subkategori: subKategoriBaru || "Mesin Cuci" 
+                    });
                 }
             }
 
@@ -673,30 +682,30 @@
                 setTimeout(() => {
                     sedangAdaAksiServer = false;
                     muatDataAntrian(true);
-                }, 500);
+                }, 400);
             }).catch(() => {
                 setTimeout(() => {
                     sedangAdaAksiServer = false;
                     muatDataAntrian(true);
-                }, 500);
+                }, 400);
             });
         }
 
         function aksiUtamaAntri() {
             const kategoriPilih = document.getElementById('pilih-kategori').value;
             const subKategoriPilih = document.getElementById('pilih-subkategori').value;
-            eksekusiAksiMutlak('daftarAntri', 'Standby', kategoriPilih, subKategoriPilih);
+            eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih, subKategoriPilih);
         }
 
         function aksiUtamaCustomer() {
             tampilkanModalKonfirmasi("Konfirmasi", "Sudah membawa customer?", function() {
-                eksekusiAksiMutlak('ambilAntrian', 'Melayani');
+                eksekusiAksiInstan('ambilAntrian', 'Melayani');
             });
         }
 
         function aksiSelesaiClosing() {
             tampilkanModalKonfirmasi("Konfirmasi Selesai", "Selesai melayani customer? Anda akan dikeluarkan dari antrian.", function() {
-                eksekusiAksiMutlak('selesaiMelayani', 'belum_ada');
+                eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
             });
         }
 
@@ -705,18 +714,18 @@
 
             if (statusSekarang === "Standby") {
                 tampilkanModalKonfirmasi("Status Dipanggil CS/GUDANG", "Dipanggil oleh CS/GUDANG? Posisi antrian Anda akan dikunci.", function() {
-                    eksekusiAksiMutlak('panggilCS', 'Dipanggil CS/GUDANG');
+                    eksekusiAksiInstan('panggilCS', 'Dipanggil CS/GUDANG');
                 });
             } else if (statusSekarang === "Dipanggil CS/GUDANG" || statusSekarang === "Dipanggil CS") {
                 tampilkanModalKonfirmasi("Selesai Urusan CS/GUDANG", "Urusan CS/GUDANG sudah selesai? Kembali aktif di antrian.", function() {
-                    eksekusiAksiMutlak('selesaiCS', 'Standby');
+                    eksekusiAksiInstan('selesaiCS', 'Standby');
                 });
             }
         }
 
         function bukaModalKeluarIstirahat() {
             tampilkanModalKonfirmasi("Keluar Antrian", "Apakah Anda yakin ingin keluar dari antrian untuk istirahat / ada keperluan?", function() {
-                eksekusiAksiMutlak('selesaiMelayani', 'belum_ada');
+                eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
             });
         }
 
