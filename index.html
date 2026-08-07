@@ -1,4 +1,4 @@
-<!DOCTYPE html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -23,9 +23,9 @@
             --text-muted: #475569;
             --border: #cbd5e1;
             
-            --ha-bg: #eab308;        
+            --ha-bg: int;      
             --ha-border: #ca8a04;
-            --av-bg: #10b981;        
+            --av-bg: #10b981;      
             --av-border: #059669;
         }
 
@@ -135,7 +135,7 @@
         .status-closed { background: #fee2e2; color: #b91c1c; border: 2px solid #fca5a5; }
 
         .card-giliran-wrapper { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-        .card-giliran-ha { background: var(--ha-bg); border: 2px solid var(--ha-border); border-radius: 16px; padding: 16px 12px; text-align: center; color: #ffffff; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25); }
+        .card-giliran-ha { background: #eab308; border: 2px solid #ca8a04; border-radius: 16px; padding: 16px 12px; text-align: center; color: #ffffff; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25); }
         .card-giliran-ha .label-giliran { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #fefce8; letter-spacing: 0.5px; }
         .card-giliran-ha .nama-giliran-aktif { font-size: 20px; font-weight: 800; color: #ffffff; margin: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
         
@@ -242,9 +242,17 @@
 
             <div class="input-group">
                 <label>Pilih Kategori Antrian</label>
-                <select id="pilih-kategori">
+                <select id="pilih-kategori" onchange="updateSubKategori()">
                     <option value="HA">HA (Home Appliance)</option>
                     <option value="AV">AV (Audio Video)</option>
+                </select>
+            </div>
+
+            <!-- Dropdown Subkategori Baru -->
+            <div class="input-group" id="group-subkategori">
+                <label>Pilih Spesifikasi / Produk</label>
+                <select id="pilih-subkategori">
+                    <!-- Opsi akan diisi dinamis via JavaScript -->
                 </select>
             </div>
 
@@ -313,6 +321,7 @@
             initDarkMode();
             muatMasterSalesInstant();
             muatCacheAntrianInstan();
+            updateSubKategori(); // Inisialisasi awal subkategori
             
             const cachedNama = localStorage.getItem('ufo_nama_sales_aktif');
             if (cachedNama) {
@@ -330,6 +339,30 @@
             
             setInterval(muatDataAntrian, 3000); 
         };
+
+        // Fungsi untuk memperbarui pilihan subkategori berdasarkan kategori utama
+        function updateSubKategori() {
+            const kategori = document.getElementById('pilih-kategori').value;
+            const subSelect = document.getElementById('pilih-subkategori');
+            let optionsHtml = "";
+
+            if (kategori === "HA") {
+                optionsHtml = `
+                    <option value="Mesin Cuci">Mesin Cuci</option>
+                    <option value="Lemari Es">Lemari Es (Kulkas)</option>
+                    <option value="AC">AC (Air Conditioner)</option>
+                    <option value="Water Dispenser">Water Dispenser</option>
+                    <option value="Small Appliance">Small Appliance / Lainnya</option>
+                `;
+            } else if (kategori === "AV") {
+                optionsHtml = `
+                    <option value="TV LED / Smart TV">TV LED / Smart TV</option>
+                    <option value="Audio / Soundbar">Audio / Soundbar / Speaker</option>
+                    <option value="Kamera / Lainnya">Kamera / Perangkat Lainnya</option>
+                `;
+            }
+            subSelect.innerHTML = optionsHtml;
+        }
 
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
@@ -517,6 +550,7 @@
                     const kategoriItem = item.kategori ? item.kategori : "HA"; 
                     let itemHtml = "";
 
+                    // Jika Anda ingin menampilkan subkategori di daftar live antrian, bisa ditambahkan di sini (misal: item.subkategori)
                     if (item.status === "Standby") {
                         let urut = kategoriItem === "AV" ? urutAV++ : urutHA++;
                         let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-giliran-anda">Giliran Anda</span>` : `<span class="badge-status-item badge-standby">Standby</span>`;
@@ -555,6 +589,7 @@
             const btnCS = document.getElementById('btn-utama-cs');
             const btnKeluar = document.getElementById('btn-keluar-istirahat');
             const selectKategori = document.getElementById('pilih-kategori');
+            const selectSubKategori = document.getElementById('pilih-subkategori');
             const lockBoxEl = document.getElementById('keterangan-lock-box');
             const teksAlasanEl = document.getElementById('teks-alasan-lock');
 
@@ -571,14 +606,16 @@
                     teksAlasanEl.innerText = `Alasan: "${alasanLockSPV}"`;
                 }
                 btnCustomer.style.display = "none"; btnClosing.style.display = "none";
-                btnCS.style.display = "none"; btnKeluar.style.display = "none"; selectKategori.disabled = true;
+                btnCS.style.display = "none"; btnKeluar.style.display = "none"; 
+                selectKategori.disabled = true; selectSubKategori.disabled = true;
             } else {
                 if (lockBoxEl) lockBoxEl.style.display = "none";
 
                 if (statusSayaNyata === "Melayani") {
                     btnAntri.innerText = "Sedang Melayani Customer"; btnAntri.className = "btn-customer btn-disabled"; btnAntri.disabled = true;
                     btnCustomer.style.display = "none"; btnClosing.style.display = "block"; btnClosing.className = "btn-closing";
-                    btnCS.style.display = "none"; btnKeluar.style.display = "none"; selectKategori.disabled = true;
+                    btnCS.style.display = "none"; btnKeluar.style.display = "none"; 
+                    selectKategori.disabled = true; selectSubKategori.disabled = true;
                 } else if (statusSayaNyata === "Standby") {
                     btnAntri.innerText = "Anda Sudah Di Antrian"; btnAntri.className = "btn-success btn-disabled"; btnAntri.disabled = true;
                     btnCustomer.style.display = "block"; btnClosing.style.display = "none";
@@ -589,18 +626,20 @@
 
                     btnCS.style.display = "block"; btnCS.className = "btn-purple";
                     btnKeluar.style.display = "block"; btnKeluar.className = "btn-amber";
-                    selectKategori.disabled = true;
+                    selectKategori.disabled = true; selectSubKategori.disabled = true;
                 } else if (statusSayaNyata === "Dipanggil CS/GUDANG" || statusSayaNyata === "Dipanggil CS") {
                     btnAntri.innerText = "Posisi Antrian Dikunci (Di CS/GUDANG)"; btnAntri.className = "btn-purple btn-disabled"; btnAntri.disabled = true;
                     btnCustomer.style.display = "none"; btnClosing.style.display = "none";
                     btnCS.style.display = "block"; btnCS.innerText = "SELESAI CS/GUDANG (KEMBALI ANTRI)"; btnCS.className = "btn-teal";
-                    btnKeluar.style.display = "none"; selectKategori.disabled = true;
+                    btnKeluar.style.display = "none"; 
+                    selectKategori.disabled = true; selectSubKategori.disabled = true;
                 } else { 
                     btnAntri.innerText = statusSistemGlobal === "TUTUP" ? "Antrian Ditutup Oleh SPV" : "Daftar Antrian";
                     btnAntri.className = statusSistemGlobal === "TUTUP" ? "btn-closing btn-disabled" : "btn-success";
                     btnAntri.disabled = (statusSistemGlobal === "TUTUP");
                     btnCustomer.style.display = "none"; btnClosing.style.display = "none";
-                    btnCS.style.display = "none"; btnKeluar.style.display = "none"; selectKategori.disabled = false;
+                    btnCS.style.display = "none"; btnKeluar.style.display = "none"; 
+                    selectKategori.disabled = false; selectSubKategori.disabled = false;
                 }
             }
 
@@ -624,7 +663,7 @@
             }).catch(() => {});
         }
 
-        function eksekusiAksiMutlak(btnId, teksLoading, aksiServer, targetStatusSimulasi, kategoriBaru = null) {
+        function eksekusiAksiMutlak(btnId, teksLoading, aksiServer, targetStatusSimulasi, kategoriBaru = null, subKategoriBaru = null) {
             const namaSales = getAkunAktif().trim();
             if (!namaSales) return;
 
@@ -655,7 +694,13 @@
 
             renderUIRentalPaksaManual(daftarAntrianGlobal, statusSistemGlobal, pengumumanTerakhirGlobal, targetStatusSimulasi, kategoriBaru);
 
-            fetch(`${SCRIPT_URL}?aksi=${aksiServer}&namaSales=${encodeURIComponent(namaSales)}${kategoriBaru ? '&kategori='+encodeURIComponent(kategoriBaru) : ''}&t=${Date.now()}`)
+            // Jika backend Anda perlu menerima subkategori, tambahkan parameter &subkategori=... di URL fetch berikut
+            let urlParam = `${SCRIPT_URL}?aksi=${aksiServer}&namaSales=${encodeURIComponent(namaSales)}`;
+            if (kategoriBaru) urlParam += `&kategori=${encodeURIComponent(kategoriBaru)}`;
+            if (subKategoriBaru) urlParam += `&subkategori=${encodeURIComponent(subKategoriBaru)}`;
+            urlParam += `&t=${Date.now()}`;
+
+            fetch(urlParam)
             .then(res => res.json())
             .then(res => {
                 setTimeout(() => {
@@ -716,6 +761,7 @@
             const btnCS = document.getElementById('btn-utama-cs');
             const btnKeluar = document.getElementById('btn-keluar-istirahat');
             const selectKategori = document.getElementById('pilih-kategori');
+            const selectSubKategori = document.getElementById('pilih-subkategori');
 
             btnAntri.innerHTML = "Daftar Antrian"; btnAntri.className = "btn-success"; btnAntri.disabled = false;
             btnCustomer.innerHTML = "Sudah Membawa Customer"; btnCustomer.className = "btn-customer"; btnCustomer.disabled = false;
@@ -726,7 +772,8 @@
             if (statusPaksa === "Melayani") {
                 btnAntri.innerText = "Sedang Melayani Customer"; btnAntri.className = "btn-success btn-disabled"; btnAntri.disabled = true;
                 btnCustomer.style.display = "none"; btnClosing.style.display = "block"; btnClosing.className = "btn-closing";
-                btnCS.style.display = "none"; btnKeluar.style.display = "none"; selectKategori.disabled = true;
+                btnCS.style.display = "none"; btnKeluar.style.display = "none"; 
+                selectKategori.disabled = true; selectSubKategori.disabled = true;
             } else if (statusPaksa === "Standby") {
                 btnAntri.innerText = "Anda Sudah Di Antrian"; btnAntri.className = "btn-success btn-disabled"; btnAntri.disabled = true;
                 btnCustomer.style.display = "block"; btnClosing.style.display = "none";
@@ -734,16 +781,18 @@
                 btnCustomer.disabled = !bisaAmbil; btnCustomer.className = bisaAmbil ? "btn-customer" : "btn-customer btn-disabled";
                 btnCS.style.display = "block"; btnCS.className = "btn-purple";
                 btnKeluar.style.display = "block"; btnKeluar.className = "btn-amber";
-                selectKategori.disabled = true;
+                selectKategori.disabled = true; selectSubKategori.disabled = true;
             } else if (statusPaksa === "Dipanggil CS/GUDANG" || statusPaksa === "Dipanggil CS") {
                 btnAntri.innerText = "Posisi Antrian Dikunci (Di CS/GUDANG)"; btnAntri.className = "btn-purple btn-disabled"; btnAntri.disabled = true;
                 btnCustomer.style.display = "none"; btnClosing.style.display = "none";
                 btnCS.style.display = "block"; btnCS.innerText = "SELESAI CS/GUDANG (KEMBALI ANTRI)"; btnCS.className = "btn-teal";
-                btnKeluar.style.display = "none"; selectKategori.disabled = true;
+                btnKeluar.style.display = "none"; 
+                selectKategori.disabled = true; selectSubKategori.disabled = true;
             } else {
                 btnAntri.innerText = "Daftar Antrian"; btnAntri.className = "btn-success"; btnAntri.disabled = false;
                 btnCustomer.style.display = "none"; btnClosing.style.display = "none";
-                btnCS.style.display = "none"; btnKeluar.style.display = "none"; selectKategori.disabled = false;
+                btnCS.style.display = "none"; btnKeluar.style.display = "none"; 
+                selectKategori.disabled = false; selectSubKategori.disabled = false;
             }
 
             document.getElementById('nama-aktif-ha').innerText = namaHANow;
@@ -754,7 +803,8 @@
 
         function aksiUtamaAntri() {
             const kategoriPilih = document.getElementById('pilih-kategori').value;
-            eksekusiAksiMutlak('btn-utama-antri', 'Mendaftarkan...', 'daftarAntri', 'Standby', kategoriPilih);
+            const subKategoriPilih = document.getElementById('pilih-subkategori').value;
+            eksekusiAksiMutlak('btn-utama-antri', 'Mendaftarkan...', 'daftarAntri', 'Standby', kategoriPilih, subKategoriPilih);
         }
 
         function aksiUtamaCustomer() {
@@ -807,7 +857,7 @@
             document.getElementById('modal-title').innerText = judul;
             document.getElementById('modal-desc').innerText = desc;
             document.getElementById('modal-actions').innerHTML = `
-                <button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button>
+                <button type="button" class="btn-cancel" onclick="tutupModal()">Batal</label>
                 <button type="button" class="btn-customer" id="btn-modal-ya">Ya</button>
             `;
             document.getElementById('custom-modal').classList.add('active');
