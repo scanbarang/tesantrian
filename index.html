@@ -706,15 +706,15 @@
             }
         }
 
-      function validasiGpsDanJalankan(callbackBerhasil, callbackBatal) {
+   function validasiGpsDanJalankan(callbackBerhasil, callbackBatal) {
             // Jika koordinat toko kosong atau belum diset oleh admin, langsung lewatkan
             if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
-                callbackBerhasil();
+                if (typeof callbackBerhasil === 'function') callbackBerhasil();
                 return;
             }
 
             if (navigator.geolocation) {
-                // Menggunakan maximumAge yang besar agar mengambil cache lokasi instan tanpa menunggu satelit dingin
+                // Menggunakan timeout 6 detik dengan cache ringan agar cepat merespons tapi tetap akurat
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
                         const jarakMeter = hitungJarakHaversine(
@@ -724,41 +724,21 @@
                         const batasRadius = Number(koordinatToko.radius) || 50;
 
                         if (jarakMeter > batasRadius) {
-                            if (callbackBatal) callbackBatal();
+                            if (typeof callbackBatal === 'function') callbackBatal();
                             tampilkanModal("Di Luar Radius Toko", `Gagal mendaftar antrean!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal: ${batasRadius} meter.\n\nAnda berada di luar area toko.`);
                             return; 
                         }
                         
-                        callbackBerhasil();
+                        if (typeof callbackBerhasil === 'function') callbackBerhasil();
                     },
                     function(error) {
-                        // Fallback jika cache gagal, gunakan akurasi standar dengan waktu tunggu singkat (5 detik)
-                        navigator.geolocation.getCurrentPosition(
-                            function(positionFallback) {
-                                const jarakMeter = hitungJarakHaversine(
-                                    positionFallback.coords.latitude, positionFallback.coords.longitude, 
-                                    Number(koordinatToko.lat), Number(koordinatToko.lng)
-                                );
-                                const batasRadius = Number(koordinatToko.radius) || 50;
-
-                                if (jarakMeter > batasRadius) {
-                                    if (callbackBatal) callbackBatal();
-                                    tampilkanModal("Di Luar Radius Toko", `Jarak Anda: ${Math.round(jarakMeter)} meter (Maks: ${batasRadius} meter).`);
-                                    return;
-                                }
-                                callbackBerhasil();
-                            },
-                            function(errorFallback) {
-                                if (callbackBatal) callbackBatal();
-                                tampilkanModal("GPS Wajib Aktif", "Pastikan GPS Anda aktif dan izin lokasi browser diizinkan (Allow) untuk melanjutkan.");
-                            },
-                            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-                        );
+                        if (typeof callbackBatal === 'function') callbackBatal();
+                        tampilkanModal("GPS Wajib Aktif", "Pastikan GPS Anda aktif dan izin lokasi browser diizinkan (Allow) untuk mendaftar antrean.");
                     },
-                    { enableHighAccuracy: false, timeout: 4000, maximumAge: 300000 }
+                    { enableHighAccuracy: true, timeout: 6000, maximumAge: 10000 }
                 );
             } else {
-                if (callbackBatal) callbackBatal();
+                if (typeof callbackBatal === 'function') callbackBatal();
                 tampilkanModal("Tidak Mendukung", "Browser Anda tidak mendukung fitur GPS.");
             }
         }
