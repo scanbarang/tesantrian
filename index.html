@@ -111,7 +111,7 @@
             STATUS ANTRIAN: OPEN
         </div>
 
-        <!-- PANEL LOGIN / PILIH NAMA -->
+        <!-- PANEL LOGIN -->
         <div id="panel-login" style="display: none;">
             <div class="input-group">
                 <label>Pilih Nama Anda (Kunci Perangkat)</label>
@@ -193,6 +193,7 @@
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
         let koordinatToko = { lat: -7.9666, lng: 112.6326 }; 
+        let localActionActive = false;
 
         window.onload = function() {
             initDarkMode();
@@ -335,6 +336,8 @@
         }
 
         function renderUIRental(dataAntrian, statusSistem, koordinatServer) {
+            if (localActionActive) return;
+
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
             if (koordinatServer && koordinatServer.lat && koordinatServer.lng) {
@@ -401,7 +404,6 @@
             const btnCS = document.getElementById('btn-utama-cs');
             const btnKeluar = document.getElementById('btn-keluar-istirahat');
 
-            // ATUR KONDISI TOMBOL AKSI BERDASARKAN STATUS BUKA/TUTUP SPV
             if (statusSayaNyata === "Standby") {
                 btnCustomer.style.display = "block"; 
                 btnClosing.style.display = "none";
@@ -409,12 +411,10 @@
                 btnKeluar.style.display = "block";
 
                 if (statusSistemGlobal === "TUTUP") {
-                    // Jika SPV menutup antrian, tombol aksi dikunci/tidak aktif
                     btnCustomer.disabled = true; btnCustomer.className = "btn-customer btn-disabled";
                     btnCS.disabled = true; btnCS.className = "btn-purple btn-disabled";
                     btnKeluar.disabled = true; btnKeluar.className = "btn-amber btn-disabled";
                 } else {
-                    // Jika SPV membuka antrian, cek posisi giliran 1 atau 2
                     let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && (it.subkategori || "").trim() === kategoriSayaAktif);
                     let indexSaya = listSubStandby.findIndex(it => String(it.nama).trim().toLowerCase() === akunSaya);
                     let apakahSayaBisaAmbil = (indexSaya === 0 || indexSaya === 1);
@@ -435,64 +435,87 @@
         }
 
         function muatDataAntrian() {
+            if (localActionActive) return;
             fetch(`${SCRIPT_URL}?aksi=getAntrian&t=${Date.now()}`)
             .then(res => res.json())
             .then(res => {
-                if (res && res.status === "sukses") {
+                if (res && res.status === "sukses" && !localActionActive) {
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
                     renderUIRental(res.data, res.statusAntrian, res.koordinatPusat);
                 }
             }).catch(() => {});
         }
 
-        function aksiCheckinKedatangan() {
-            const kategoriPilih = document.getElementById('pilih-kategori-checkin').value;
+        // --- AKSI INSTAN (OPTIMISTIC UI) ---
+        function eksekusiAksiInstan(aksiServer, targetStatusSimulasi, subKatBaru = null) {
             const namaSales = getAkunAktif().trim();
             if (!namaSales) return;
 
-            fetch(`${SCRIPT_URL}?aksi=daftarAntri&namaSales=${encodeURIComponent(namaSales)}&kategori=HA&subkategori=${encodeURIComponent(kategoriPilih)}&t=${Date.now()}`)
+            localActionActive = true;
+            let subKatAktif = subKatBaru || document.getElementById('pilih-kategori-checkin').value || "Mesin Cuci & Lemari Es";
+
+            if (targetStatusSimulasi === "belum_ada") {
+                daftarAntrianGlobal = daftarAntrianGlobal.filter(item => String(item.nama).trim().toLowerCase() !== namaSales.toLowerCase());
+            } else {
+                let ketemu = false;
+                daftarAntrianGlobal.forEach(item => {
+                    if (String(item.nama).trim().toLowerCase() === namaSales.toLowerCase()) {
+                        item.status = targetStatusSimulasi;
+                        if (subKatBaru) item.subkategori = subKatBaru;
+                        ketemu = true;
+                    }
+                });
+                if (!ketemu) {
+                    daftarAntrianGlobal.push({ nama: namaSales, status: targetStatusSimulasi, kategori: "HA", subkategori: subKatAktif });
+                }
+            }
+
+            localActionActive = false;
+            renderUIRental(daftarAntrianGlobal, statusSistemGlobal, koordinatToko);
+            localActionActive = true;
+
+            fetch(`${SCRIPT_URL}?aksi=${aksiServer}&namaSales=${encodeURIComponent(namaSales)}&subkategori=${encodeURIComponent(subKatAktif)}&t=${Date.now()}`)
             .then(res => res.json())
             .then(res => {
-                tampilkanModal("Check-In", res.pesan);
-                muatDataAntrian();
-            });
+                if (res && res.status === "sukses" && res.data) {
+                    daftarAntrianGlobal = res.data;
+                }
+                localActionActive = false;
+                renderUIRental(daftarAntrianGlobal, statusSistemGlobal, koordinatToko);
+            }).catch(() => { localActionActive = false; });
+        }
+
+        function aksiCheckinKedatangan() {
+            const kategoriPilih = document.getElementById('pilih-kategori-checkin').value;
+            eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
         }
 
         function aksiUtamaCustomer() {
             tampilkanModalKonfirmasi("Konfirmasi", "Sudah membawa customer?", function() {
-                const namaSales = getAkunAktif().trim();
-                fetch(`${SCRIPT_URL}?aksi=ambilAntrian&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
-                .then(r => r.json()).then(() => muatDataAntrian());
+                eksekusiAksiInstan('ambilAntrian', 'Melayani');
             });
         }
 
         function aksiSelesaiClosing() {
             tampilkanModalKonfirmasi("Konfirmasi Selesai", "Selesai melayani customer?", function() {
-                const namaSales = getAkunAktif().trim();
-                fetch(`${SCRIPT_URL}?aksi=selesaiMelayani&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
-                .then(r => r.json()).then(() => muatDataAntrian());
+                eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
             });
         }
 
         function aksiToggleCS() {
             const statusSekarang = cekStatusSayaDariArray(daftarAntrianGlobal);
-            const namaSales = getAkunAktif().trim();
             if (statusSekarang === "Standby") {
                 tampilkanModalKonfirmasi("Dipanggil CS/Gudang", "Posisi antrian Anda akan dikunci sementara.", function() {
-                    fetch(`${SCRIPT_URL}?aksi=panggilCS&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
-                    .then(r => r.json()).then(() => muatDataAntrian());
+                    eksekusiAksiInstan('panggilCS', 'Dipanggil CS');
                 });
             } else {
-                fetch(`${SCRIPT_URL}?aksi=selesaiCS&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
-                .then(r => r.json()).then(() => muatDataAntrian());
+                eksekusiAksiInstan('selesaiCS', 'Standby');
             }
         }
 
         function bukaModalKeluarIstirahat() {
             tampilkanModalKonfirmasi("Keluar Antrian", "Yakin ingin keluar dari antrian?", function() {
-                const namaSales = getAkunAktif().trim();
-                fetch(`${SCRIPT_URL}?aksi=selesaiMelayani&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
-                .then(r => r.json()).then(() => muatDataAntrian());
+                eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
             });
         }
 
@@ -500,21 +523,10 @@
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(
                     function(position) {
-                        const latPromotor = position.coords.latitude;
-                        const lonPromotor = position.coords.longitude;
-                        const jarakMeter = hitungJarakHaversine(latPromotor, lonPromotor, koordinatToko.lat, koordinatToko.lng);
-
-                        const statusSaya = cekStatusSayaDariArray(daftarAntrianGlobal);
-                        if (jarakMeter > 50 && statusSaya === "Standby") {
-                            const namaSales = getAkunAktif().trim();
-                            if (namaSales) {
-                                fetch(`${SCRIPT_URL}?aksi=selesaiMelayani&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
-                                .then(r => r.json())
-                                .then(() => {
-                                    tampilkanModal("Auto-Exit GPS", "Anda berada di luar radius 50 meter dari toko. Anda otomatis dikeluarkan dari antrian.");
-                                    muatDataAntrian();
-                                });
-                            }
+                        const jarakMeter = hitungJarakHaversine(position.coords.latitude, position.coords.longitude, koordinatToko.lat, koordinatToko.lng);
+                        if (jarakMeter > 50 && cekStatusSayaDariArray(daftarAntrianGlobal) === "Standby") {
+                            eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
+                            tampilkanModal("Auto-Exit GPS", "Anda berada di luar radius 50 meter dari toko. Anda otomatis dikeluarkan dari antrian.");
                         }
                     },
                     function(error) {},
@@ -527,11 +539,8 @@
             const R = 6371000; 
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c; 
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
         }
 
         function tampilkanModal(judul, desc) {
