@@ -24,7 +24,7 @@
             --border: #cbd5e1;
         }
 
-        /* STYLING MODE GELAP DENGAN EFEK NEON BOX MENYALA PADA SEMUA ELEMEN */
+        /* STYLING MODE GELAP DENGAN EFEK NEON BOX MENYALA */
         body.dark-mode {
             --bg-color: #000000 !important;
             --card-bg: #030712 !important;
@@ -46,6 +46,10 @@
             border: 2px solid #ef4444 !important; 
             box-shadow: 0 0 25px rgba(239, 68, 68, 0.4) !important;
         }
+
+        /* TOMBOL TEMA / DARK MODE YANG JELAS TERBACA */
+        .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        body.dark-mode .dark-mode-btn { background: #18181b !important; color: #ffffff !important; border: 2px solid #3b82f6 !important; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
 
         body.dark-mode .status-badge-sistem {
             background: #064e3b !important;
@@ -89,7 +93,6 @@
             box-shadow: 0 0 30px rgba(245, 158, 11, 0.4) !important;
         }
 
-        /* PERBAIKAN TOMBOL BATAL DI MODE GELAP AGAR TEKS JELAS TERBACA */
         body.dark-mode .btn-cancel {
             background: #27272a !important;
             color: #ffffff !important;
@@ -139,7 +142,15 @@
             box-shadow: 0 0 25px rgba(5, 150, 105, 0.8) !important;
         }
 
-        /* KOTAK GILIRAN HA & AV (TAMPILAN LAMA DENGAN NEON BOX MENYALA DI MODE GELAP) */
+        /* EFEK DENYUT (PULSE) PADA TOMBOL UTAMA */
+        @keyframes pulseGlow {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.6); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        }
+        .btn-pulse { animation: pulseGlow 2s infinite; }
+
+        /* KOTAK GILIRAN HA & AV (TAMPILAN LAMA) */
         .timer-box-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
         .timer-card-admin { background: #f8fafc; border-radius: 14px; padding: 14px; text-align: center; border: 2px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
         
@@ -169,7 +180,6 @@
         .app-container { width: 100%; max-width: 500px; background: var(--card-bg); border-radius: 24px; padding: 24px; border: 2px solid var(--border); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.1); text-align: center; }
 
         .top-controls { display: flex; justify-content: flex-end; margin-bottom: 12px; }
-        .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 
         .gradient-header { background: linear-gradient(135deg, #dc2626 0%, #ffffff 100%); border-radius: 18px; padding: 22px; color: white; margin-bottom: 18px; box-shadow: 0 8px 20px -4px rgba(220, 38, 38, 0.3); }
         .gradient-header h2 { margin: 0; font-size: 22px; font-weight: 800; text-shadow: 1px 1px 4px rgba(0,0,0,0.6); }
@@ -194,7 +204,7 @@
         .btn-teal { background: var(--teal-cs); color: white; }
         .btn-amber { background: var(--amber-rest); color: white; }
         .btn-cancel { background: #e2e8f0; color: var(--text-main); }
-        .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; box-shadow: none !important; }
+        .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; box-shadow: none !important; animation: none !important; }
 
         .user-badge { background: #f8fafc; border: 2px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 18px; text-align: left; font-size: 14px; font-weight: 600; }
         .list-antrian { list-style: none; padding: 0; margin: 8px 0 0 0; text-align: left; }
@@ -206,7 +216,7 @@
         .badge-melayani { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
         .badge-cs { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
 
-        .wa-report-btn { margin-top: 12px; background: #25d366; border: 2px solid #1ebe57; color: white; font-size: 13px; padding: 14px; border-radius: 12px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 800; }
+        .wa-report-btn { margin-top: 16px; background: #25d366; border: 2px solid #1ebe57; color: white; font-size: 13px; padding: 14px; border-radius: 12px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 800; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 11, 20, 0.85); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.2s; padding: 16px; }
         .modal-overlay.active { opacity: 1; visibility: visible; }
@@ -240,7 +250,7 @@
                 <label>Pilih Nama Anda (Kunci Perangkat)</label>
                 <select id="pilih-sales"><option value="">-- Pilih Nama Anda --</option></select>
             </div>
-            <button type="button" id="btn-simpan-hp" class="btn-customer" onclick="simpanAkunHP()">Simpan & Kunci di HP Ini</button>
+            <button type="button" id="btn-simpan-hp" class="btn-customer btn-pulse" onclick="simpanAkunHP()">Simpan & Kunci di HP Ini</button>
         </div>
 
         <!-- PANEL MENU UTAMA -->
@@ -249,7 +259,7 @@
                 <span style="color: var(--text-muted);">Promotor:</span> <strong id="label-user-aktif" style="color:var(--primary-dark); font-size: 15px;">-</strong>
             </div>
 
-            <!-- KOTAK GILIRAN HA & AV (TAMPILAN LAMA) -->
+            <!-- KOTAK GILIRAN HA & AV -->
             <div class="timer-box-wrapper">
                 <div class="timer-card-admin ha">
                     <div>
@@ -275,7 +285,7 @@
                         <option value="AV">AV (Audio Video)</option>
                     </select>
                 </div>
-                <button type="button" id="btn-hadir" class="btn-success" onclick="aksiHadirKerja()">Konfirmasi Kehadiran & Masuk Antri</button>
+                <button type="button" id="btn-hadir" class="btn-success btn-pulse" onclick="aksiHadirKerja()">Konfirmasi Kehadiran & Masuk Antri</button>
             </div>
 
             <!-- SISTEM NORMAL -->
@@ -288,8 +298,8 @@
                     </select>
                 </div>
 
-                <button type="button" id="btn-daftar-antrian" class="btn-success" onclick="aksiDaftarAntrianNormal()" style="display: none; margin-top: 4px;">Daftar Antrian</button>
-                <button type="button" id="btn-utama-customer" class="btn-customer" onclick="aksiUtamaCustomer()" style="display: none; margin-top: 12px;">Sudah Membawa Customer</button>
+                <button type="button" id="btn-daftar-antrian" class="btn-success btn-pulse" onclick="aksiDaftarAntrianNormal()" style="display: none; margin-top: 4px;">Daftar Antrian</button>
+                <button type="button" id="btn-utama-customer" class="btn-customer btn-pulse" onclick="aksiUtamaCustomer()" style="display: none; margin-top: 12px;">Sudah Membawa Customer</button>
                 <button type="button" id="btn-selesai-closing" class="btn-closing" onclick="aksiSelesaiClosing()" style="display: none; margin-top: 10px;">SELESAI MELAYANI (DEAL / CLOSING)</button>
                 <button type="button" id="btn-utama-cs" class="btn-purple" onclick="aksiToggleCS()" style="display: none; margin-top: 12px;">DIPANGGIL CS/GUDANG (KUNCI POSISI)</button>
                 <button type="button" id="btn-keluar-istirahat" class="btn-amber" onclick="bukaModalKeluarIstirahat()" style="display: none; margin-top: 12px;">KELUAR ANTRIAN (ISTIRAHAT)</button>
@@ -306,7 +316,7 @@
         </div>
 
         <a href="https://wa.me/6289524391002" target="_blank" class="wa-report-btn">
-            Laporkan via WhatsApp
+            💬 Laporkan Kendala via WhatsApp
         </a>
     </div>
 
@@ -377,10 +387,11 @@
         }
 
         function initDarkMode() {
-            if (localStorage.getItem('ufo_dark_mode') === 'true') {
+            const isDark = localStorage.getItem('ufo_dark_mode') === 'true';
+            if (isDark) {
                 document.body.classList.add('dark-mode');
-                updateDarkButtonText(true);
             }
+            updateDarkButtonText(isDark);
         }
 
         function updateDarkButtonText(isDark) {
@@ -643,7 +654,7 @@
                     if (statusSistemGlobal === "TUTUP") {
                         btnDaftar.disabled = true; btnDaftar.className = "btn-success btn-disabled";
                     } else {
-                        btnDaftar.disabled = false; btnDaftar.className = "btn-success";
+                        btnDaftar.disabled = false; btnDaftar.className = "btn-success btn-pulse";
                     }
                 } else {
                     groupPilihKat.style.display = "none";
@@ -665,7 +676,7 @@
                             let apakahSayaBisaAmbil = (indexSaya === 0 || indexSaya === 1);
 
                             btnCustomer.disabled = !apakahSayaBisaAmbil; 
-                            btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer" : "btn-customer btn-disabled";
+                            btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer btn-pulse" : "btn-customer btn-disabled";
                             btnCS.disabled = false; btnCS.className = "btn-purple";
                             btnKeluar.disabled = false; btnKeluar.className = "btn-amber";
                         }
@@ -738,6 +749,7 @@
             });
         }
 
+        // VALIDASI GPS LENGKAP DENGAN POPUP JARAK METER
         function validasiGpsDanJalankan(callbackBerhasil, selesaiCallback) {
             if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                 callbackBerhasil();
