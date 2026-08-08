@@ -310,7 +310,7 @@
         let masterSalesGlobal = [];
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
-        let koordinatToko = { lat: "", lng: "", radius: 50 }; 
+        let koordinatToko = { lat: "", lng: "", radius: 50, statusGps: "OFF" }; 
         let localActionActive = false;
         let sedangDiprosesPromotor = false;
 
@@ -442,9 +442,11 @@
 
                 const btn = document.getElementById('btn-simpan-hp');
                 const textAsli = btn.innerHTML;
-                btn.innerHTML = `<span class="spinner" style="width:14px; height:14px; border:2px solid #fff; border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite; display:inline-block;"></span> Memeriksa Lokasi...`;
-
-                if (koordinatToko.lat && koordinatToko.lng && koordinatToko.lat !== "" && koordinatToko.lng !== "") {
+                
+                const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
+                
+                if (gpsAktif && koordinatToko.lat && koordinatToko.lng && koordinatToko.lat !== "" && koordinatToko.lng !== "") {
+                    btn.innerHTML = `<span class="spinner" style="width:14px; height:14px; border:2px solid #fff; border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite; display:inline-block;"></span> Memeriksa Lokasi...`;
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(
                             function(position) {
@@ -548,6 +550,7 @@
                 koordinatToko.lat = koordinatServer.lat || "";
                 koordinatToko.lng = koordinatServer.lng || "";
                 koordinatToko.radius = Number(koordinatServer.radius) || 50;
+                koordinatToko.statusGps = koordinatServer.statusGps || koordinatServer.gps || "OFF";
             }
 
             const badge = document.getElementById('badge-status-sistem');
@@ -602,66 +605,68 @@
             
             let sudahCheckinPernahHariIni = localStorage.getItem('ufo_checkin_hari_ini') === 'true';
 
-            if (!sudahCheckinPernahHariIni) {
+            if (statusSayaNyata !== "belum_ada") {
+                sectionCheckinAwal.style.display = 'none';
+                sectionNormal.style.display = 'block';
+            } else if (!sudahCheckinPernahHariIni) {
                 sectionCheckinAwal.style.display = 'block';
                 sectionNormal.style.display = 'none';
             } else {
                 sectionCheckinAwal.style.display = 'none';
                 sectionNormal.style.display = 'block';
+            }
 
-                const btnDaftar = document.getElementById('btn-daftar-antrian');
-                const groupPilihKat = document.getElementById('group-pilih-kategori-normal');
-                const btnCustomer = document.getElementById('btn-utama-customer');
-                const btnClosing = document.getElementById('btn-selesai-closing');
-                const btnCS = document.getElementById('btn-utama-cs');
-                const btnKeluar = document.getElementById('btn-keluar-istirahat');
+            const btnDaftar = document.getElementById('btn-daftar-antrian');
+            const groupPilihKat = document.getElementById('group-pilih-kategori-normal');
+            const btnCustomer = document.getElementById('btn-utama-customer');
+            const btnClosing = document.getElementById('btn-selesai-closing');
+            const btnCS = document.getElementById('btn-utama-cs');
+            const btnKeluar = document.getElementById('btn-keluar-istirahat');
 
-                if (statusSayaNyata === "belum_ada") {
-                    groupPilihKat.style.display = "block";
-                    btnDaftar.style.display = "block";
-                    btnCustomer.style.display = "none";
+            if (statusSayaNyata === "belum_ada") {
+                groupPilihKat.style.display = "block";
+                btnDaftar.style.display = "block";
+                btnCustomer.style.display = "none";
+                btnClosing.style.display = "none";
+                btnCS.style.display = "none";
+                btnKeluar.style.display = "none";
+
+                if (statusSistemGlobal === "TUTUP") {
+                    btnDaftar.disabled = true; btnDaftar.className = "btn-success btn-disabled";
+                } else {
+                    btnDaftar.disabled = false; btnDaftar.className = "btn-success btn-pulse";
+                }
+            } else {
+                groupPilihKat.style.display = "none";
+                btnDaftar.style.display = "none";
+
+                if (statusSayaNyata === "Standby") {
+                    btnCustomer.style.display = "block"; 
                     btnClosing.style.display = "none";
-                    btnCS.style.display = "none";
-                    btnKeluar.style.display = "none";
+                    btnCS.style.display = "block"; 
+                    btnKeluar.style.display = "block";
 
                     if (statusSistemGlobal === "TUTUP") {
-                        btnDaftar.disabled = true; btnDaftar.className = "btn-success btn-disabled";
+                        btnCustomer.disabled = true; btnCustomer.className = "btn-customer btn-disabled";
+                        btnCS.disabled = true; btnCS.className = "btn-purple btn-disabled";
+                        btnKeluar.disabled = true; btnKeluar.className = "btn-amber btn-disabled";
                     } else {
-                        btnDaftar.disabled = false; btnDaftar.className = "btn-success btn-pulse";
+                        let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && String(it.kategori || "").trim().toUpperCase() === kategoriSayaAktif);
+                        let indexSaya = listSubStandby.findIndex(it => String(it.nama).trim().toLowerCase() === akunSaya);
+                        let apakahSayaBisaAmbil = (indexSaya >= 0 && indexSaya <= 2);
+
+                        btnCustomer.disabled = !apakahSayaBisaAmbil; 
+                        btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer btn-pulse" : "btn-customer btn-disabled";
+                        btnCS.disabled = false; btnCS.className = "btn-purple";
+                        btnKeluar.disabled = false; btnKeluar.className = "btn-amber";
                     }
-                } else {
-                    groupPilihKat.style.display = "none";
-                    btnDaftar.style.display = "none";
-
-                    if (statusSayaNyata === "Standby") {
-                        btnCustomer.style.display = "block"; 
-                        btnClosing.style.display = "none";
-                        btnCS.style.display = "block"; 
-                        btnKeluar.style.display = "block";
-
-                        if (statusSistemGlobal === "TUTUP") {
-                            btnCustomer.disabled = true; btnCustomer.className = "btn-customer btn-disabled";
-                            btnCS.disabled = true; btnCS.className = "btn-purple btn-disabled";
-                            btnKeluar.disabled = true; btnKeluar.className = "btn-amber btn-disabled";
-                        } else {
-                            // Mengizinkan urutan 1, 2, dan 3 untuk mengambil aksi
-                            let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && String(it.kategori || "").trim().toUpperCase() === kategoriSayaAktif);
-                            let indexSaya = listSubStandby.findIndex(it => String(it.nama).trim().toLowerCase() === akunSaya);
-                            let apakahSayaBisaAmbil = (indexSaya >= 0 && indexSaya <= 2);
-
-                            btnCustomer.disabled = !apakahSayaBisaAmbil; 
-                            btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer btn-pulse" : "btn-customer btn-disabled";
-                            btnCS.disabled = false; btnCS.className = "btn-purple";
-                            btnKeluar.disabled = false; btnKeluar.className = "btn-amber";
-                        }
-                    } else if (statusSayaNyata === "Melayani") {
-                        btnCustomer.style.display = "none"; btnClosing.style.display = "block";
-                        btnCS.style.display = "none"; btnKeluar.style.display = "none";
-                    } else if (statusSayaNyata === "Dipanggil CS/GUDANG" || statusSayaNyata === "Dipanggil CS") {
-                        btnCustomer.style.display = "none"; btnClosing.style.display = "none";
-                        btnCS.style.display = "block"; btnCS.innerText = "SELESAI CS/GUDANG (KEMBALI ANTRI)"; btnCS.className = "btn-teal"; btnCS.disabled = false;
-                        btnKeluar.style.display = "none";
-                    }
+                } else if (statusSayaNyata === "Melayani") {
+                    btnCustomer.style.display = "none"; btnClosing.style.display = "block";
+                    btnCS.style.display = "none"; btnKeluar.style.display = "none";
+                } else if (statusSayaNyata === "Dipanggil CS/GUDANG" || statusSayaNyata === "Dipanggil CS") {
+                    btnCustomer.style.display = "none"; btnClosing.style.display = "none";
+                    btnCS.style.display = "block"; btnCS.innerText = "SELESAI CS/GUDANG (KEMBALI ANTRI)"; btnCS.className = "btn-teal"; btnCS.disabled = false;
+                    btnKeluar.style.display = "none";
                 }
             }
         }
@@ -724,7 +729,9 @@
         }
 
         function validasiGpsDanJalankan(callbackBerhasil, selesaiCallback) {
-            if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+            const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
+
+            if (!gpsAktif || !koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                 callbackBerhasil();
                 return;
             }
@@ -738,6 +745,7 @@
                         );
                         const batasRadius = Number(koordinatToko.radius) || 10;
 
+                        // PERBAIKAN: Jika masih di luar radius, pastikan selesaiCallback() dipanggil agar tombol kembali aktif & tidak bisa tembus daftar
                         if (jarakMeter > batasRadius) {
                             tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean! Anda berada di luar radius toko (${Math.round(jarakMeter)} meter dari titik toko). Batas maksimal adalah ${batasRadius} meter. Harap masuk ke area toko.`);
                             if (selesaiCallback) selesaiCallback();
@@ -819,7 +827,8 @@
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(
                     function(position) {
-                        if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+                        const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
+                        if (!gpsAktif || !koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                             return; 
                         }
 
