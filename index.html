@@ -174,7 +174,6 @@
         </a>
     </div>
 
-    <!-- MODAL -->
     <div id="custom-modal" class="modal-overlay">
         <div class="modal-box">
             <div id="modal-title" class="modal-title">Pemberitahuan</div>
@@ -192,7 +191,7 @@
         let masterSalesGlobal = [];
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
-        let koordinatToko = { lat: -7.9666, lng: 112.6326 }; 
+        let koordinatToko = { lat: "", lng: "", radius: 50 }; 
         let localActionActive = false;
 
         window.onload = function() {
@@ -340,8 +339,10 @@
 
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
-            if (koordinatServer && koordinatServer.lat && koordinatServer.lng) {
-                koordinatToko = koordinatServer;
+            if (koordinatServer) {
+                koordinatToko.lat = koordinatServer.lat || "";
+                koordinatToko.lng = koordinatServer.lng || "";
+                koordinatToko.radius = Number(koordinatServer.radius) || 50;
             }
 
             const badge = document.getElementById('badge-status-sistem');
@@ -446,7 +447,6 @@
             }).catch(() => {});
         }
 
-        // --- AKSI INSTAN (OPTIMISTIC UI) ---
         function eksekusiAksiInstan(aksiServer, targetStatusSimulasi, subKatBaru = null) {
             const namaSales = getAkunAktif().trim();
             if (!namaSales) return;
@@ -519,21 +519,20 @@
             });
         }
 
-       function mulaiPemantauanGPS() {
+        function mulaiPemantauanGPS() {
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(
                     function(position) {
-                        // Jika SPV mengosongkan koordinat di sheet (kosong / 0 / null), batasan GPS dilewati
-                        if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat == "" || koordinatToko.lng == "") {
+                        if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                             return; 
                         }
 
                         const jarakMeter = hitungJarakHaversine(position.coords.latitude, position.coords.longitude, Number(koordinatToko.lat), Number(koordinatToko.lng));
-                        
-                        // Jika jarak > 50 meter dan status promotor sedang standby di antrian
-                        if (jarakMeter > 50 && cekStatusSayaDariArray(daftarAntrianGlobal) === "Standby") {
+                        const batasRadius = koordinatToko.radius || 50;
+
+                        if (jarakMeter > batasRadius && cekStatusSayaDariArray(daftarAntrianGlobal) === "Standby") {
                             eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
-                            tampilkanModal("Auto-Exit GPS", "Anda berada di luar radius 50 meter dari toko. Anda otomatis dikeluarkan dari antrean.");
+                            tampilkanModal("Auto-Exit GPS", `Anda berada di luar radius ${batasRadius} meter dari toko. Anda otomatis dikeluarkan dari antrean.`);
                         }
                     },
                     function(error) {},
