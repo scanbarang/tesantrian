@@ -181,12 +181,12 @@
                 <ul id="item-antrian-list-AV" class="list-antrian"><li><span>Memuat...</span></li></ul>
             </div>
 
-            <!-- TAMBAHAN: PENGATURAN TITIK GPS TOKO UNTUK RADIUS 50 METER -->
-            <div class="section-title">Pengaturan Titik GPS Toko (Radius 50M)</div>
+            <div class="section-title">Pengaturan Titik GPS Toko & Radius</div>
             <div class="spv-grid" style="margin-bottom: 15px;">
                 <input type="text" id="input-lat-toko" placeholder="Latitude Toko (Cth: -7.9666)">
                 <input type="text" id="input-lng-toko" placeholder="Longitude Toko (Cth: 112.6326)">
-                <button type="button" class="btn-teal" onclick="simpanLokasiTokoSPV()">Simpan Titik GPS Toko</button>
+                <input type="number" id="input-radius-toko" placeholder="Radius (Meter, Cth: 50)">
+                <button type="button" class="btn-teal" onclick="simpanLokasiTokoSPV()">Simpan Pengaturan GPS Toko</button>
             </div>
 
             <div class="section-title">1. Kontrol Sistem Antrian</div>
@@ -229,7 +229,6 @@
         </div>
     </div>
 
-    <!-- MODAL POPUP -->
     <div id="custom-modal" class="modal-overlay">
         <div class="modal-box">
             <div id="modal-title" class="modal-title">Pemberitahuan</div>
@@ -318,6 +317,7 @@
             if (res.koordinatPusat) {
                 document.getElementById('input-lat-toko').value = res.koordinatPusat.lat || "";
                 document.getElementById('input-lng-toko').value = res.koordinatPusat.lng || "";
+                document.getElementById('input-radius-toko').value = res.koordinatPusat.radius || 50;
             }
 
             let listMC = "", listAC = "", listAV = "";
@@ -344,7 +344,7 @@
                         else if (sub === "AC") urut = urutAC++;
                         else if (sub === "AV") urut = urutAV++;
 
-                        let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-standby">Giliran Anda</span>` : `<span class="badge-status-item badge-standby">Standby (${urut})</span>`;
+                        let badgeHtml = `<span class="badge-status-item badge-standby">Standby (${urut})</span>`;
                         itemHtml = `<li><b>${urut}. ${item.nama}</b> ${badgeHtml}</li>`;
                     } else if (item.status === "Melayani") {
                         itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-melayani">Melayani</span></li>`;
@@ -445,21 +445,21 @@
             });
         }
 
-       function simpanLokasiTokoSPV() {
+        function simpanLokasiTokoSPV() {
             const pin = getActivePinSPV();
             const lat = document.getElementById('input-lat-toko').value.trim();
             const lng = document.getElementById('input-lng-toko').value.trim();
+            const radius = document.getElementById('input-radius-toko').value.trim() || "50";
             if (!pin) return alert("PIN SPV tidak ditemukan!");
             
-            fetch(`${SCRIPT_URL}?aksi=spvSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&t=${Date.now()}`)
-            .then(r => r.json()).then(res => tampilkanModal("Titik GPS Toko", res.pesan));
+            fetch(`${SCRIPT_URL}?aksi=spvSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&radius=${encodeURIComponent(radius)}&t=${Date.now()}`)
+            .then(r => r.json()).then(res => tampilkanModal("Pengaturan GPS Toko", res.pesan));
         }
 
         function bukaModalToggleSistem(targetStatus) {
-            const currentPin = getActivePinSPV();
             document.getElementById('modal-title').innerText = targetStatus === 'BUKA' ? 'Mulai Antrian' : 'Hentikan Antrian';
             document.getElementById('modal-desc').innerHTML = `Status baru: <b>${targetStatus}</b>`;
-            document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button><button type="button" id="btn-modal-proses" class="btn-primary" onclick="eksekusiToggleSistem('${targetStatus}')">Proses</button>`;
+            document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button><button type="button" class="btn-primary" onclick="eksekusiToggleSistem('${targetStatus}')">Proses</button>`;
             document.getElementById('custom-modal').classList.add('active');
         }
 
@@ -475,7 +475,7 @@
         function bukaModalResetTotal() {
             document.getElementById('modal-title').innerText = 'Reset Semua Antrian';
             document.getElementById('modal-desc').innerHTML = `⚠️ <b>PERINGATAN:</b><br>Semua antrian akan dihapus total.`;
-            document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button><button type="button" id="btn-modal-reset" class="btn-danger" onclick="eksekusiResetTotal()">Reset Sekarang</button>`;
+            document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button><button type="button" class="btn-danger" onclick="eksekusiResetTotal()">Reset Sekarang</button>`;
             document.getElementById('custom-modal').classList.add('active');
         }
 
@@ -489,7 +489,6 @@
         }
 
         function bukaModalTambahAntriSpv() {
-            const currentPin = getActivePinSPV();
             document.getElementById('modal-title').innerText = "Masukkan Promotor ke Antrian";
             let optionsSales = '<option value="">-- Pilih Promotor --</option>';
             masterSalesGlobal.forEach(n => { let nama = typeof n === 'object' ? n.nama : n; optionsSales += `<option value="${nama}">${nama}</option>`; });
