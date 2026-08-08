@@ -25,7 +25,7 @@
             --border: #cbd5e1;
         }
 
-        /* STYLING MODE GELAP: SEMUA ELEMEN & TOMBOL MERAH MENYALA */
+        /* STYLING MODE GELAP */
         body.dark-mode {
             --bg-color: #080203 !important;
             --card-bg: #140406 !important;
@@ -36,25 +36,21 @@
 
         body.dark-mode { background: #080203 !important; }
         
-        /* KOTAK UTAMA: Neon Merah Menyala */
         body.dark-mode .app-container { 
             background: #140406 !important; 
             border: 2px solid #ef4444 !important; 
             box-shadow: 0 0 50px rgba(239, 68, 68, 0.45) !important; 
         }
 
-        /* HEADER: Neon Merah Terang */
         body.dark-mode .gradient-header { 
             background: linear-gradient(135deg, #450a0a 0%, #1f0505 100%) !important; 
             border: 2px solid #f87171 !important; 
             box-shadow: 0 0 35px rgba(248, 113, 113, 0.6) !important;
         }
 
-        /* TOMBOL TEMA */
         .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
         body.dark-mode .dark-mode-btn { background: #450a0a !important; color: #ffffff !important; border: 2px solid #f87171 !important; box-shadow: 0 0 20px rgba(248, 113, 113, 0.6); }
 
-        /* STATUS BADGE */
         body.dark-mode .status-badge-sistem {
             background: #450a0a !important;
             color: #fca5a5 !important;
@@ -62,7 +58,6 @@
             box-shadow: 0 0 25px rgba(239, 68, 68, 0.7) !important;
         }
 
-        /* INPUT & SELECT */
         body.dark-mode select, body.dark-mode input[type="text"] { 
             background: #1f0505 !important; 
             color: #ffffff !important; 
@@ -77,7 +72,6 @@
             box-shadow: none !important;
         }
 
-        /* USER BADGE */
         body.dark-mode .user-badge { 
             background: #2b0a0d !important; 
             border: 2px solid #f87171 !important; 
@@ -85,7 +79,6 @@
             box-shadow: 0 0 25px rgba(248, 113, 113, 0.6) !important;
         }
 
-        /* KOTAK GILIRAN HA & AV */
         .timer-box-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
         .timer-card-admin { background: #f8fafc; border-radius: 14px; padding: 14px; text-align: center; border: 2px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
         
@@ -103,7 +96,6 @@
         .promotor-nama-aktif { font-size: 15px; font-weight: 800; color: var(--text-main); margin-top: 2px; line-height: 1.3; min-height: 36px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
         body.dark-mode .promotor-nama-aktif { color: #ffffff !important; }
 
-        /* LIVE URUTAN ANTRIAN */
         body.dark-mode .list-antrian li { 
             background: #1f0505 !important; 
             border: 2px solid #f87171 !important; 
@@ -111,7 +103,6 @@
             box-shadow: 0 0 20px rgba(248, 113, 113, 0.5) !important;
         }
 
-        /* MODAL BOX */
         body.dark-mode .modal-box { 
             background: #2b0a0d !important; 
             border: 2px solid #ef4444 !important; 
@@ -126,7 +117,6 @@
             box-shadow: 0 0 15px rgba(113, 113, 122, 0.5) !important;
         }
 
-        /* PAKSA SEMUA TOMBOL DI MODE GELAP MENJADI MERAH MENYALA */
         body.dark-mode button:not(.dark-mode-btn):not(.btn-disabled) {
             background: #dc2626 !important;
             color: #ffffff !important;
@@ -134,7 +124,6 @@
             box-shadow: 0 0 25px rgba(248, 113, 113, 0.7) !important;
         }
 
-        /* EFEK DENYUT (PULSE) MERAH UNTUK TOMBOL UTAMA */
         @keyframes pulseGlow {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
             70% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
@@ -142,13 +131,16 @@
         }
         .btn-pulse { animation: pulseGlow 2s infinite; }
 
-        /* EFEK DENYUT (PULSE) HIJAU KHUSUS TOMBOL WHATSAPP */
         @keyframes pulseGreen {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
             70% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
         .wa-pulse { animation: pulseGreen 2s infinite; }
+
+        /* SPINNER / LOADING ANIMATION */
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .spinner { display: inline-block; width: 16px; height: 16px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s ease-in-out infinite; vertical-align: middle; margin-right: 6px; }
 
         *, body, button, select, input { font-family: 'Plus Jakarta Sans', sans-serif !important; box-sizing: border-box; }
         body { background: var(--bg-color); color: var(--text-main); margin: 0; padding: 16px; display: flex; justify-content: center; min-height: 100vh; }
@@ -278,7 +270,6 @@
                 <button type="button" id="btn-selesai-closing" class="btn-closing" onclick="aksiSelesaiClosing()" style="display: none; margin-top: 10px;">SELESAI MELAYANI (DEAL / CLOSING)</button>
                 <button type="button" id="btn-utama-cs" class="btn-purple" onclick="aksiToggleCS()" style="display: none; margin-top: 12px;">DIPANGGIL CS/GUDANG (KUNCI POSISI)</button>
                 
-                <!-- TOMBOL IBADAH -->
                 <button type="button" id="btn-utama-ibadah" class="btn-indigo" onclick="aksiToggleIbadah()" style="display: none; margin-top: 12px;">SEDANG IBADAH (KUNCI POSISI)</button>
 
                 <button type="button" id="btn-keluar-istirahat" class="btn-amber" onclick="bukaModalKeluarIstirahat()" style="display: none; margin-top: 12px;">KELUAR ANTRIAN (ISTIRAHAT)</button>
@@ -432,15 +423,21 @@
                 return;
             }
 
+            const btn = document.getElementById('btn-simpan-hp');
+            setButtonLoading(btn, true, "Menyimpan Perangkat...");
+
             validasiGpsDanJalankan(function() {
-                lanjutkanSimpanAkun(namaPilih, deviceId);
+                lanjutkanSimpanAkun(namaPilih, deviceId, btn);
+            }, function() {
+                setButtonLoading(btn, false, "Simpan & Kunci di HP Ini");
             });
         }
 
-        function lanjutkanSimpanAkun(namaPilih, deviceId) {
+        function lanjutkanSimpanAkun(namaPilih, deviceId, btnElement) {
             fetch(`${SCRIPT_URL}?aksi=kunciPerangkat&namaSales=${encodeURIComponent(namaPilih)}&deviceId=${encodeURIComponent(deviceId)}&t=${Date.now()}`)
             .then(res => res.json())
             .then(res => {
+                setButtonLoading(btnElement, false, "Simpan & Kunci di HP Ini");
                 if(res.status === "sukses") {
                     namaSalesAktifGlobal = namaPilih;
                     localStorage.setItem('ufo_nama_sales_aktif', namaPilih);
@@ -452,6 +449,7 @@
                     tampilkanModal("Akses Ditolak", res.pesan); 
                 }
             }).catch(() => {
+                setButtonLoading(btnElement, false, "Simpan & Kunci di HP Ini");
                 tampilkanModal("Gagal", "Terjadi gangguan jaringan saat menyimpan perangkat.");
             });
         }
@@ -500,7 +498,6 @@
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
             
-            // SINKRONISASI OTOMATIS: Ambil koordinat dan radius langsung dari Sheet
             if (koordinatServer) {
                 koordinatToko.lat = koordinatServer.lat || "";
                 koordinatToko.lng = koordinatServer.lng || "";
@@ -695,8 +692,21 @@
             });
         }
 
-        function validasiGpsDanJalankan(callbackBerhasil) {
-            // VALIDASI MUTLAK: Selama koordinat di Sheet terisi, GPS WAJIB aktif dan jarak dicek!
+        // FUNGSI BANTUAN SPINNER TOMBOL
+        function setButtonLoading(btnElement, isLoading, defaultText) {
+            if (!btnElement) return;
+            if (isLoading) {
+                btnElement.disabled = true;
+                btnElement.classList.add('btn-disabled');
+                btnElement.innerHTML = `<span class="spinner"></span> Memeriksa Lokasi GPS...`;
+            } else {
+                btnElement.disabled = false;
+                btnElement.classList.remove('btn-disabled');
+                btnElement.innerHTML = defaultText;
+            }
+        }
+
+        function validasiGpsDanJalankan(callbackBerhasil, callbackBatal) {
             if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                 callbackBerhasil();
                 return;
@@ -711,8 +721,8 @@
                         );
                         const batasRadius = Number(koordinatToko.radius) || 10;
 
-                        // JIKA DI LUAR RADIUS: BLOKIR TOTAL DENGAN TEGAS
                         if (jarakMeter > batasRadius) {
+                            if (callbackBatal) callbackBatal();
                             tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal dari Sheet: ${batasRadius} meter.\n\nAnda berada di luar area toko.`);
                             return; 
                         }
@@ -720,27 +730,41 @@
                         callbackBerhasil();
                     },
                     function(error) {
+                        if (callbackBatal) callbackBatal();
                         tampilkanModal("GPS Wajib Aktif", "Gagal mendeteksi lokasi GPS Anda. Harap aktifkan GPS / izinkan akses lokasi pada perangkat Anda untuk mendaftar.");
                     },
                     { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
                 );
             } else {
+                if (callbackBatal) callbackBatal();
                 tampilkanModal("Tidak Mendukung", "Browser Anda tidak mendukung fitur GPS.");
             }
         }
 
         function aksiHadirKerja() {
+            const btn = document.getElementById('btn-hadir');
+            setButtonLoading(btn, true, "Konfirmasi Kehadiran & Masuk Antri");
+
             validasiGpsDanJalankan(function() {
+                setButtonLoading(btn, false, "Konfirmasi Kehadiran & Masuk Antri");
                 const kategoriPilih = document.getElementById('pilih-kategori-hadir').value;
                 localStorage.setItem('ufo_checkin_hari_ini', 'true');
                 eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
+            }, function() {
+                setButtonLoading(btn, false, "Konfirmasi Kehadiran & Masuk Antri");
             });
         }
 
         function aksiDaftarAntrianNormal() {
+            const btn = document.getElementById('btn-daftar-antrian');
+            setButtonLoading(btn, true, "Daftar Antrian");
+
             validasiGpsDanJalankan(function() {
+                setButtonLoading(btn, false, "Daftar Antrian");
                 const kategoriPilih = document.getElementById('pilih-kategori-normal').value;
                 eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
+            }, function() {
+                setButtonLoading(btn, false, "Daftar Antrian");
             });
         }
 
