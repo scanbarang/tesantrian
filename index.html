@@ -327,6 +327,15 @@
         let circleTokoPeta = null;
         let markerSayaPeta = null;
 
+        // Fungsi Helper untuk format tanggal Indonesia dd-mm-yyyy
+        function getTanggalIndo() {
+            const now = new Date();
+            const dd = String(now.getDate()).padStart(2, '0');
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const yyyy = now.getFullYear();
+            return `${dd}-${mm}-${yyyy}`;
+        }
+
         window.onload = function() {
             initDarkMode();
             
@@ -337,6 +346,14 @@
 
             muatMasterSalesInstant();
             muatCacheAntrianInstan();
+            
+            // Validasi Check-in harian (1 kali sehari berdasarkan format dd-mm-yyyy)
+            const tanggalHariIni = getTanggalIndo();
+            const tanggalCheckinTerakhir = localStorage.getItem('ufo_checkin_tanggal') || "";
+            if (tanggalCheckinTerakhir !== tanggalHariIni) {
+                localStorage.removeItem('ufo_checkin_hari_ini');
+                localStorage.setItem('ufo_checkin_tanggal', tanggalHariIni);
+            }
             
             const cachedNama = localStorage.getItem('ufo_nama_sales_aktif');
             if (cachedNama) {
@@ -778,7 +795,11 @@
             validasiGpsDanJalankan(function() {
                 setButtonLoading(btn, false, "Konfirmasi Kehadiran & Masuk Antri");
                 const kategoriPilih = document.getElementById('pilih-kategori-hadir').value;
+                
+                const tanggalHariIni = getTanggalIndo();
                 localStorage.setItem('ufo_checkin_hari_ini', 'true');
+                localStorage.setItem('ufo_checkin_tanggal', tanggalHariIni);
+
                 eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
             }, function() {
                 setButtonLoading(btn, false, "Konfirmasi Kehadiran & Masuk Antri");
@@ -821,7 +842,7 @@
             }
         }
 
-   function aksiToggleIbadah() {
+        function aksiToggleIbadah() {
             const statusSekarang = cekStatusSayaDariArray(daftarAntrianGlobal);
             if (statusSekarang === "Standby") {
                 tampilkanModalKonfirmasi("Ibadah", "Posisi antrian Anda akan dikunci sementara selama ibadah.", function() {
@@ -831,6 +852,7 @@
                 eksekusiAksiInstan('selesaiIbadah', 'Standby');
             }
         }
+
         function bukaModalKeluarIstirahat() {
             tampilkanModalKonfirmasi("Keluar Antrian", "Yakin ingin keluar dari antrian?", function() {
                 eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
