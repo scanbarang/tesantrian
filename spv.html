@@ -167,26 +167,26 @@
             </div>
 
             <div class="list-section-wrapper">
-                <div style="font-size: 13px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 10px; text-transform: uppercase;">LIVE URUTAN HA (Lantai 1)</div>
+                <div style="font-size: 13px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 10px; text-transform: uppercase;">LIVE URUTAN KATEGORI HA</div>
                 
-                <span class="sub-section-title">Mesin Cuci</span>
-                <ul id="item-antrian-list-Mesin Cuci" class="list-antrian"><li><span>Memuat...</span></li></ul>
-
-                <span class="sub-section-title">Lemari Es</span>
-                <ul id="item-antrian-list-Lemari Es" class="list-antrian"><li><span>Memuat...</span></li></ul>
+                <span class="sub-section-title">Mesin Cuci & Lemari Es</span>
+                <ul id="item-antrian-list-Mesin Cuci & Lemari Es" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
                 <span class="sub-section-title">AC</span>
                 <ul id="item-antrian-list-AC" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
-                <div style="font-size: 13px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 16px; margin-bottom: 10px; text-transform: uppercase;">LIVE URUTAN HA (Lantai 2)</div>
-
-                <span class="sub-section-title">Freezer Box / Showcase</span>
-                <ul id="item-antrian-list-Frezeer Box / Showcase" class="list-antrian"><li><span>Memuat...</span></li></ul>
-
                 <div style="font-size: 13px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 16px; margin-bottom: 10px; text-transform: uppercase;">LIVE URUTAN KATEGORI AV</div>
 
-                <span class="sub-section-title">Audio Video (Umum)</span>
+                <span class="sub-section-title">Audio Video (AV)</span>
                 <ul id="item-antrian-list-AV" class="list-antrian"><li><span>Memuat...</span></li></ul>
+            </div>
+
+            <!-- TAMBAHAN: PENGATURAN TITIK GPS TOKO UNTUK RADIUS 50 METER -->
+            <div class="section-title">Pengaturan Titik GPS Toko (Radius 50M)</div>
+            <div class="spv-grid" style="margin-bottom: 15px;">
+                <input type="text" id="input-lat-toko" placeholder="Latitude Toko (Cth: -7.9666)">
+                <input type="text" id="input-lng-toko" placeholder="Longitude Toko (Cth: 112.6326)">
+                <button type="button" class="btn-teal" onclick="simpanLokasiTokoSPV()">Simpan Titik GPS Toko</button>
             </div>
 
             <div class="section-title">1. Kontrol Sistem Antrian</div>
@@ -315,8 +315,13 @@
             badge.innerText = statusSistem === "BUKA" ? "STATUS: OPEN" : "STATUS: CLOSED";
             badge.className = statusSistem === "BUKA" ? "status-badge status-open" : "status-badge status-closed";
 
-            let listMesinCuci = "", listLemariEs = "", listAC = "", listFreezer = "", listAV = "";
-            let urutMC = 1, urutLE = 1, urutAC = 1, urutFreezer = 1, urutAV = 1;
+            if (res.koordinatPusat) {
+                document.getElementById('input-lat-toko').value = res.koordinatPusat.lat || "";
+                document.getElementById('input-lng-toko').value = res.koordinatPusat.lng || "";
+            }
+
+            let listMC = "", listAC = "", listAV = "";
+            let urutMC = 1, urutAC = 1, urutAV = 1;
             
             const data = res.data || [];
             daftarAntrianGlobal = data;
@@ -330,32 +335,14 @@
 
             if(data.length > 0) {
                 data.forEach((item) => {
-                    let sub = item.subkategori ? String(item.subkategori).trim() : "";
-                    let kat = item.kategori ? String(item.kategori).trim() : "HA";
+                    let sub = item.subkategori ? String(item.subkategori).trim() : "Mesin Cuci & Lemari Es";
                     
-                    let targetListKey = "Mesin Cuci";
-                    if (kat === "AV") {
-                        targetListKey = "AV";
-                    } else if (sub.includes("Mesin Cuci")) {
-                        targetListKey = "Mesin Cuci";
-                    } else if (sub.includes("Lemari Es")) {
-                        targetListKey = "Lemari Es";
-                    } else if (sub.includes("AC")) {
-                        targetListKey = "AC";
-                    } else if (sub.includes("Frezeer Box / Showcase")) {
-                        targetListKey = "Frezeer Box / Showcase";
-                    } else {
-                        targetListKey = "Mesin Cuci";
-                    }
-
                     let itemHtml = "";
                     if (item.status === "Standby") {
                         let urut = 1;
-                        if (targetListKey === "Mesin Cuci") urut = urutMC++;
-                        else if (targetListKey === "Lemari Es") urut = urutLE++;
-                        else if (targetListKey === "AC") urut = urutAC++;
-                        else if (targetListKey === "Frezeer Box / Showcase") urut = urutFreezer++;
-                        else if (targetListKey === "AV") urut = urutAV++;
+                        if (sub === "Mesin Cuci & Lemari Es") urut = urutMC++;
+                        else if (sub === "AC") urut = urutAC++;
+                        else if (sub === "AV") urut = urutAV++;
 
                         let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-standby">Giliran Anda</span>` : `<span class="badge-status-item badge-standby">Standby (${urut})</span>`;
                         itemHtml = `<li><b>${urut}. ${item.nama}</b> ${badgeHtml}</li>`;
@@ -365,19 +352,15 @@
                         itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-cs">Dipanggil CS/Gudang</span></li>`;
                     }
 
-                    if (targetListKey === "Mesin Cuci") listMesinCuci += itemHtml;
-                    else if (targetListKey === "Lemari Es") listLemariEs += itemHtml;
-                    else if (targetListKey === "AC") listAC += itemHtml;
-                    else if (targetListKey === "Frezeer Box / Showcase") listFreezer += itemHtml;
-                    else if (targetListKey === "AV") listAV += itemHtml;
+                    if (sub === "Mesin Cuci & Lemari Es") listMC += itemHtml;
+                    else if (sub === "AC") listAC += itemHtml;
+                    else if (sub === "AV") listAV += itemHtml;
                 });
             }
 
             const kosongHtml = "<li><span style='color:#64748b; font-style:italic;'>Belum ada antrian</span></li>";
-            document.getElementById('item-antrian-list-Mesin Cuci').innerHTML = listMesinCuci || kosongHtml;
-            document.getElementById('item-antrian-list-Lemari Es').innerHTML = listLemariEs || kosongHtml;
+            document.getElementById('item-antrian-list-Mesin Cuci & Lemari Es').innerHTML = listMC || kosongHtml;
             document.getElementById('item-antrian-list-AC').innerHTML = listAC || kosongHtml;
-            document.getElementById('item-antrian-list-Frezeer Box / Showcase').innerHTML = listFreezer || kosongHtml;
             document.getElementById('item-antrian-list-AV').innerHTML = listAV || kosongHtml;
         }
 
@@ -392,29 +375,16 @@
                     
                     let badgeHtml = "", aksiHtml = "";
                     if (statusLock === "LOCKED") {
-                        badgeHtml = `
-                            <span class="badge-status-sanksi badge-penalti">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                                LOCKED
-                            </span>`;
+                        badgeHtml = `<span class="badge-status-sanksi badge-penalti">LOCKED</span>`;
                         aksiHtml = `<button type="button" id="btn-unlock-${nama.replace(/[^a-zA-Z0-9]/g, '_')}" class="btn-action btn-success" onclick="unlockPromotor('${nama.replace(/'/g, "\\'")}')">Buka Kunci</button>`;
                     } else {
-                        badgeHtml = `
-                            <span class="badge-status-sanksi badge-normal">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                AMAN
-                            </span>`;
+                        badgeHtml = `<span class="badge-status-sanksi badge-normal">AMAN</span>`;
                         aksiHtml = `<button type="button" id="btn-lock-${nama.replace(/[^a-zA-Z0-9]/g, '_')}" class="btn-action btn-danger" onclick="lockPromotor('${nama.replace(/'/g, "\\'")}')">Lock Akun</button>`;
                     }
 
-                    html += `<tr>
-                            <td><b style="font-size: 14px; color: var(--text-main);">${nama}</b></td>
-                            <td>${badgeHtml}</td>
-                            <td>${aksiHtml}</td>
-                        </tr>`;
+                    html += `<tr><td><b style="font-size: 14px; color: var(--text-main);">${nama}</b></td><td>${badgeHtml}</td><td>${aksiHtml}</td></tr>`;
                 });
             }
-
             const tbody = document.getElementById('tabel-penalti-spv');
             if(tbody) tbody.innerHTML = html;
         }
@@ -443,9 +413,6 @@
                 tutupModal();
                 sedangProsesAksiSPV = true;
 
-                const btnEl = document.getElementById(`btn-lock-${namaSales.replace(/[^a-zA-Z0-9]/g, '_')}`);
-                if (btnEl) { btnEl.disabled = true; btnEl.innerHTML = `<span class="spinner" style="width:12px;height:12px;border-width:2px;"></span> Memproses...`; }
-
                 fetch(`${SCRIPT_URL}?aksi=spvLockPromotor&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&alasan=${encodeURIComponent(alasan)}&t=${Date.now()}`)
                 .then(res => res.json())
                 .then(res => {
@@ -454,12 +421,6 @@
                         tampilkanModal(res.status === "sukses" ? "Berhasil" : "Perhatian", res.pesan);
                         muatMasterSales();
                         muatDataAntrian();
-                    }, 500);
-                }).catch(() => { 
-                    setTimeout(() => {
-                        sedangProsesAksiSPV = false;
-                        if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = `Lock Akun`; }
-                        tampilkanModal("Gagal", "Gagal terhubung ke server."); 
                     }, 500);
                 });
             };
@@ -471,10 +432,6 @@
             
             tampilkanModalKonfirmasi("Buka Kunci Promotor", `Buka kunci akun (${namaSales}) agar bisa antri kembali?`, function() {
                 sedangProsesAksiSPV = true;
-
-                const btnEl = document.getElementById(`btn-unlock-${namaSales.replace(/[^a-zA-Z0-9]/g, '_')}`);
-                if (btnEl) { btnEl.disabled = true; btnEl.innerHTML = `<span class="spinner" style="width:12px;height:12px;border-width:2px;"></span> Memproses...`; }
-
                 fetch(`${SCRIPT_URL}?aksi=spvUnlockPromotor&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
                 .then(res => res.json())
                 .then(res => {
@@ -484,42 +441,40 @@
                         muatMasterSales();
                         muatDataAntrian();
                     }, 500);
-                }).catch(() => { 
-                    setTimeout(() => {
-                        sedangProsesAksiSPV = false;
-                        if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = `Buka Kunci`; }
-                        tampilkanModal("Gagal", "Gagal terhubung ke server."); 
-                    }, 500);
                 });
             });
+        }
+
+        function simpanLokasiTokoSPV() {
+            const pin = getActivePinSPV();
+            const lat = document.getElementById('input-lat-toko').value.trim();
+            const lng = document.getElementById('input-lng-toko').value.trim();
+            if (!pin) return alert("PIN SPV tidak ditemukan!");
+            
+            fetch(`${SCRIPT_URL}?aksi=spvSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&t=${Date.now()}`)
+            .then(r => r.json()).then(res => tampilkanModal("Titik GPS Toko", res.pesan));
         }
 
         function bukaModalToggleSistem(targetStatus) {
             const currentPin = getActivePinSPV();
             document.getElementById('modal-title').innerText = targetStatus === 'BUKA' ? 'Mulai Antrian' : 'Hentikan Antrian';
-            document.getElementById('modal-desc').innerHTML = `Status baru: <b>${targetStatus}</b><br><br><input type="hidden" id="spv-toggle-pin" value="${currentPin}">`;
+            document.getElementById('modal-desc').innerHTML = `Status baru: <b>${targetStatus}</b>`;
             document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button><button type="button" id="btn-modal-proses" class="btn-primary" onclick="eksekusiToggleSistem('${targetStatus}')">Proses</button>`;
             document.getElementById('custom-modal').classList.add('active');
         }
 
         function eksekusiToggleSistem(targetStatus) {
             const pin = getActivePinSPV();
-            if(!pin) return alert("PIN SPV tidak ditemukan, silakan login kembali!");
+            if(!pin) return alert("PIN SPV tidak ditemukan!");
             sedangProsesAksiSPV = true; 
-            const btnProses = document.getElementById('btn-modal-proses'); const textAsli = btnProses.innerHTML;
-            btnProses.disabled = true; btnProses.innerHTML = `<span class="spinner"></span> Memproses...`;
-
             fetch(`${SCRIPT_URL}?aksi=spvSetStatusAntrian&pin=${encodeURIComponent(pin)}&statusBaru=${targetStatus}&t=${Date.now()}`)
             .then(res => res.json())
-            .then(res => {
-                setTimeout(() => { tutupModal(); sedangProsesAksiSPV = false; tampilkanModal("Status Sistem", res.pesan); muatDataAntrian(); }, 500);
-            }).catch(() => { btnProses.disabled = false; btnProses.innerHTML = textAsli; sedangProsesAksiSPV = false; });
+            .then(res => { setTimeout(() => { tutupModal(); sedangProsesAksiSPV = false; tampilkanModal("Status Sistem", res.pesan); muatDataAntrian(); }, 500); });
         }
 
         function bukaModalResetTotal() {
-            const currentPin = getActivePinSPV();
             document.getElementById('modal-title').innerText = 'Reset Semua Antrian';
-            document.getElementById('modal-desc').innerHTML = `⚠️ <b>PERINGATAN:</b><br>Semua antrian (Standby & Melayani) akan dihapus total.<br><input type="hidden" id="spv-reset-pin" value="${currentPin}">`;
+            document.getElementById('modal-desc').innerHTML = `⚠️ <b>PERINGATAN:</b><br>Semua antrian akan dihapus total.`;
             document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button><button type="button" id="btn-modal-reset" class="btn-danger" onclick="eksekusiResetTotal()">Reset Sekarang</button>`;
             document.getElementById('custom-modal').classList.add('active');
         }
@@ -527,100 +482,67 @@
         function eksekusiResetTotal() {
             const pin = getActivePinSPV();
             if(!pin) return alert("PIN SPV tidak ditemukan!");
-            sedangProsesAksiSPV = true; const btnProses = document.getElementById('btn-modal-reset');
-            btnProses.disabled = true; btnProses.innerHTML = `<span class="spinner"></span> Mereset...`;
+            sedangProsesAksiSPV = true; 
             fetch(`${SCRIPT_URL}?aksi=spvResetAntrian&pin=${encodeURIComponent(pin)}&t=${Date.now()}`)
             .then(res => res.json())
-            .then(res => { setTimeout(() => { tutupModal(); sedangProsesAksiSPV = false; tampilkanModal("Status Reset Total", res.pesan); muatDataAntrian(); }, 500); })
-            .catch(() => { sedangProsesAksiSPV = false; tutupModal(); });
+            .then(res => { setTimeout(() => { tutupModal(); sedangProsesAksiSPV = false; tampilkanModal("Status Reset Total", res.pesan); muatDataAntrian(); }, 500); });
         }
 
         function bukaModalTambahAntriSpv() {
             const currentPin = getActivePinSPV();
             document.getElementById('modal-title').innerText = "Masukkan Promotor ke Antrian";
-            
             let optionsSales = '<option value="">-- Pilih Promotor --</option>';
-            masterSalesGlobal.forEach(n => { 
-                let nama = typeof n === 'object' ? n.nama : n; 
-                optionsSales += `<option value="${nama}">${nama}</option>`; 
-            });
-
-            let htmlContent = `
+            masterSalesGlobal.forEach(n => { let nama = typeof n === 'object' ? n.nama : n; optionsSales += `<option value="${nama}">${nama}</option>`; });
+            
+            document.getElementById('modal-desc').innerHTML = `
                 Kategori:<br>
                 <select id="spv-select-kategori">
-                    <option value="HA">Home Appliance (HA)</option>
-                    <option value="AV">Audio Video (AV)</option>
+                    <option value="Mesin Cuci & Lemari Es">Mesin Cuci & Lemari Es</option>
+                    <option value="AC">AC</option>
+                    <option value="AV">AV (Audio Video)</option>
                 </select><br><br>
-                
                 Promotor:<br>
                 <select id="spv-select-sales">${optionsSales}</select><br><br>
-                
-                Posisi Urutan Antrian:<br>
-                <input type="number" id="spv-input-posisi" value="1" min="1" placeholder="Masukkan nomor urut (Cth: 1, 10, dst)"><br>
-                <small style="color: var(--text-muted); font-size: 11px;">*Ketik angka 1 untuk paling depan, atau angka besar untuk ditaruh di bawah.</small>
-                
-                <input type="hidden" id="spv-input-pin" value="${currentPin}">
+                Posisi Urutan:<br>
+                <input type="number" id="spv-input-posisi" value="1" min="1">
             `;
-            
-            document.getElementById('modal-desc').innerHTML = htmlContent;
-            document.getElementById('modal-actions').innerHTML = `
-                <button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button>
-                <button type="button" id="btn-modal-proses-aksi" class="btn-primary" onclick="eksekusiTambahAntriSpv()">Proses</button>
-            `;
+            document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button><button type="button" class="btn-primary" onclick="eksekusiTambahAntriSpv()">Proses</button>`;
             document.getElementById('custom-modal').classList.add('active');
         }
 
         function eksekusiTambahAntriSpv() {
-            const kategori = document.getElementById('spv-select-kategori').value; 
+            const subkat = document.getElementById('spv-select-kategori').value; 
+            const kategori = subkat === "AV" ? "AV" : "HA";
             const namaSales = document.getElementById('spv-select-sales').value; 
             const posisi = document.getElementById('spv-input-posisi').value || "1"; 
             const pin = getActivePinSPV();
             
-            if(!namaSales) return alert("Pilih promotor terlebih dahulu!"); 
-            if(!pin) return alert("PIN SPV tidak valid!");
-            
+            if(!namaSales) return alert("Pilih promotor!"); 
             sedangProsesAksiSPV = true; 
-            const btnProses = document.getElementById('btn-modal-proses-aksi');
-            btnProses.disabled = true; 
-            btnProses.innerHTML = `<span class="spinner"></span> Memproses...`;
-            
-            fetch(`${SCRIPT_URL}?aksi=spvDaftarAntri&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategori)}&posisi=${encodeURIComponent(posisi)}&t=${Date.now()}`)
-            .then(res => res.json())
-            .then(res => { 
-                setTimeout(() => { 
-                    tutupModal(); 
-                    sedangProsesAksiSPV = false; 
-                    tampilkanModal("Status SPV", res.pesan); 
-                    muatDataAntrian(); 
-                }, 500); 
-            })
-            .catch(() => { 
-                sedangProsesAksiSPV = false; 
-                tutupModal(); 
-            });
+            fetch(`${SCRIPT_URL}?aksi=spvDaftarAntri&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategori)}&subkategori=${encodeURIComponent(subkat)}&posisi=${encodeURIComponent(posisi)}&t=${Date.now()}`)
+            .then(res => res.json()).then(res => { setTimeout(() => { tutupModal(); sedangProsesAksiSPV = false; tampilkanModal("Status SPV", res.pesan); muatDataAntrian(); }, 500); });
         }
 
         function bukaModalFormSPVKategori(aksiName, judulAksi, butuhPilihPromotor = true) {
-            const currentPin = getActivePinSPV(); document.getElementById('modal-title').innerText = judulAksi;
+            document.getElementById('modal-title').innerText = judulAksi;
             let optionsSales = '<option value="">-- Pilih Promotor --</option>';
             masterSalesGlobal.forEach(n => { let nama = typeof n === 'object' ? n.nama : n; optionsSales += `<option value="${nama}">${nama}</option>`; });
-            let htmlContent = `Kategori:<br><select id="spv-select-kategori"><option value="HA">Home Appliance (HA)</option><option value="AV">Audio Video (AV)</option></select><br><br>`;
+            let htmlContent = `Kategori:<br><select id="spv-select-kategori"><option value="Mesin Cuci & Lemari Es">Mesin Cuci & Lemari Es</option><option value="AC">AC</option><option value="AV">Audio Video (AV)</option></select><br><br>`;
             if (butuhPilihPromotor) htmlContent += `Promotor:<br><select id="spv-select-sales">${optionsSales}</select>`;
-            htmlContent += `<input type="hidden" id="spv-input-pin" value="${currentPin}">`;
             document.getElementById('modal-desc').innerHTML = htmlContent;
-            document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button><button type="button" id="btn-modal-proses-aksi" class="btn-primary" onclick="eksekusiAksiSPVKategori('${aksiName}', ${butuhPilihPromotor})">Proses</button>`;
+            document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button><button type="button" class="btn-primary" onclick="eksekusiAksiSPVKategori('${aksiName}', ${butuhPilihPromotor})">Proses</button>`;
             document.getElementById('custom-modal').classList.add('active');
         }
 
         function eksekusiAksiSPVKategori(aksiName, butuhPilihPromotor) {
-            const kategori = document.getElementById('spv-select-kategori').value; let namaSales = butuhPilihPromotor ? document.getElementById('spv-select-sales').value : ""; const pin = getActivePinSPV();
-            if(butuhPilihPromotor && !namaSales) return alert("Pilih promotor terlebih dahulu!"); if(!pin) return alert("PIN SPV tidak valid!");
-            sedangProsesAksiSPV = true; const btnProses = document.getElementById('btn-modal-proses-aksi');
-            btnProses.disabled = true; btnProses.innerHTML = `<span class="spinner"></span> Memproses...`;
-            fetch(`${SCRIPT_URL}?aksi=${aksiName}&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategori)}&t=${Date.now()}`)
-            .then(res => res.json())
-            .then(res => { setTimeout(() => { tutupModal(); sedangProsesAksiSPV = false; tampilkanModal("Status SPV", res.pesan); muatDataAntrian(); }, 500); })
-            .catch(() => { sedangProsesAksiSPV = false; tutupModal(); });
+            const subkat = document.getElementById('spv-select-kategori').value; 
+            const kategori = subkat === "AV" ? "AV" : "HA";
+            let namaSales = butuhPilihPromotor ? document.getElementById('spv-select-sales').value : ""; 
+            const pin = getActivePinSPV();
+            if(butuhPilihPromotor && !namaSales) return alert("Pilih promotor!"); 
+            sedangProsesAksiSPV = true; 
+            fetch(`${SCRIPT_URL}?aksi=${aksiName}&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategori)}&subkategori=${encodeURIComponent(subkat)}&t=${Date.now()}`)
+            .then(res => res.json()).then(res => { setTimeout(() => { tutupModal(); sedangProsesAksiSPV = false; tampilkanModal("Status SPV", res.pesan); muatDataAntrian(); }, 500); });
         }
 
         function muatMasterSales() {
@@ -628,14 +550,14 @@
             .then(res => res.json())
             .then(res => {
                 if(res.status === "sukses") { masterSalesGlobal = res.data || []; localStorage.setItem('ufo_master_sales_cache', JSON.stringify(masterSalesGlobal)); renderTabelStatusAkunSPV(masterSalesGlobal); }
-            }).catch(() => {});
+            });
         }
 
         function muatDataAntrian() {
             if(sedangProsesAksiSPV) return; 
             fetch(`${SCRIPT_URL}?aksi=getAntrian&t=${Date.now()}`)
             .then(res => res.json())
-            .then(res => { if(!sedangProsesAksiSPV && res.status === "sukses") { localStorage.setItem('ufo_spv_antrian_cache', JSON.stringify(res)); renderUIWithData(res); } }).catch(() => {});
+            .then(res => { if(!sedangProsesAksiSPV && res.status === "sukses") { localStorage.setItem('ufo_spv_antrian_cache', JSON.stringify(res)); renderUIWithData(res); } });
         }
 
         function tampilkanModal(judul, pesan) {
