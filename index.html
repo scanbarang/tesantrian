@@ -29,127 +29,124 @@
             --border: #cbd5e1;
         }
 
-        /* STYLING MODE GELAP */
+        /* STYLING MODE GELAP SESUAI GAMBAR REFERENSI */
         body.dark-mode {
-            --bg-color: #080203 !important;
-            --card-bg: #140406 !important;
+            --bg-color: #000000 !important;
+            --card-bg: #000000 !important;
             --text-main: #ffffff !important;
-            --text-muted: #fca5a5 !important;
-            --border: #ef4444 !important;
+            --text-muted: #94a3b8 !important;
+            --border: #334155 !important;
         }
 
-        body.dark-mode { background: #080203 !important; }
+        body.dark-mode { background: #000000 !important; }
         
         body.dark-mode .app-container { 
-            background: #140406 !important; 
-            border: 2px solid #ef4444 !important; 
-            box-shadow: 0 0 50px rgba(239, 68, 68, 0.45) !important; 
+            background: #000000 !important; 
+            border: 2px solid #1e293b !important; 
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9) !important; 
         }
 
         body.dark-mode .gradient-header { 
-            background: linear-gradient(135deg, #450a0a 0%, #1f0505 100%) !important; 
-            border: 2px solid #f87171 !important; 
-            box-shadow: 0 0 35px rgba(248, 113, 113, 0.6) !important;
+            background: linear-gradient(135deg, #18181b 0%, #09090b 100%) !important; 
+            border: 2px solid #27272a !important; 
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.5) !important;
         }
 
         .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
-        body.dark-mode .dark-mode-btn { background: #450a0a !important; color: #ffffff !important; border: 2px solid #f87171 !important; box-shadow: 0 0 20px rgba(248, 113, 113, 0.6); }
+        body.dark-mode .dark-mode-btn { background: #18181b !important; color: #ffffff !important; border: 2px solid #3f3f46 !important; }
 
         body.dark-mode .status-badge-sistem {
-            background: #450a0a !important;
-            color: #fca5a5 !important;
-            border: 2px solid #ef4444 !important;
-            box-shadow: 0 0 25px rgba(239, 68, 68, 0.7) !important;
+            background: #18181b !important;
+            color: #38bdf8 !important;
+            border: 2px solid #0284c7 !important;
+            box-shadow: 0 0 15px rgba(2, 132, 199, 0.4) !important;
         }
 
         /* STYLING MODERN CUSTOM SELECT & INPUT */
         body.dark-mode select, body.dark-mode input[type="text"] { 
-            background: #1f0505 !important; 
+            background: #18181b !important; 
             color: #ffffff !important; 
-            border: 2px solid #ef4444 !important; 
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5) !important;
+            border: 2px solid #3f3f46 !important; 
         }
 
         body.dark-mode select:disabled { 
-            background-color: #18181b !important; 
-            color: #71717a !important; 
+            background-color: #09090b !important; 
+            color: #52525b !important; 
             border-color: #27272a !important; 
-            box-shadow: none !important;
         }
 
         body.dark-mode .user-badge { 
-            background: #2b0a0d !important; 
-            border: 2px solid #f87171 !important; 
+            background: #18181b !important; 
+            border: 2px solid #3f3f46 !important; 
             color: #ffffff !important; 
-            box-shadow: 0 0 25px rgba(248, 113, 113, 0.6) !important;
         }
 
-        .timer-box-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
-        .timer-card-admin { background: #f8fafc; border-radius: 14px; padding: 14px; text-align: center; border: 2px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
+        .timer-box-wrapper { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+        .timer-card-admin { background: #f8fafc; border-radius: 20px; padding: 18px 16px; text-align: center; border: 2px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
         
-        /* NEON GLOW KOTAK GILIRAN HA & AV KHUSUS MODE GELAP */
+        /* DESAIN KOTAK NEON GILIRAN HA & AV (MODE GELAP SESUAI GAMBAR) */
         body.dark-mode .timer-card-admin.ha {
-            background: #080203 !important;
-            border: 2px solid #facc15 !important;
-            box-shadow: 0 0 25px rgba(250, 204, 21, 0.5), inset 0 0 15px rgba(250, 204, 21, 0.15) !important;
+            background: #000000 !important;
+            border: 3px solid #facc15 !important;
+            border-radius: 24px !important;
+            box-shadow: 0 0 25px rgba(250, 204, 21, 0.55), inset 0 0 15px rgba(250, 204, 21, 0.15) !important;
         }
         body.dark-mode .timer-card-admin.av {
-            background: #080203 !important;
-            border: 2px solid #22c55e !important;
-            box-shadow: 0 0 25px rgba(34, 197, 94, 0.5), inset 0 0 15px rgba(34, 197, 94, 0.15) !important;
+            background: #000000 !important;
+            border: 3px solid #22c55e !important;
+            border-radius: 24px !important;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.55), inset 0 0 15px rgba(34, 197, 94, 0.15) !important;
         }
 
-        .timer-badge-title { font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .timer-badge-title { font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.5px; }
         .ha .timer-badge-title { color: #2563eb; }
         .av .timer-badge-title { color: #7c3aed; }
 
-        /* NEON TEKS TITLE & NAMA DI MODE GELAP */
+        /* TEKS & GLOW WARNA KUNING & HIJAU DI MODE GELAP */
         body.dark-mode .timer-card-admin.ha .timer-badge-title { color: #fde047 !important; text-shadow: 0 0 10px rgba(253, 224, 71, 0.8); }
         body.dark-mode .timer-card-admin.av .timer-badge-title { color: #86efac !important; text-shadow: 0 0 10px rgba(134, 239, 172, 0.8); }
 
-        .promotor-nama-aktif { font-size: 15px; font-weight: 800; color: var(--text-main); margin-top: 2px; line-height: 1.3; min-height: 36px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
+        .promotor-nama-aktif { font-size: 20px; font-weight: 800; color: var(--text-main); margin-top: 2px; line-height: 1.3; min-height: 40px; display: flex; align-items: center; justify-content: center; word-break: break-word; letter-spacing: 0.5px; }
         
-        body.dark-mode .timer-card-admin.ha .promotor-nama-aktif { color: #fef08a !important; text-shadow: 0 0 15px rgba(254, 240, 138, 0.9); }
-        body.dark-mode .timer-card-admin.av .promotor-nama-aktif { color: #bbf7d0 !important; text-shadow: 0 0 15px rgba(187, 247, 208, 0.9); }
+        body.dark-mode .timer-card-admin.ha .promotor-nama-aktif { color: #fef08a !important; text-shadow: 0 0 18px rgba(254, 240, 138, 0.95); }
+        body.dark-mode .timer-card-admin.av .promotor-nama-aktif { color: #bbf7d0 !important; text-shadow: 0 0 18px rgba(187, 247, 208, 0.95); }
 
         body.dark-mode .list-antrian li { 
-            background: #1f0505 !important; 
-            border: 2px solid #f87171 !important; 
+            background: #18181b !important; 
+            border: 2px solid #27272a !important; 
             color: #ffffff !important; 
-            box-shadow: 0 0 20px rgba(248, 113, 113, 0.5) !important;
         }
 
         body.dark-mode .modal-box { 
-            background: #2b0a0d !important; 
-            border: 2px solid #ef4444 !important; 
+            background: #18181b !important; 
+            border: 2px solid #3f3f46 !important; 
             color: #ffffff !important; 
-            box-shadow: 0 0 40px rgba(239, 68, 68, 0.6) !important;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8) !important;
         }
 
         body.dark-mode .btn-cancel {
             background: #27272a !important;
             color: #ffffff !important;
-            border: 2px solid #71717a !important;
-            box-shadow: 0 0 15px rgba(113, 113, 122, 0.5) !important;
+            border: 2px solid #52525b !important;
         }
 
         body.dark-mode button:not(.dark-mode-btn):not(.btn-disabled) {
-            background: #dc2626 !important;
+            background: #2563eb !important;
             color: #ffffff !important;
-            border: 2px solid #f87171 !important;
-            box-shadow: 0 0 25px rgba(248, 113, 113, 0.7) !important;
+            border: 2px solid #3b82f6 !important;
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.5) !important;
         }
 
         @keyframes pulseGlow {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
         }
         .btn-pulse { animation: pulseGlow 2s infinite; }
 
         @keyframes pulseGreen {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
-            70% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
         .wa-pulse { animation: pulseGreen 2s infinite; }
@@ -175,7 +172,6 @@
         .input-group { margin-bottom: 16px; text-align: left; }
         .input-group label { display: block; font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
 
-        /* MODIFIKASI MODERN DROPDOWN SELECT & INPUT */
         select, input[type="text"] { 
             width: 100%; 
             padding: 14px 16px; 
@@ -267,23 +263,23 @@
                 <span style="color: var(--text-muted);">Promotor:</span> <strong id="label-user-aktif" style="color:var(--primary-dark); font-size: 15px;">-</strong>
             </div>
 
-            <!-- PETA MINI VISUALISASI POSISI (Instan dimuat dari Cache) -->
+            <!-- PETA MINI VISUALISASI POSISI -->
             <div class="input-group" id="section-peta-gps">
                 <label>Peta Posisi Anda & Radius Toko</label>
                 <div id="map-promotor" style="width: 100%; height: 180px; border-radius: 14px; border: 2px solid var(--border); z-index: 1;"></div>
             </div>
 
-            <!-- KOTAK GILIRAN HA & AV -->
+            <!-- KOTAK GILIRAN HA & AV (SESUAI REFERENSI GAMBAR) -->
             <div class="timer-box-wrapper">
                 <div class="timer-card-admin ha">
                     <div>
-                        <span class="timer-badge-title">Giliran HA Saat Ini</span>
+                        <span class="timer-badge-title">GILIRAN HA SAAT INI</span>
                         <div id="promotor-nama-ha" class="promotor-nama-aktif">Memuat...</div>
                     </div>
                 </div>
                 <div class="timer-card-admin av">
                     <div>
-                        <span class="timer-badge-title">Giliran AV Saat Ini</span>
+                        <span class="timer-badge-title">GILIRAN AV SAAT INI</span>
                         <div id="promotor-nama-av" class="promotor-nama-aktif">Memuat...</div>
                     </div>
                 </div>
@@ -358,13 +354,11 @@
         let koordinatToko = { lat: "", lng: "", radius: 50 }; 
         let localActionActive = false;
 
-        // Variabel Peta Mini Leaflet
         let mapPromotor = null;
         let markerTokoPeta = null;
         let circleTokoPeta = null;
         let markerSayaPeta = null;
 
-        // Helper Format Tanggal Indonesia dd-mm-yyyy
         function getTanggalIndo() {
             const now = new Date();
             const dd = String(now.getDate()).padStart(2, '0');
@@ -915,7 +909,6 @@
             });
         }
 
-        // FUNGSI INISIALISASI & UPDATE PETA MINI (OPTIMAL & INSTAN)
         function initAtauUpdatePetaPromotor(latToko, lngToko, radiusToko, latUser, lngUser) {
             if (!latToko || !lngToko || isNaN(latToko) || isNaN(lngToko)) return;
 
