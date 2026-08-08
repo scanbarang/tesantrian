@@ -126,26 +126,32 @@
                 <span style="color: var(--text-muted);">Promotor:</span> <strong id="label-user-aktif" style="color:var(--primary-dark); font-size: 15px;">-</strong>
             </div>
 
-            <!-- KONTROL DAFTAR ANTRIAN DENGAN PILIHAN KATEGORI BEBAS -->
-            <div id="section-daftar-antri" style="display: none;">
+            <!-- CHECK-IN KEDATANGAN (HANYA MUNCUL SEKALI DI AWAL HADIR KERJA) -->
+            <div id="section-checkin-awal" style="display: none;">
                 <div class="input-group">
-                    <label>Pilih Kategori Antrian</label>
-                    <select id="pilih-kategori-bebas">
+                    <label>Check-in Kehadiran (Awal Masuk Kerja)</label>
+                    <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 8px 0; text-align: left;">Silakan pilih kategori utama Anda untuk hari ini:</p>
+                    <select id="pilih-kategori-hadir">
                         <option value="Mesin Cuci & Lemari Es">Mesin Cuci & Lemari Es</option>
                         <option value="AC">AC</option>
                         <option value="AV">AV (Audio Video)</option>
                     </select>
                 </div>
-                <button type="button" id="btn-daftar-antrian" class="btn-success" onclick="aksiDaftarAntrianBebas()">Daftar Antrian</button>
+                <button type="button" id="btn-hadir" class="btn-success" onclick="aksiHadirKerja()">Konfirmasi Kehadiran & Masuk Antri</button>
             </div>
 
-            <!-- MENU AKSI SAAT DALAM ANTRIAN / MELAYANI -->
-            <div id="section-aksi-aktif" style="display: none;">
-                <div class="input-group">
-                    <label>Status / Kategori Anda Saat Ini</label>
-                    <input type="text" id="label-info-status" readonly style="background: #f1f5f9; font-weight: 800; text-align: center;">
+            <!-- SISTEM NORMAL KEMBALI SEPERTI SEMULA -->
+            <div id="section-normal" style="display: none;">
+                <div class="input-group" id="group-pilih-kategori-normal">
+                    <label>Pilih Kategori Antrian</label>
+                    <select id="pilih-kategori-normal">
+                        <option value="Mesin Cuci & Lemari Es">Mesin Cuci & Lemari Es</option>
+                        <option value="AC">AC</option>
+                        <option value="AV">AV (Audio Video)</option>
+                    </select>
                 </div>
 
+                <button type="button" id="btn-daftar-antrian" class="btn-success" onclick="aksiDaftarAntrianNormal()" style="display: none; margin-top: 4px;">Daftar Antrian</button>
                 <button type="button" id="btn-utama-customer" class="btn-customer" onclick="aksiUtamaCustomer()" style="display: none; margin-top: 12px;">Sudah Membawa Customer</button>
                 <button type="button" id="btn-selesai-closing" class="btn-closing" onclick="aksiSelesaiClosing()" style="display: none; margin-top: 10px;">SELESAI MELAYANI (DEAL / CLOSING)</button>
                 <button type="button" id="btn-utama-cs" class="btn-purple" onclick="aksiToggleCS()" style="display: none; margin-top: 12px;">DIPANGGIL CS/GUDANG (KUNCI POSISI)</button>
@@ -388,57 +394,73 @@
             document.getElementById('list-AV').innerHTML = listAV || kosongHtml;
 
             let statusSayaNyata = cekStatusSayaDariArray(daftarAntrianGlobal);
-            const sectionDaftarAntri = document.getElementById('section-daftar-antri');
-            const sectionAksiAktif = document.getElementById('section-aksi-aktif');
+            const sectionCheckinAwal = document.getElementById('section-checkin-awal');
+            const sectionNormal = document.getElementById('section-normal');
+            
+            let sudahCheckinPernahHariIni = localStorage.getItem('ufo_checkin_hari_ini') === 'true';
 
-            if (statusSayaNyata === "belum_ada") {
-                sectionDaftarAntri.style.display = 'block';
-                sectionAksiAktif.style.display = 'none';
+            if (!sudahCheckinPernahHariIni) {
+                // Hanya muncul sekali di awal hadir kerja
+                sectionCheckinAwal.style.display = 'block';
+                sectionNormal.style.display = 'none';
+            } else {
+                // Kembali ke sistem normal
+                sectionCheckinAwal.style.display = 'none';
+                sectionNormal.style.display = 'block';
 
                 const btnDaftar = document.getElementById('btn-daftar-antrian');
-                if (statusSistemGlobal === "TUTUP") {
-                    btnDaftar.disabled = true; btnDaftar.className = "btn-success btn-disabled";
+                const groupPilihKat = document.getElementById('group-pilih-kategori-normal');
+                const btnCustomer = document.getElementById('btn-utama-customer');
+                const btnClosing = document.getElementById('btn-selesai-closing');
+                const btnCS = document.getElementById('btn-utama-cs');
+                const btnKeluar = document.getElementById('btn-keluar-istirahat');
+
+                if (statusSayaNyata === "belum_ada") {
+                    groupPilihKat.style.display = "block";
+                    btnDaftar.style.display = "block";
+                    btnCustomer.style.display = "none";
+                    btnClosing.style.display = "none";
+                    btnCS.style.display = "none";
+                    btnKeluar.style.display = "none";
+
+                    if (statusSistemGlobal === "TUTUP") {
+                        btnDaftar.disabled = true; btnDaftar.className = "btn-success btn-disabled";
+                    } else {
+                        btnDaftar.disabled = false; btnDaftar.className = "btn-success";
+                    }
                 } else {
-                    btnDaftar.disabled = false; btnDaftar.className = "btn-success";
+                    groupPilihKat.style.display = "none";
+                    btnDaftar.style.display = "none";
+
+                    if (statusSayaNyata === "Standby") {
+                        btnCustomer.style.display = "block"; 
+                        btnClosing.style.display = "none";
+                        btnCS.style.display = "block"; 
+                        btnKeluar.style.display = "block";
+
+                        if (statusSistemGlobal === "TUTUP") {
+                            btnCustomer.disabled = true; btnCustomer.className = "btn-customer btn-disabled";
+                            btnCS.disabled = true; btnCS.className = "btn-purple btn-disabled";
+                            btnKeluar.disabled = true; btnKeluar.className = "btn-amber btn-disabled";
+                        } else {
+                            let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && (it.subkategori || "").trim() === kategoriSayaAktif);
+                            let indexSaya = listSubStandby.findIndex(it => String(it.nama).trim().toLowerCase() === akunSaya);
+                            let apakahSayaBisaAmbil = (indexSaya === 0 || indexSaya === 1);
+
+                            btnCustomer.disabled = !apakahSayaBisaAmbil; 
+                            btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer" : "btn-customer btn-disabled";
+                            btnCS.disabled = false; btnCS.className = "btn-purple";
+                            btnKeluar.disabled = false; btnKeluar.className = "btn-amber";
+                        }
+                    } else if (statusSayaNyata === "Melayani") {
+                        btnCustomer.style.display = "none"; btnClosing.style.display = "block";
+                        btnCS.style.display = "none"; btnKeluar.style.display = "none";
+                    } else if (statusSayaNyata === "Dipanggil CS/GUDANG" || statusSayaNyata === "Dipanggil CS") {
+                        btnCustomer.style.display = "none"; btnClosing.style.display = "none";
+                        btnCS.style.display = "block"; btnCS.innerText = "SELESAI CS/GUDANG (KEMBALI ANTRI)"; btnCS.className = "btn-teal"; btnCS.disabled = false;
+                        btnKeluar.style.display = "none";
+                    }
                 }
-            } else {
-                sectionDaftarAntri.style.display = 'none';
-                sectionAksiAktif.style.display = 'block';
-                document.getElementById('label-info-status').value = `${statusSayaNyata} (${kategoriSayaAktif})`;
-            }
-
-            const btnCustomer = document.getElementById('btn-utama-customer');
-            const btnClosing = document.getElementById('btn-selesai-closing');
-            const btnCS = document.getElementById('btn-utama-cs');
-            const btnKeluar = document.getElementById('btn-keluar-istirahat');
-
-            if (statusSayaNyata === "Standby") {
-                btnCustomer.style.display = "block"; 
-                btnClosing.style.display = "none";
-                btnCS.style.display = "block"; 
-                btnKeluar.style.display = "block";
-
-                if (statusSistemGlobal === "TUTUP") {
-                    btnCustomer.disabled = true; btnCustomer.className = "btn-customer btn-disabled";
-                    btnCS.disabled = true; btnCS.className = "btn-purple btn-disabled";
-                    btnKeluar.disabled = true; btnKeluar.className = "btn-amber btn-disabled";
-                } else {
-                    let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && (it.subkategori || "").trim() === kategoriSayaAktif);
-                    let indexSaya = listSubStandby.findIndex(it => String(it.nama).trim().toLowerCase() === akunSaya);
-                    let apakahSayaBisaAmbil = (indexSaya === 0 || indexSaya === 1);
-
-                    btnCustomer.disabled = !apakahSayaBisaAmbil; 
-                    btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer" : "btn-customer btn-disabled";
-                    btnCS.disabled = false; btnCS.className = "btn-purple";
-                    btnKeluar.disabled = false; btnKeluar.className = "btn-amber";
-                }
-            } else if (statusSayaNyata === "Melayani") {
-                btnCustomer.style.display = "none"; btnClosing.style.display = "block";
-                btnCS.style.display = "none"; btnKeluar.style.display = "none";
-            } else if (statusSayaNyata === "Dipanggil CS/GUDANG" || statusSayaNyata === "Dipanggil CS") {
-                btnCustomer.style.display = "none"; btnClosing.style.display = "none";
-                btnCS.style.display = "block"; btnCS.innerText = "SELESAI CS/GUDANG (KEMBALI ANTRI)"; btnCS.className = "btn-teal"; btnCS.disabled = false;
-                btnKeluar.style.display = "none";
             }
         }
 
@@ -459,7 +481,7 @@
             if (!namaSales) return;
 
             localActionActive = true;
-            let subKatAktif = subKatBaru || document.getElementById('pilih-kategori-bebas').value || "Mesin Cuci & Lemari Es";
+            let subKatAktif = subKatBaru || document.getElementById('pilih-kategori-normal').value || "Mesin Cuci & Lemari Es";
 
             if (targetStatusSimulasi === "belum_ada") {
                 daftarAntrianGlobal = daftarAntrianGlobal.filter(item => String(item.nama).trim().toLowerCase() !== namaSales.toLowerCase());
@@ -492,8 +514,16 @@
             }).catch(() => { localActionActive = false; });
         }
 
-        function aksiDaftarAntrianBebas() {
-            const kategoriPilih = document.getElementById('pilih-kategori-bebas').value;
+        // HANYA SEKALI SAAT PERTAMA HADIR KERJA
+        function aksiHadirKerja() {
+            const kategoriPilih = document.getElementById('pilih-kategori-hadir').value;
+            localStorage.setItem('ufo_checkin_hari_ini', 'true');
+            eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
+        }
+
+        // SISTEM NORMAL KEMBALI SEPERTI SEMULA (BEBAS PILIH KATEGORI SETIAP MAU DAFTAR)
+        function aksiDaftarAntrianNormal() {
+            const kategoriPilih = document.getElementById('pilih-kategori-normal').value;
             eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
         }
 
