@@ -17,6 +17,7 @@
             --purple-cs: #7c3aed;
             --teal-cs: #0d9488;
             --amber-rest: #d97706;
+            --indigo-ibadah: #4f46e5;
             --bg-color: #f1f5f9;
             --card-bg: #ffffff;
             --text-main: #0f172a;
@@ -177,6 +178,7 @@
         .btn-purple { background: #7c3aed; color: white; }
         .btn-teal { background: #0d9488; color: white; }
         .btn-amber { background: #d97706; color: white; }
+        .btn-indigo { background: var(--indigo-ibadah); color: white; }
         .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; box-shadow: none !important; animation: none !important; }
 
         .user-badge { background: #f8fafc; border: 2px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 18px; text-align: left; font-size: 14px; font-weight: 600; }
@@ -188,6 +190,7 @@
         .badge-standby { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
         .badge-melayani { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
         .badge-cs { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+        .badge-ibadah { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
 
         .wa-report-btn { margin-top: 16px; background: #25d366; border: 2px solid #1ebe57; color: white; font-size: 13px; padding: 14px; border-radius: 12px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 800; }
 
@@ -274,6 +277,10 @@
                 <button type="button" id="btn-utama-customer" class="btn-customer btn-pulse" onclick="aksiUtamaCustomer()" style="display: none; margin-top: 12px;">Sudah Membawa Customer</button>
                 <button type="button" id="btn-selesai-closing" class="btn-closing" onclick="aksiSelesaiClosing()" style="display: none; margin-top: 10px;">SELESAI MELAYANI (DEAL / CLOSING)</button>
                 <button type="button" id="btn-utama-cs" class="btn-purple" onclick="aksiToggleCS()" style="display: none; margin-top: 12px;">DIPANGGIL CS/GUDANG (KUNCI POSISI)</button>
+                
+                <!-- TOMBOL IBADAH -->
+                <button type="button" id="btn-utama-ibadah" class="btn-indigo" onclick="aksiToggleIbadah()" style="display: none; margin-top: 12px;">SEDANG IBADAH (KUNCI POSISI)</button>
+
                 <button type="button" id="btn-keluar-istirahat" class="btn-amber" onclick="bukaModalKeluarIstirahat()" style="display: none; margin-top: 12px;">KELUAR ANTRIAN (ISTIRAHAT)</button>
             </div>
         </div>
@@ -310,8 +317,6 @@
         let masterSalesGlobal = [];
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
-        
-        // VARIABEL KOORDINAT & PENGATURAN TOKO (MURNI DARI SHEET)
         let koordinatToko = { lat: "", lng: "", radius: 50, statusGps: "OFF" }; 
         let localActionActive = false;
 
@@ -495,7 +500,6 @@
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
             
-            // SINKRONISASI OTOMATIS: Koordinat, radius, dan status GPS mutlak diambil dari Sheet
             if (koordinatServer) {
                 koordinatToko.lat = koordinatServer.lat || "";
                 koordinatToko.lng = koordinatServer.lng || "";
@@ -538,6 +542,8 @@
                         itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-melayani">Melayani</span></li>`;
                     } else if (item.status === "Dipanggil CS/GUDANG" || item.status === "Dipanggil CS") {
                         itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-cs">Dipanggil CS/Gudang</span></li>`;
+                    } else if (item.status === "Ibadah") {
+                        itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-ibadah">Sedang Ibadah</span></li>`;
                     }
 
                     if (kat === "HA") listHA += itemHtml;
@@ -571,6 +577,7 @@
             const btnCustomer = document.getElementById('btn-utama-customer');
             const btnClosing = document.getElementById('btn-selesai-closing');
             const btnCS = document.getElementById('btn-utama-cs');
+            const btnIbadah = document.getElementById('btn-utama-ibadah');
             const btnKeluar = document.getElementById('btn-keluar-istirahat');
 
             if (statusSayaNyata === "belum_ada") {
@@ -579,6 +586,7 @@
                 btnCustomer.style.display = "none";
                 btnClosing.style.display = "none";
                 btnCS.style.display = "none";
+                btnIbadah.style.display = "none";
                 btnKeluar.style.display = "none";
 
                 if (statusSistemGlobal === "TUTUP") {
@@ -594,11 +602,13 @@
                     btnCustomer.style.display = "block"; 
                     btnClosing.style.display = "none";
                     btnCS.style.display = "block"; 
+                    btnIbadah.style.display = "block"; btnIbadah.innerText = "SEDANG IBADAH (KUNCI POSISI)"; btnIbadah.className = "btn-indigo"; btnIbadah.disabled = false;
                     btnKeluar.style.display = "block";
 
                     if (statusSistemGlobal === "TUTUP") {
                         btnCustomer.disabled = true; btnCustomer.className = "btn-customer btn-disabled";
                         btnCS.disabled = true; btnCS.className = "btn-purple btn-disabled";
+                        btnIbadah.disabled = true; btnIbadah.className = "btn-indigo btn-disabled";
                         btnKeluar.disabled = true; btnKeluar.className = "btn-amber btn-disabled";
                     } else {
                         let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && String(it.kategori || "").trim().toUpperCase() === kategoriSayaAktif);
@@ -608,15 +618,29 @@
                         btnCustomer.disabled = !apakahSayaBisaAmbil; 
                         btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer btn-pulse" : "btn-customer btn-disabled";
                         btnCS.disabled = false; btnCS.className = "btn-purple";
+                        btnIbadah.disabled = false; btnIbadah.className = "btn-indigo";
                         btnKeluar.disabled = false; btnKeluar.className = "btn-amber";
                     }
                 } else if (statusSayaNyata === "Melayani") {
                     btnCustomer.style.display = "none"; btnClosing.style.display = "block";
-                    btnCS.style.display = "none"; btnKeluar.style.display = "none";
+                    btnCS.style.display = "none"; btnIbadah.style.display = "none"; btnKeluar.style.display = "none";
                 } else if (statusSayaNyata === "Dipanggil CS/GUDANG" || statusSayaNyata === "Dipanggil CS") {
                     btnCustomer.style.display = "none"; btnClosing.style.display = "none";
                     btnCS.style.display = "block"; btnCS.innerText = "SELESAI CS/GUDANG (KEMBALI ANTRI)"; btnCS.className = "btn-teal"; btnCS.disabled = false;
+                    btnIbadah.style.display = "none";
                     btnKeluar.style.display = "none";
+                } else if (statusSayaNyata === "Ibadah") {
+                    // JIKA PROMOTOR SEDANG STATUS IBADAH DIURUTAN MANA PUN (1,2,3 ATAU LEBIH)
+                    // HANYA TOMBOL SELESAI IBADAH SAJA YANG AKTIF
+                    btnCustomer.style.display = "none";
+                    btnClosing.style.display = "none";
+                    btnCS.style.display = "none";
+                    btnKeluar.style.display = "none";
+                    
+                    btnIbadah.style.display = "block"; 
+                    btnIbadah.innerText = "SELESAI IBADAH (KEMBALI ANTRI)"; 
+                    btnIbadah.className = "btn-teal"; 
+                    btnIbadah.disabled = false;
                 }
             }
         }
@@ -674,11 +698,9 @@
         }
 
         function validasiGpsDanJalankan(callbackBerhasil) {
-            // Cek apakah GPS di Sheet berstatus ON dan koordinatnya terisi
             const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
 
             if (!gpsAktif || !koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
-                // Jika GPS di Sheet di-OFF-kan, maka lewati validasi (bisa daftar dari mana saja)
                 callbackBerhasil();
                 return;
             }
@@ -692,9 +714,8 @@
                         );
                         const batasRadius = Number(koordinatToko.radius) || 10;
 
-                        // JIKA DI LUAR RADIUS DARI SHEET: BLOKIR TOTAL
                         if (jarakMeter > batasRadius) {
-                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal dari Sheet: ${batasRadius} meter.\n\nAnda berada di luar area toko.`);
+                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal: ${batasRadius} meter.\n\nAnda berada di luar area toko.`);
                             return; 
                         }
                         
@@ -748,6 +769,18 @@
             }
         }
 
+        function aksiToggleIbadah() {
+            const statusSekarang = cekStatusSayaDariArray(daftarAntrianGlobal);
+            if (statusSekarang === "Standby") {
+                tampilkanModalKonfirmasi("Ibadah", "Posisi antrian Anda akan dikunci sementara selama ibadah.", function() {
+                    // Menggunakan aksi panggilCS atau endpoint khusus ibadah (bisa disesuaikan di backend Apps Script)
+                    eksekusiAksiInstan('panggilCS', 'Ibadah');
+                });
+            } else {
+                eksekusiAksiInstan('selesaiCS', 'Standby');
+            }
+        }
+
         function bukaModalKeluarIstirahat() {
             tampilkanModalKonfirmasi("Keluar Antrian", "Yakin ingin keluar dari antrian?", function() {
                 eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
@@ -764,7 +797,7 @@
                         }
 
                         let statusSaya = cekStatusSayaDariArray(daftarAntrianGlobal);
-                        if (statusSaya === "Dipanggil CS/GUDANG" || statusSaya === "Dipanggil CS") {
+                        if (statusSaya === "Dipanggil CS/GUDANG" || statusSaya === "Dipanggil CS" || statusSaya === "Ibadah") {
                             return; 
                         }
 
