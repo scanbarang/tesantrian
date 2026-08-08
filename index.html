@@ -519,14 +519,21 @@
             });
         }
 
-        function mulaiPemantauanGPS() {
+       function mulaiPemantauanGPS() {
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(
                     function(position) {
-                        const jarakMeter = hitungJarakHaversine(position.coords.latitude, position.coords.longitude, koordinatToko.lat, koordinatToko.lng);
+                        // Jika SPV mengosongkan koordinat di sheet (kosong / 0 / null), batasan GPS dilewati
+                        if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat == "" || koordinatToko.lng == "") {
+                            return; 
+                        }
+
+                        const jarakMeter = hitungJarakHaversine(position.coords.latitude, position.coords.longitude, Number(koordinatToko.lat), Number(koordinatToko.lng));
+                        
+                        // Jika jarak > 50 meter dan status promotor sedang standby di antrian
                         if (jarakMeter > 50 && cekStatusSayaDariArray(daftarAntrianGlobal) === "Standby") {
                             eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
-                            tampilkanModal("Auto-Exit GPS", "Anda berada di luar radius 50 meter dari toko. Anda otomatis dikeluarkan dari antrian.");
+                            tampilkanModal("Auto-Exit GPS", "Anda berada di luar radius 50 meter dari toko. Anda otomatis dikeluarkan dari antrean.");
                         }
                     },
                     function(error) {},
