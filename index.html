@@ -317,7 +317,7 @@
         let masterSalesGlobal = [];
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
-        let koordinatToko = { lat: "", lng: "", radius: 50, statusGps: "OFF" }; 
+        let koordinatToko = { lat: "", lng: "", radius: 50 }; 
         let localActionActive = false;
 
         window.onload = function() {
@@ -500,11 +500,11 @@
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
             
+            // SINKRONISASI OTOMATIS: Ambil koordinat dan radius langsung dari Sheet
             if (koordinatServer) {
                 koordinatToko.lat = koordinatServer.lat || "";
                 koordinatToko.lng = koordinatServer.lng || "";
                 koordinatToko.radius = Number(koordinatServer.radius) || 50;
-                koordinatToko.statusGps = koordinatServer.statusGps || koordinatServer.gps || "OFF";
             }
 
             const badge = document.getElementById('badge-status-sistem');
@@ -630,8 +630,6 @@
                     btnIbadah.style.display = "none";
                     btnKeluar.style.display = "none";
                 } else if (statusSayaNyata === "Ibadah") {
-                    // JIKA PROMOTOR SEDANG STATUS IBADAH DIURUTAN MANA PUN (1,2,3 ATAU LEBIH)
-                    // HANYA TOMBOL SELESAI IBADAH SAJA YANG AKTIF
                     btnCustomer.style.display = "none";
                     btnClosing.style.display = "none";
                     btnCS.style.display = "none";
@@ -698,9 +696,8 @@
         }
 
         function validasiGpsDanJalankan(callbackBerhasil) {
-            const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
-
-            if (!gpsAktif || !koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+            // VALIDASI MUTLAK: Selama koordinat di Sheet terisi, GPS WAJIB aktif dan jarak dicek!
+            if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                 callbackBerhasil();
                 return;
             }
@@ -714,8 +711,9 @@
                         );
                         const batasRadius = Number(koordinatToko.radius) || 10;
 
+                        // JIKA DI LUAR RADIUS: BLOKIR TOTAL DENGAN TEGAS
                         if (jarakMeter > batasRadius) {
-                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal: ${batasRadius} meter.\n\nAnda berada di luar area toko.`);
+                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal dari Sheet: ${batasRadius} meter.\n\nAnda berada di luar area toko.`);
                             return; 
                         }
                         
@@ -773,7 +771,6 @@
             const statusSekarang = cekStatusSayaDariArray(daftarAntrianGlobal);
             if (statusSekarang === "Standby") {
                 tampilkanModalKonfirmasi("Ibadah", "Posisi antrian Anda akan dikunci sementara selama ibadah.", function() {
-                    // Menggunakan aksi panggilCS atau endpoint khusus ibadah (bisa disesuaikan di backend Apps Script)
                     eksekusiAksiInstan('panggilCS', 'Ibadah');
                 });
             } else {
@@ -791,8 +788,7 @@
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(
                     function(position) {
-                        const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
-                        if (!gpsAktif || !koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+                        if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                             return; 
                         }
 
