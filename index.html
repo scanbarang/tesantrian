@@ -24,49 +24,49 @@
             --border: #cbd5e1;
         }
 
-        /* STYLING MODE GELAP DENGAN NEON BOX WARNA-WARNI MENYALA */
+        /* STYLING MODE GELAP DENGAN NEON BOX MENYALA & BACKGROUND BERWARNA DI TIAP ELEMEN */
         body.dark-mode {
-            --bg-color: #000000 !important;
-            --card-bg: #030712 !important;
+            --bg-color: #030008 !important;
+            --card-bg: #0b0718 !important;
             --text-main: #ffffff !important;
-            --text-muted: #94a3b8 !important;
+            --text-muted: #cbd5e1 !important;
             --border: #334155 !important;
         }
 
-        body.dark-mode { background: #000000 !important; }
+        body.dark-mode { background: #030008 !important; }
         
-        /* 1. KOTAK UTAMA (Aplikasi): Neon Biru Cyan */
+        /* 1. KOTAK UTAMA: Pendaran Biru Cyan Menyala */
         body.dark-mode .app-container { 
-            background: #050509 !important; 
+            background: #080b18 !important; 
             border: 2px solid #06b6d4 !important; 
-            box-shadow: 0 0 40px rgba(6, 182, 212, 0.3) !important; 
+            box-shadow: 0 0 50px rgba(6, 182, 212, 0.4) !important; 
         }
 
-        /* 2. HEADER: Neon Merah / Pink */
+        /* 2. HEADER WALK-IN: Pendaran Merah/Pink Menyala */
         body.dark-mode .gradient-header { 
-            background: #09090b !important; 
+            background: linear-gradient(135deg, #2b0a14 0%, #1a050b 100%) !important; 
             border: 2px solid #f43f5e !important; 
-            box-shadow: 0 0 25px rgba(244, 63, 94, 0.4) !important;
+            box-shadow: 0 0 35px rgba(244, 63, 94, 0.6) !important;
         }
 
         /* TOMBOL TEMA / DARK MODE */
         .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
-        body.dark-mode .dark-mode-btn { background: #18181b !important; color: #ffffff !important; border: 2px solid #a855f7 !important; box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); }
+        body.dark-mode .dark-mode-btn { background: #1e1b4b !important; color: #ffffff !important; border: 2px solid #a855f7 !important; box-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
 
-        /* 3. STATUS BADGE: Neon Hijau Emerald */
+        /* 3. STATUS BADGE: Pendaran Hijau Emerald Menyala */
         body.dark-mode .status-badge-sistem {
-            background: #064e3b !important;
+            background: #022c22 !important;
             color: #34d399 !important;
             border: 2px solid #10b981 !important;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5) !important;
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.7) !important;
         }
 
-        /* 4. INPUT & SELECT: Neon Biru Royal */
+        /* 4. INPUT & SELECT: Pendaran Biru Royal Menyala */
         body.dark-mode select, body.dark-mode input[type="text"] { 
-            background: #09090b !important; 
+            background: #0c1427 !important; 
             color: #ffffff !important; 
             border: 2px solid #3b82f6 !important; 
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4) !important;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5) !important;
         }
 
         body.dark-mode select:disabled { 
@@ -76,113 +76,113 @@
             box-shadow: none !important;
         }
 
-        /* 5. USER BADGE: Neon Ungu (Purple) */
+        /* 5. USER BADGE: Pendaran Ungu Menyala */
         body.dark-mode .user-badge { 
-            background: #09090b !important; 
+            background: #1e1b4b !important; 
             border: 2px solid #c084fc !important; 
             color: #ffffff !important; 
-            box-shadow: 0 0 20px rgba(192, 132, 252, 0.4) !important;
+            box-shadow: 0 0 25px rgba(192, 132, 252, 0.6) !important;
         }
 
-        /* 6. LIST ITEM ANTRIAN: Neon Tosca / Cyan */
+        /* 6. KOTAK GILIRAN HA & AV (MENYALA TERANG BERWARNA) */
+        .timer-box-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+        .timer-card-admin { background: #f8fafc; border-radius: 14px; padding: 14px; text-align: center; border: 2px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
+        
+        /* HA: Pendaran Biru Terang */
+        body.dark-mode .timer-card-admin.ha {
+            background: #081229 !important;
+            border: 2px solid #3b82f6 !important;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.7) !important;
+        }
+        /* AV: Pendaran Ungu/Violet Terang */
+        body.dark-mode .timer-card-admin.av {
+            background: #180829 !important;
+            border: 2px solid #a855f7 !important;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.7) !important;
+        }
+
+        .timer-badge-title { font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .ha .timer-badge-title { color: #2563eb; }
+        body.dark-mode .ha .timer-badge-title { color: #60a5fa !important; text-shadow: 0 0 10px rgba(96, 165, 250, 0.8); }
+
+        .av .timer-badge-title { color: #7c3aed; }
+        body.dark-mode .av .timer-badge-title { color: #c084fc !important; text-shadow: 0 0 10px rgba(192, 132, 252, 0.8); }
+
+        .promotor-nama-aktif { font-size: 15px; font-weight: 800; color: var(--text-main); margin-top: 2px; line-height: 1.3; min-height: 36px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
+        body.dark-mode .promotor-nama-aktif { color: #ffffff !important; }
+
+        /* 7. LIVE URUTAN ANTRIAN (ITEM LIST MENYALA TERANG DENGAN PENDARAN TOSCA) */
         body.dark-mode .list-antrian li { 
-            background: #09090b !important; 
+            background: #042f2e !important; 
             border: 2px solid #2dd4bf !important; 
             color: #ffffff !important; 
-            box-shadow: 0 0 15px rgba(45, 212, 191, 0.3) !important;
+            box-shadow: 0 0 20px rgba(45, 212, 191, 0.4) !important;
         }
 
-        /* 7. MODAL BOX: Neon Kuning / Amber */
+        /* 8. MODAL BOX: Pendaran Kuning/Amber Menyala */
         body.dark-mode .modal-box { 
-            background: #09090b !important; 
+            background: #271a02 !important; 
             border: 2px solid #fbbf24 !important; 
             color: #ffffff !important; 
-            box-shadow: 0 0 30px rgba(251, 191, 36, 0.4) !important;
+            box-shadow: 0 0 40px rgba(251, 191, 36, 0.6) !important;
         }
 
         body.dark-mode .btn-cancel {
             background: #27272a !important;
             color: #ffffff !important;
             border: 2px solid #71717a !important;
-            box-shadow: 0 0 15px rgba(113, 113, 122, 0.4) !important;
+            box-shadow: 0 0 15px rgba(113, 113, 122, 0.5) !important;
         }
 
-        /* EFEK NEON WARNA-WARNI PADA MASING-MASING TOMBOL AKSI */
+        /* EFEK NEON WARNA-WARNI PADA TOMBOL AKSI */
         body.dark-mode .btn-success, body.dark-mode .btn-customer {
-            background: #2563eb !important;
+            background: #1d4ed8 !important;
             color: #ffffff !important;
-            border: 2px solid #38bdf8 !important; /* Neon Biru Langit */
-            box-shadow: 0 0 25px rgba(56, 189, 248, 0.7) !important;
+            border: 2px solid #38bdf8 !important;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.8) !important;
         }
 
         body.dark-mode .btn-closing {
-            background: #dc2626 !important;
+            background: #991b1b !important;
             color: #ffffff !important;
-            border: 2px solid #fb7185 !important; /* Neon Pink / Merah Muda */
-            box-shadow: 0 0 25px rgba(251, 113, 133, 0.7) !important;
+            border: 2px solid #fb7185 !important;
+            box-shadow: 0 0 30px rgba(251, 113, 133, 0.8) !important;
         }
 
         body.dark-mode .btn-purple {
-            background: #7c3aed !important;
+            background: #581c87 !important;
             color: #ffffff !important;
-            border: 2px solid #e879f9 !important; /* Neon Magenta / Ungu Terang */
-            box-shadow: 0 0 25px rgba(232, 121, 249, 0.7) !important;
+            border: 2px solid #e879f9 !important;
+            box-shadow: 0 0 30px rgba(232, 121, 249, 0.8) !important;
         }
 
         body.dark-mode .btn-teal {
-            background: #0d9488 !important;
+            background: #115e59 !important;
             color: #ffffff !important;
-            border: 2px solid #5eead4 !important; /* Neon Mint / Tosca Terang */
-            box-shadow: 0 0 25px rgba(94, 234, 212, 0.7) !important;
+            border: 2px solid #5eead4 !important;
+            box-shadow: 0 0 30px rgba(94, 234, 212, 0.8) !important;
         }
 
         body.dark-mode .btn-amber {
-            background: #d97706 !important;
+            background: #b45309 !important;
             color: #ffffff !important;
-            border: 2px solid #fde047 !important; /* Neon Kuning Terang */
-            box-shadow: 0 0 25px rgba(253, 224, 71, 0.7) !important;
+            border: 2px solid #fde047 !important;
+            box-shadow: 0 0 30px rgba(253, 224, 71, 0.8) !important;
         }
 
         body.dark-mode .wa-report-btn {
-            background: #059669 !important;
-            border: 2px solid #4ade80 !important; /* Neon Hijau Terang */
-            box-shadow: 0 0 25px rgba(74, 222, 128, 0.7) !important;
+            background: #065f46 !important;
+            border: 2px solid #4ade80 !important;
+            box-shadow: 0 0 30px rgba(74, 222, 128, 0.8) !important;
         }
 
         /* EFEK DENYUT (PULSE) WARNA-WARNI PADA TOMBOL UTAMA */
         @keyframes pulseGlow {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.6); }
-            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(56, 189, 248, 0); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(56, 189, 248, 0); }
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
         }
         .btn-pulse { animation: pulseGlow 2s infinite; }
-
-        /* KOTAK GILIRAN HA & AV (TAMPILAN LAMA DENGAN WARNA NEON BERBEDA) */
-        .timer-box-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
-        .timer-card-admin { background: #f8fafc; border-radius: 14px; padding: 14px; text-align: center; border: 2px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
-        
-        /* Kotak HA: Neon Biru */
-        body.dark-mode .timer-card-admin.ha {
-            background: #050b14 !important;
-            border: 2px solid #3b82f6 !important;
-            box-shadow: 0 0 25px rgba(59, 130, 246, 0.6) !important;
-        }
-        /* Kotak AV: Neon Ungu / Violet */
-        body.dark-mode .timer-card-admin.av {
-            background: #0e0514 !important;
-            border: 2px solid #a855f7 !important;
-            box-shadow: 0 0 25px rgba(168, 85, 247, 0.6) !important;
-        }
-
-        .timer-badge-title { font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; display: block; }
-        .ha .timer-badge-title { color: #2563eb; }
-        body.dark-mode .ha .timer-badge-title { color: #60a5fa !important; text-shadow: 0 0 10px rgba(96, 165, 250, 0.5); }
-
-        .av .timer-badge-title { color: #7c3aed; }
-        body.dark-mode .av .timer-badge-title { color: #c084fc !important; text-shadow: 0 0 10px rgba(192, 132, 252, 0.5); }
-
-        .promotor-nama-aktif { font-size: 15px; font-weight: 800; color: var(--text-main); margin-top: 2px; line-height: 1.3; min-height: 36px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
-        body.dark-mode .promotor-nama-aktif { color: #ffffff !important; }
 
         *, body, button, select, input { font-family: 'Plus Jakarta Sans', sans-serif !important; box-sizing: border-box; }
         body { background: var(--bg-color); color: var(--text-main); margin: 0; padding: 16px; display: flex; justify-content: center; min-height: 100vh; }
