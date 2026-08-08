@@ -24,7 +24,7 @@
             --border: #cbd5e1;
         }
 
-        /* --- STYLING KHUSUS MODE GELAP: NEON BOX MENYALA --- */
+        /* --- STYLING MODE GELAP: NEON BOX MERAH MENYALA KEMBALI SEPERTI SEMULA --- */
         body.dark-mode {
             --bg-color: #030712 !important;
             --card-bg: #0f172a !important;
@@ -36,21 +36,21 @@
 
         body.dark-mode .app-container {
             background: #090d16 !important;
-            border: 2px solid #3b82f6 !important;
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.35), inset 0 0 15px rgba(59, 130, 246, 0.1);
+            border: 2px solid #ef4444 !important;
+            box-shadow: 0 0 35px rgba(239, 68, 68, 0.4), inset 0 0 15px rgba(239, 68, 68, 0.15);
         }
 
         body.dark-mode .gradient-header {
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%) !important;
-            border: 2px solid #818cf8 !important;
-            box-shadow: 0 0 20px rgba(129, 140, 248, 0.5);
+            background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%) !important;
+            border: 2px solid #f87171 !important;
+            box-shadow: 0 0 25px rgba(248, 113, 113, 0.6);
         }
 
         body.dark-mode select, body.dark-mode input[type="text"] {
             background: #020617 !important;
             color: #ffffff !important;
-            border: 2px solid #3b82f6 !important;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.25);
+            border: 2px solid #ef4444 !important;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
         }
 
         body.dark-mode select:disabled {
@@ -62,57 +62,57 @@
 
         body.dark-mode .user-badge {
             background: #020617 !important;
-            border: 2px solid #a855f7 !important;
+            border: 2px solid #ef4444 !important;
             color: #ffffff !important;
-            box-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
         }
 
         body.dark-mode .list-antrian li {
             background: #020617 !important;
-            border: 2px solid #06b6d4 !important;
+            border: 2px solid #f87171 !important;
             color: #ffffff !important;
-            box-shadow: 0 0 10px rgba(6, 182, 212, 0.25);
+            box-shadow: 0 0 10px rgba(248, 113, 113, 0.25);
         }
 
         body.dark-mode .modal-box {
             background: #0f172a !important;
-            border: 2px solid #38bdf8 !important;
+            border: 2px solid #ef4444 !important;
             color: #ffffff !important;
-            box-shadow: 0 0 35px rgba(56, 189, 248, 0.4);
+            box-shadow: 0 0 35px rgba(239, 68, 68, 0.5);
         }
 
-        /* NEON BOX MENYALA UNTUK SEMUA TOMBOL DI MODE GELAP */
+        /* NEON BOX MERAH MENYALA UNTUK TOMBOL UTAMA DI MODE GELAP */
         body.dark-mode .btn-success, 
         body.dark-mode .btn-customer {
-            background: #1d4ed8 !important;
-            color: #ffffff !important;
-            border: 2px solid #60a5fa !important;
-            box-shadow: 0 0 15px rgba(96, 165, 250, 0.7), inset 0 0 8px rgba(96, 165, 250, 0.4);
-        }
-
-        body.dark-mode .btn-closing {
-            background: #b91c1c !important;
+            background: #991b1b !important;
             color: #ffffff !important;
             border: 2px solid #f87171 !important;
             box-shadow: 0 0 15px rgba(248, 113, 113, 0.7), inset 0 0 8px rgba(248, 113, 113, 0.4);
         }
 
+        body.dark-mode .btn-closing {
+            background: #7f1d1d !important;
+            color: #ffffff !important;
+            border: 2px solid #fca5a5 !important;
+            box-shadow: 0 0 15px rgba(252, 165, 165, 0.7), inset 0 0 8px rgba(252, 165, 165, 0.4);
+        }
+
         body.dark-mode .btn-purple {
-            background: #6d28d9 !important;
+            background: #581c87 !important;
             color: #ffffff !important;
             border: 2px solid #c084fc !important;
             box-shadow: 0 0 15px rgba(192, 132, 252, 0.7), inset 0 0 8px rgba(192, 132, 252, 0.4);
         }
 
         body.dark-mode .btn-teal {
-            background: #0f766e !important;
+            background: #115e59 !important;
             color: #ffffff !important;
             border: 2px solid #2dd4bf !important;
             box-shadow: 0 0 15px rgba(45, 212, 191, 0.7), inset 0 0 8px rgba(45, 212, 191, 0.4);
         }
 
         body.dark-mode .btn-amber {
-            background: #b45309 !important;
+            background: #9a3412 !important;
             color: #ffffff !important;
             border: 2px solid #fbbf24 !important;
             box-shadow: 0 0 15px rgba(251, 191, 36, 0.7), inset 0 0 8px rgba(251, 191, 36, 0.4);
@@ -125,7 +125,7 @@
             box-shadow: 0 0 12px rgba(148, 163, 184, 0.4);
         }
 
-        /* TOMBOL WHATSAPP BERKEDIP MENYALA (PULSING NEON) DI MODE GELAP */
+        /* ANIMASI KEDIP MENYALA (PULSING NEON) PADA TOMBOL WHATSAPP */
         @keyframes neonPulseGreen {
             0% { box-shadow: 0 0 8px rgba(74, 222, 128, 0.4), inset 0 0 5px rgba(74, 222, 128, 0.2); border-color: #15803d; }
             50% { box-shadow: 0 0 25px rgba(74, 222, 128, 0.9), inset 0 0 12px rgba(74, 222, 128, 0.6); border-color: #4ade80; }
@@ -141,11 +141,11 @@
 
         body.dark-mode .dark-mode-btn {
             background: #0f172a !important;
-            border: 2px solid #fbbf24 !important;
-            color: #fbbf24 !important;
-            box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
+            border: 2px solid #ef4444 !important;
+            color: #f87171 !important;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
         }
-        /* ---------------------------------------------------- */
+        /* ----------------------------------------------------------------- */
 
         *, body, button, select, input { font-family: 'Plus Jakarta Sans', sans-serif !important; box-sizing: border-box; }
         body { background: var(--bg-color); color: var(--text-main); margin: 0; padding: 16px; display: flex; justify-content: center; min-height: 100vh; }
@@ -282,6 +282,7 @@
         </div>
 
         <a href="https://wa.me/6289524391002" target="_blank" class="wa-report-btn">
+            <svg style="width:20px;height:20px;fill:currentColor;" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
             Laporkan via WhatsApp
         </a>
     </div>
