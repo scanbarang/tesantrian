@@ -180,12 +180,13 @@
                 <ul id="item-antrian-list-AV" class="list-antrian"><li><span>Memuat...</span></li></ul>
             </div>
 
-            <div class="section-title">Pengaturan Titik GPS Toko & Radius</div>
+            <div class="section-title">Pengaturan Status GPS Validasi Toko</div>
             <div class="admin-grid" style="margin-bottom: 15px;">
-                <input type="text" id="input-lat-toko" placeholder="Latitude Toko (Cth: -7.9666)">
-                <input type="text" id="input-lng-toko" placeholder="Longitude Toko (Cth: 112.6326)">
-                <input type="number" id="input-radius-toko" placeholder="Radius (Meter, Cth: 50)">
-                <button type="button" class="btn-teal" onclick="simpanLokasiTokoAdmin()">Simpan Pengaturan GPS Toko</button>
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" class="btn-success" style="flex:1;" onclick="toggleGPSAdmin(true)">🟢 AKTIFKAN GPS</button>
+                    <button type="button" class="btn-danger" style="flex:1;" onclick="toggleGPSAdmin(false)">🔴 MATIKAN GPS</button>
+                </div>
+                <div id="label-status-gps" style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-align: center; margin-top: 4px;">Status GPS: Memeriksa...</div>
             </div>
 
             <div class="section-title">1. Kontrol Sistem Antrian</div>
@@ -245,6 +246,7 @@
         let daftarAntrianGlobal = [];
         let sedangProsesAksiAdmin = false; 
         let savedPinAdmin = "";
+        let koordinatTokoAdmin = { lat: "", lng: "", radius: 50 };
 
         window.onload = function() {
             muatMasterSalesInstant();
@@ -314,9 +316,16 @@
             badge.className = statusSistem === "BUKA" ? "status-badge status-open" : "status-badge status-closed";
 
             if (res.koordinatPusat) {
-                document.getElementById('input-lat-toko').value = res.koordinatPusat.lat || "";
-                document.getElementById('input-lng-toko').value = res.koordinatPusat.lng || "";
-                document.getElementById('input-radius-toko').value = res.koordinatPusat.radius || 50;
+                koordinatTokoAdmin.lat = res.koordinatPusat.lat || "";
+                koordinatTokoAdmin.lng = res.koordinatPusat.lng || "";
+                koordinatTokoAdmin.radius = res.koordinatPusat.radius || 50;
+
+                const statusGpsLabel = document.getElementById('label-status-gps');
+                if (koordinatTokoAdmin.lat && koordinatTokoAdmin.lat !== "") {
+                    statusGpsLabel.innerHTML = `Status GPS: <b style="color:#10b981;">AKTIF</b> (Radius: ${koordinatTokoAdmin.radius}m)`;
+                } else {
+                    statusGpsLabel.innerHTML = `Status GPS: <b style="color:#ef4444;">NONAKTIF (OFF)</b>`;
+                }
             }
 
             let listMC = "", listAC = "", listAV = "";
@@ -368,6 +377,42 @@
             document.getElementById('item-antrian-list-Mesin Cuci & Lemari Es').innerHTML = listMC || kosongHtml;
             document.getElementById('item-antrian-list-AC').innerHTML = listAC || kosongHtml;
             document.getElementById('item-antrian-list-AV').innerHTML = listAV || kosongHtml;
+        }
+
+        // FUNGSI SWITCH ON / OFF GPS DARI TOMBOL ADMIN
+        function toggleGPSAdmin(statusAktif) {
+            const pin = getActivePinAdmin();
+            if (!pin) return alert("PIN Admin tidak ditemukan!");
+
+            if (!statusAktif) {
+                // Matikan GPS dengan mengosongkan koordinat di sheet
+                fetch(`${SCRIPT_URL}?aksi=spvSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=&lng=&radius=50&t=${Date.now()}`)
+                .then(r => r.json())
+                .then(res => {
+                    tampilkanModal("GPS Dinonaktifkan", "Validasi radius GPS toko berhasil dimatikan (OFF). Promotor dapat mendaftar dari mana saja.");
+                    muatDataAntrian();
+                });
+            } else {
+                // Aktifkan GPS dengan mendeteksi lokasi perangkat Admin saat ini sebagai patokan toko
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(pos) {
+                        const lat = pos.coords.latitude;
+                        const lng = pos.coords.longitude;
+                        const radius = "50";
+
+                        fetch(`${SCRIPT_URL}?aksi=spvSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&radius=${encodeURIComponent(radius)}&t=${Date.now()}`)
+                        .then(r => r.json())
+                        .then(res => {
+                            tampilkanModal("GPS Diaktifkan", "Validasi radius GPS toko berhasil diaktifkan (ON) menggunakan posisi perangkat Admin saat ini.");
+                            muatDataAntrian();
+                        });
+                    }, function() {
+                        alert("Gagal mendeteksi lokasi perangkat Anda. Pastikan izin lokasi browser aktif.");
+                    });
+                } else {
+                    alert("Browser Anda tidak mendukung geolokasi.");
+                }
+            }
         }
 
         function renderTabelStatusAkunAdmin(dataSales) {
@@ -442,17 +487,6 @@
             });
         }
 
-        function simpanLokasiTokoAdmin() {
-            const pin = getActivePinAdmin();
-            const lat = document.getElementById('input-lat-toko').value.trim();
-            const lng = document.getElementById('input-lng-toko').value.trim();
-            const radius = document.getElementById('input-radius-toko').value.trim() || "50";
-            if (!pin) return alert("PIN Admin tidak ditemukan!");
-            
-            fetch(`${SCRIPT_URL}?aksi=spvSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&radius=${encodeURIComponent(radius)}&t=${Date.now()}`)
-            .then(r => r.json()).then(res => tampilkanModal("Pengaturan GPS Toko", res.pesan));
-        }
-
         function bukaModalToggleSistem(targetStatus) {
             document.getElementById('modal-title').innerText = targetStatus === 'BUKA' ? 'Mulai Antrian' : 'Hentikan Antrian';
             document.getElementById('modal-desc').innerHTML = `Status baru: <b>${targetStatus}</b>`;
@@ -525,7 +559,6 @@
             .then(res => res.json()).then(res => { tampilkanModal("Status Admin", res.pesan); muatDataAntrian(); });
         }
 
-        // RESET PERANGKAT (HANYA PILIH NAMA PROMOTOR TANPA KATEGORI)
         function bukaModalResetDeviceAdmin() {
             document.getElementById('modal-title').innerText = "Reset Perangkat Promotor";
             
