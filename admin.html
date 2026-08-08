@@ -248,6 +248,7 @@
         let sedangProsesAksiAdmin = false; 
         let savedPinAdmin = "";
         let koordinatTokoAdmin = { lat: "", lng: "", radius: 50 };
+        let sedangDiprosesGlobal = false;
 
         window.onload = function() {
             muatMasterSalesInstant();
@@ -269,26 +270,49 @@
             setInterval(muatDataAntrian, 3000); 
         };
 
+        function amanKlikAdmin(callbackAksi) {
+            if (sedangDiprosesGlobal) return;
+            sedangDiprosesGlobal = true;
+            const semuaTombol = document.querySelectorAll('button');
+            semuaTombol.forEach(b => b.disabled = true);
+
+            callbackAksi(function() {
+                sedangDiprosesGlobal = false;
+                semuaTombol.forEach(b => b.disabled = false);
+            });
+        }
+
         function getActivePinAdmin() { return savedPinAdmin || document.getElementById('input-pin-admin').value || localStorage.getItem('ufo_admin_pin') || ""; }
 
         function prosesLoginAdmin() {
-            const pin = document.getElementById('input-pin-admin').value.trim();
-            if(!pin) return tampilkanModal("Perhatian", "Masukkan PIN Admin!");
+            amanKlikAdmin(function(selesai) {
+                const pin = document.getElementById('input-pin-admin').value.trim();
+                if(!pin) {
+                    tampilkanModal("Perhatian", "Masukkan PIN Admin!");
+                    selesai();
+                    return;
+                }
 
-            const btn = document.getElementById('btn-login-admin');
-            const textAsli = btn.innerHTML;
-            btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Memeriksa...`;
+                const btn = document.getElementById('btn-login-admin');
+                const textAsli = btn.innerHTML;
+                btn.innerHTML = `<span class="spinner"></span> Memeriksa...`;
 
-            fetch(`${SCRIPT_URL}?aksi=loginSPV&pin=${encodeURIComponent(pin)}&t=${Date.now()}`)
-            .then(res => res.json())
-            .then(res => {
-                btn.disabled = false; btn.innerHTML = textAsli;
-                if(res.status === "sukses") {
-                    savedPinAdmin = pin; localStorage.setItem('ufo_admin_pin', pin);
-                    document.getElementById('login-admin-box').style.display = 'none';
-                    document.getElementById('controls-admin-box').style.display = 'block';
-                } else { tampilkanModal("Gagal Login", res.pesan); }
-            }).catch(() => { btn.disabled = false; btn.innerHTML = textAsli; tampilkanModal("Gagal", "Terjadi gangguan jaringan saat login."); });
+                fetch(`${SCRIPT_URL}?aksi=loginSPV&pin=${encodeURIComponent(pin)}&t=${Date.now()}`)
+                .then(res => res.json())
+                .then(res => {
+                    btn.innerHTML = textAsli;
+                    if(res.status === "sukses") {
+                        savedPinAdmin = pin; localStorage.setItem('ufo_admin_pin', pin);
+                        document.getElementById('login-admin-box').style.display = 'none';
+                        document.getElementById('controls-admin-box').style.display = 'block';
+                    } else { tampilkanModal("Gagal Login", res.pesan); }
+                    selesai();
+                }).catch(() => {
+                    btn.innerHTML = textAsli;
+                    tampilkanModal("Gagal", "Terjadi gangguan jaringan saat login.");
+                    selesai();
+                });
+            });
         }
 
         function logoutAdmin() {
@@ -327,7 +351,7 @@
 
                 if (koordinatTokoAdmin.lat && koordinatTokoAdmin.lat !== "") {
                     statusGpsLabel.innerHTML = `Status GPS: <b style="color:#10b981;">AKTIF</b> (Radius: ${koordinatTokoAdmin.radius}m)`;
-                    if (btnOn && btnOff) {
+                    if (btnOn && btnOff && !sedangDiprosesGlobal) {
                         btnOn.disabled = true;
                         btnOn.className = "btn-success btn-disabled";
                         btnOff.disabled = false;
@@ -335,7 +359,7 @@
                     }
                 } else {
                     statusGpsLabel.innerHTML = `Status GPS: <b style="color:#ef4444;">NONAKTIF (OFF)</b>`;
-                    if (btnOn && btnOff) {
+                    if (btnOn && btnOff && !sedangDiprosesGlobal) {
                         btnOn.disabled = false;
                         btnOn.className = "btn-success";
                         btnOff.disabled = true;
@@ -396,36 +420,65 @@
         }
 
         function toggleGPSAdmin(statusAktif) {
-            const pin = getActivePinAdmin();
-            if (!pin) return alert("PIN Admin tidak ditemukan!");
+            amanKlikAdmin(function(selesai) {
+                const pin = getActivePinAdmin();
+                if (!pin) {
+                    alert("PIN Admin tidak ditemukan!");
+                    selesai();
+                    return;
+                }
 
-            if (!statusAktif) {
-                fetch(`${SCRIPT_URL}?aksi=spvSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=&lng=&radius=50&t=${Date.now()}`)
-                .then(r => r.json())
-                .then(res => {
-                    tampilkanModal("GPS Dinonaktifkan", "Validasi radius GPS toko berhasil dimatikan (OFF).");
-                    muatDataAntrian();
-                });
-            } else {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(pos) {
-                        const lat = pos.coords.latitude;
-                        const lng = pos.coords.longitude;
-                        const radius = "50";
+                const btnOn = document.getElementById('btn-on-gps');
+                const btnOff = document.getElementById('btn-off-gps');
 
-                        fetch(`${SCRIPT_URL}?aksi=spvSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&radius=${encodeURIComponent(radius)}&t=${Date.now()}`)
-                        .then(r => r.json())
-                        .then(res => {
-                            tampilkanModal("GPS Diaktifkan", "Validasi radius GPS toko berhasil diaktifkan (ON).");
-                            muatDataAntrian();
-                        });
-                    }, function() {
-                        alert("Gagal mendeteksi lokasi perangkat Anda. Pastikan izin lokasi browser aktif.");
+                if (!statusAktif) {
+                    btnOff.innerHTML = `<span class="spinner"></span> Mematikan...`;
+
+                    fetch(`${SCRIPT_URL}?aksi=spvSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=&lng=&radius=50&t=${Date.now()}`)
+                    .then(r => r.json())
+                    .then(res => {
+                        btnOff.innerHTML = `🔴 MATIKAN GPS`;
+                        tampilkanModal("GPS Dinonaktifkan", "Validasi radius GPS toko berhasil dimatikan (OFF).");
+                        muatDataAntrian();
+                        selesai();
+                    }).catch(() => {
+                        btnOff.innerHTML = `🔴 MATIKAN GPS`;
+                        alert("Terjadi gangguan jaringan.");
+                        selesai();
                     });
                 } else {
-                    alert("Browser Anda tidak mendukung geolokasi.");
+                    btnOn.innerHTML = `<span class="spinner"></span> Mendeteksi GPS...`;
+
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function(pos) {
+                            const lat = pos.coords.latitude;
+                            const lng = pos.coords.longitude;
+                            const radius = "50";
+
+                            fetch(`${SCRIPT_URL}?aksi=spvSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&radius=${encodeURIComponent(radius)}&t=${Date.now()}`)
+                            .then(r => r.json())
+                            .then(res => {
+                                btnOn.innerHTML = `🟢 AKTIFKAN GPS`;
+                                tampilkanModal("GPS Diaktifkan", "Validasi radius GPS toko berhasil diaktifkan (ON).");
+                                muatDataAntrian();
+                                selesai();
+                            }).catch(() => {
+                                btnOn.innerHTML = `🟢 AKTIFKAN GPS`;
+                                alert("Terjadi gangguan jaringan ke server.");
+                                selesai();
+                            });
+                        }, function() {
+                            btnOn.innerHTML = `🟢 AKTIFKAN GPS`;
+                            alert("Gagal mendeteksi lokasi perangkat Anda. Pastikan izin lokasi browser aktif.");
+                            selesai();
+                        }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 });
+                    } else {
+                        btnOn.innerHTML = `🟢 AKTIFKAN GPS`;
+                        alert("Browser Anda tidak mendukung geolokasi.");
+                        selesai();
+                    }
                 }
-            }
+            });
         }
 
         function renderTabelStatusAkunAdmin(dataSales) {
@@ -475,12 +528,15 @@
                 if(!alasan) return alert("Harap masukkan alasan!");
 
                 tutupModal();
-                fetch(`${SCRIPT_URL}?aksi=spvLockPromotor&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&alasan=${encodeURIComponent(alasan)}&t=${Date.now()}`)
-                .then(res => res.json())
-                .then(res => {
-                    tampilkanModal("Berhasil", res.pesan);
-                    muatMasterSales();
-                    muatDataAntrian();
+                amanKlikAdmin(function(selesai) {
+                    fetch(`${SCRIPT_URL}?aksi=spvLockPromotor&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&alasan=${encodeURIComponent(alasan)}&t=${Date.now()}`)
+                    .then(res => res.json())
+                    .then(res => {
+                        tampilkanModal("Berhasil", res.pesan);
+                        muatMasterSales();
+                        muatDataAntrian();
+                        selesai();
+                    }).catch(() => selesai());
                 });
             };
         }
@@ -490,12 +546,15 @@
             if(!pin) return alert("PIN Admin tidak ditemukan!");
             
             tampilkanModalKonfirmasi("Buka Kunci Promotor", `Buka kunci akun (${namaSales})?`, function() {
-                fetch(`${SCRIPT_URL}?aksi=spvUnlockPromotor&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
-                .then(res => res.json())
-                .then(res => {
-                    tampilkanModal("Berhasil", res.pesan);
-                    muatMasterSales();
-                    muatDataAntrian();
+                amanKlikAdmin(function(selesai) {
+                    fetch(`${SCRIPT_URL}?aksi=spvUnlockPromotor&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
+                    .then(res => res.json())
+                    .then(res => {
+                        tampilkanModal("Berhasil", res.pesan);
+                        muatMasterSales();
+                        muatDataAntrian();
+                        selesai();
+                    }).catch(() => selesai());
                 });
             });
         }
@@ -508,12 +567,22 @@
         }
 
         function eksekusiToggleSistem(targetStatus) {
-            const pin = getActivePinAdmin();
-            if(!pin) return alert("PIN Admin tidak ditemukan!");
             tutupModal();
-            fetch(`${SCRIPT_URL}?aksi=spvSetStatusAntrian&pin=${encodeURIComponent(pin)}&statusBaru=${targetStatus}&t=${Date.now()}`)
-            .then(res => res.json())
-            .then(res => { tampilkanModal("Status Sistem", res.pesan); muatDataAntrian(); });
+            amanKlikAdmin(function(selesai) {
+                const pin = getActivePinAdmin();
+                if(!pin) {
+                    alert("PIN Admin tidak ditemukan!");
+                    selesai();
+                    return;
+                }
+                fetch(`${SCRIPT_URL}?aksi=spvSetStatusAntrian&pin=${encodeURIComponent(pin)}&statusBaru=${targetStatus}&t=${Date.now()}`)
+                .then(res => res.json())
+                .then(res => {
+                    tampilkanModal("Status Sistem", res.pesan);
+                    muatDataAntrian();
+                    selesai();
+                }).catch(() => selesai());
+            });
         }
 
         function bukaModalResetTotal() {
@@ -524,12 +593,22 @@
         }
 
         function eksekusiResetTotal() {
-            const pin = getActivePinAdmin();
-            if(!pin) return alert("PIN Admin tidak ditemukan!");
             tutupModal();
-            fetch(`${SCRIPT_URL}?aksi=spvResetAntrian&pin=${encodeURIComponent(pin)}&t=${Date.now()}`)
-            .then(res => res.json())
-            .then(res => { tampilkanModal("Reset Total", res.pesan); muatDataAntrian(); });
+            amanKlikAdmin(function(selesai) {
+                const pin = getActivePinAdmin();
+                if(!pin) {
+                    alert("PIN Admin tidak ditemukan!");
+                    selesai();
+                    return;
+                }
+                fetch(`${SCRIPT_URL}?aksi=spvResetAntrian&pin=${encodeURIComponent(pin)}&t=${Date.now()}`)
+                .then(res => res.json())
+                .then(res => {
+                    tampilkanModal("Reset Total", res.pesan);
+                    muatDataAntrian();
+                    selesai();
+                }).catch(() => selesai());
+            });
         }
 
         function bukaModalTambahAntriAdmin() {
@@ -564,12 +643,19 @@
             const kategori = subkat === "AV" ? "AV" : "HA";
             const namaSales = document.getElementById('admin-select-sales').value; 
             const posisi = document.getElementById('admin-input-posisi').value || "1"; 
-            const pin = getActivePinAdmin();
             
             if(!namaSales) return alert("Pilih promotor!"); 
             tutupModal();
-            fetch(`${SCRIPT_URL}?aksi=spvDaftarAntri&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategori)}&subkategori=${encodeURIComponent(subkat)}&posisi=${encodeURIComponent(posisi)}&t=${Date.now()}`)
-            .then(res => res.json()).then(res => { tampilkanModal("Status Admin", res.pesan); muatDataAntrian(); });
+            amanKlikAdmin(function(selesai) {
+                const pin = getActivePinAdmin();
+                fetch(`${SCRIPT_URL}?aksi=spvDaftarAntri&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategori)}&subkategori=${encodeURIComponent(subkat)}&posisi=${encodeURIComponent(posisi)}&t=${Date.now()}`)
+                .then(res => res.json())
+                .then(res => {
+                    tampilkanModal("Status Admin", res.pesan);
+                    muatDataAntrian();
+                    selesai();
+                }).catch(() => selesai());
+            });
         }
 
         function bukaModalResetDeviceAdmin() {
@@ -622,19 +708,26 @@
         function eksekusiResetDeviceAdmin() {
             const selectEl = document.getElementById('admin-select-sales-reset');
             const namaSales = selectEl ? selectEl.value : "";
-            const pin = getActivePinAdmin();
-
             if (!namaSales) return alert("Pilih nama promotor terlebih dahulu!");
-            if (!pin) return alert("PIN Admin tidak ditemukan!");
 
             tutupModal();
-            fetch(`${SCRIPT_URL}?aksi=spvResetDevice&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
-            .then(res => res.json())
-            .then(res => {
-                tampilkanModal("Status Reset Perangkat", res.pesan);
-                muatDataAntrian();
-            }).catch(() => {
-                tampilkanModal("Gagal", "Terjadi gangguan jaringan saat mereset perangkat.");
+            amanKlikAdmin(function(selesai) {
+                const pin = getActivePinAdmin();
+                if(!pin) {
+                    alert("PIN Admin tidak ditemukan!");
+                    selesai();
+                    return;
+                }
+                fetch(`${SCRIPT_URL}?aksi=spvResetDevice&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
+                .then(res => res.json())
+                .then(res => {
+                    tampilkanModal("Status Reset Perangkat", res.pesan);
+                    muatDataAntrian();
+                    selesai();
+                }).catch(() => {
+                    tampilkanModal("Gagal", "Terjadi gangguan jaringan saat mereset perangkat.");
+                    selesai();
+                });
             });
         }
 
@@ -661,11 +754,19 @@
             const subkat = document.getElementById('admin-select-kategori').value; 
             const kategori = subkat === "AV" ? "AV" : "HA";
             let namaSales = butuhPilihPromotor ? document.getElementById('admin-select-sales').value : ""; 
-            const pin = getActivePinAdmin();
             if(butuhPilihPromotor && !namaSales) return alert("Pilih promotor!"); 
+            
             tutupModal();
-            fetch(`${SCRIPT_URL}?aksi=${aksiName}&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategori)}&subkategori=${encodeURIComponent(subkat)}&t=${Date.now()}`)
-            .then(res => res.json()).then(res => { tampilkanModal("Status Admin", res.pesan); muatDataAntrian(); });
+            amanKlikAdmin(function(selesai) {
+                const pin = getActivePinAdmin();
+                fetch(`${SCRIPT_URL}?aksi=${aksiName}&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategori)}&subkategori=${encodeURIComponent(subkat)}&t=${Date.now()}`)
+                .then(res => res.json())
+                .then(res => {
+                    tampilkanModal("Status Admin", res.pesan);
+                    muatDataAntrian();
+                    selesai();
+                }).catch(() => selesai());
+            });
         }
 
         function muatMasterSales() {
