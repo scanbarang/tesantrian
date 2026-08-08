@@ -145,7 +145,9 @@
             box-shadow: 0 0 15px rgba(113, 113, 122, 0.5) !important;
         }
 
-        body.dark-mode button:not(.dark-mode-btn):not(.btn-disabled) {
+        /* HANYA TOMBOL DAFTAR ANTRIAN & HADIR YANG BIRU, TOMBOL LAINNYA KEMBALI NORMAL */
+        body.dark-mode .btn-success,
+        body.dark-mode .btn-customer {
             background: #2563eb !important;
             color: #ffffff !important;
             border: 2px solid #3b82f6 !important;
@@ -310,7 +312,6 @@
                         <option value="AV">AV (Audio Video)</option>
                     </select>
                 </div>
-                <!-- TOMBOL KONFIRMASI KEHADIRAN WARNA BIRU -->
                 <button type="button" id="btn-hadir" class="btn-success btn-pulse" onclick="aksiHadirKerja()">Konfirmasi Kehadiran & Masuk Antri</button>
             </div>
 
@@ -324,7 +325,6 @@
                     </select>
                 </div>
 
-                <!-- TOMBOL DAFTAR ANTRIAN WARNA BIRU -->
                 <button type="button" id="btn-daftar-antrian" class="btn-success btn-pulse" onclick="aksiDaftarAntrianNormal()" style="display: none; margin-top: 4px;">Daftar Antrian</button>
                 <button type="button" id="btn-utama-customer" class="btn-customer btn-pulse" onclick="aksiUtamaCustomer()" style="display: none; margin-top: 12px;">Sudah Membawa Customer</button>
                 <button type="button" id="btn-selesai-closing" class="btn-closing" onclick="aksiSelesaiClosing()" style="display: none; margin-top: 10px;">SELESAI MELAYANI (DEAL / CLOSING)</button>
