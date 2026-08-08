@@ -87,19 +87,30 @@
         .timer-box-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
         .timer-card-admin { background: #f8fafc; border-radius: 14px; padding: 14px; text-align: center; border: 2px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
         
-        body.dark-mode .timer-card-admin.ha, body.dark-mode .timer-card-admin.av {
-            background: #1f0505 !important;
-            border: 2px solid #ef4444 !important;
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.7) !important;
+        /* NEON GLOW KOTAK GILIRAN HA & AV KHUSUS MODE GELAP */
+        body.dark-mode .timer-card-admin.ha {
+            background: #080203 !important;
+            border: 2px solid #facc15 !important;
+            box-shadow: 0 0 25px rgba(250, 204, 21, 0.5), inset 0 0 15px rgba(250, 204, 21, 0.15) !important;
+        }
+        body.dark-mode .timer-card-admin.av {
+            background: #080203 !important;
+            border: 2px solid #22c55e !important;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.5), inset 0 0 15px rgba(34, 197, 94, 0.15) !important;
         }
 
         .timer-badge-title { font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; display: block; }
         .ha .timer-badge-title { color: #2563eb; }
         .av .timer-badge-title { color: #7c3aed; }
-        body.dark-mode .timer-badge-title { color: #fca5a5 !important; text-shadow: 0 0 10px rgba(252, 165, 165, 0.8); }
+
+        /* NEON TEKS TITLE & NAMA DI MODE GELAP */
+        body.dark-mode .timer-card-admin.ha .timer-badge-title { color: #fde047 !important; text-shadow: 0 0 10px rgba(253, 224, 71, 0.8); }
+        body.dark-mode .timer-card-admin.av .timer-badge-title { color: #86efac !important; text-shadow: 0 0 10px rgba(134, 239, 172, 0.8); }
 
         .promotor-nama-aktif { font-size: 15px; font-weight: 800; color: var(--text-main); margin-top: 2px; line-height: 1.3; min-height: 36px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
-        body.dark-mode .promotor-nama-aktif { color: #ffffff !important; }
+        
+        body.dark-mode .timer-card-admin.ha .promotor-nama-aktif { color: #fef08a !important; text-shadow: 0 0 15px rgba(254, 240, 138, 0.9); }
+        body.dark-mode .timer-card-admin.av .promotor-nama-aktif { color: #bbf7d0 !important; text-shadow: 0 0 15px rgba(187, 247, 208, 0.9); }
 
         body.dark-mode .list-antrian li { 
             background: #1f0505 !important; 
@@ -256,7 +267,7 @@
                 <span style="color: var(--text-muted);">Promotor:</span> <strong id="label-user-aktif" style="color:var(--primary-dark); font-size: 15px;">-</strong>
             </div>
 
-            <!-- PETA MINI VISUALISASI POSISI (Dibatasi tampil saat Standby / Belum daftar) -->
+            <!-- PETA MINI VISUALISASI POSISI (Instan dimuat dari Cache) -->
             <div class="input-group" id="section-peta-gps">
                 <label>Peta Posisi Anda & Radius Toko</label>
                 <div id="map-promotor" style="width: 100%; height: 180px; border-radius: 14px; border: 2px solid var(--border); z-index: 1;"></div>
@@ -266,13 +277,13 @@
             <div class="timer-box-wrapper">
                 <div class="timer-card-admin ha">
                     <div>
-                        <span class="timer-badge-title">Giliran HA</span>
+                        <span class="timer-badge-title">Giliran HA Saat Ini</span>
                         <div id="promotor-nama-ha" class="promotor-nama-aktif">Memuat...</div>
                     </div>
                 </div>
                 <div class="timer-card-admin av">
                     <div>
-                        <span class="timer-badge-title">Giliran AV</span>
+                        <span class="timer-badge-title">Giliran AV Saat Ini</span>
                         <div id="promotor-nama-av" class="promotor-nama-aktif">Memuat...</div>
                     </div>
                 </div>
@@ -367,13 +378,19 @@
             
             const cachedKoordinat = localStorage.getItem('ufo_koordinat_toko_cache');
             if (cachedKoordinat) {
-                try { koordinatToko = JSON.parse(cachedKoordinat); } catch(e) {}
+                try { 
+                    koordinatToko = JSON.parse(cachedKoordinat); 
+                    if (koordinatToko.lat && koordinatToko.lng) {
+                        setTimeout(() => {
+                            initAtauUpdatePetaPromotor(Number(koordinatToko.lat), Number(koordinatToko.lng), Number(koordinatToko.radius) || 50, null, null);
+                        }, 50);
+                    }
+                } catch(e) {}
             }
 
             muatMasterSalesInstant();
             muatCacheAntrianInstan();
             
-            // Validasi Check-in harian (1 kali sehari berdasarkan format dd-mm-yyyy)
             const tanggalHariIni = getTanggalIndo();
             const tanggalCheckinTerakhir = localStorage.getItem('ufo_checkin_tanggal') || "";
             if (tanggalCheckinTerakhir !== tanggalHariIni) {
@@ -623,11 +640,15 @@
             const sectionCheckinAwal = document.getElementById('section-checkin-awal');
             const sectionNormal = document.getElementById('section-normal');
             
-            // Atur Tampilan Peta GPS (Sembunyikan saat sedang Melayani)
             const sectionPetaGps = document.getElementById('section-peta-gps');
             if (statusSayaNyata === "belum_ada" || statusSayaNyata === "Standby") {
                 if (sectionPetaGps) sectionPetaGps.style.display = "block";
-                setTimeout(() => { if (mapPromotor) mapPromotor.invalidateSize(); }, 200);
+                setTimeout(() => { 
+                    if (mapPromotor) mapPromotor.invalidateSize(); 
+                    else if (koordinatToko.lat && koordinatToko.lng) {
+                        initAtauUpdatePetaPromotor(Number(koordinatToko.lat), Number(koordinatToko.lng), Number(koordinatToko.radius) || 50, null, null);
+                    }
+                }, 100);
             } else {
                 if (sectionPetaGps) sectionPetaGps.style.display = "none";
             }
@@ -894,12 +915,15 @@
             });
         }
 
-        // FUNGSI INISIALISASI & UPDATE PETA MINI
+        // FUNGSI INISIALISASI & UPDATE PETA MINI (OPTIMAL & INSTAN)
         function initAtauUpdatePetaPromotor(latToko, lngToko, radiusToko, latUser, lngUser) {
             if (!latToko || !lngToko || isNaN(latToko) || isNaN(lngToko)) return;
 
             if (!mapPromotor) {
-                mapPromotor = L.map('map-promotor').setView([latToko, lngToko], 18);
+                const mapContainer = document.getElementById('map-promotor');
+                if (!mapContainer) return;
+                
+                mapPromotor = L.map('map-promotor', { zoomControl: false }).setView([latToko, lngToko], 18);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
                     attribution: '© OpenStreetMap'
@@ -935,6 +959,8 @@
                     markerSayaPeta.setLatLng([latUser, lngUser]);
                 }
             }
+            
+            setTimeout(() => { if (mapPromotor) mapPromotor.invalidateSize(); }, 150);
         }
 
         function mulaiPemantauanGPS() {
@@ -946,8 +972,6 @@
                         }
 
                         let statusSaya = cekStatusSayaDariArray(daftarAntrianGlobal);
-                        
-                        // GPS Auto-Exit HANYA BERLAKU jika statusnya Standby
                         if (statusSaya !== "Standby") {
                             return; 
                         }
@@ -958,7 +982,6 @@
                         let lngToko = Number(koordinatToko.lng);
                         let batasRadius = Number(koordinatToko.radius) || 50;
 
-                        // Perbarui Peta Visual Secara Live
                         initAtauUpdatePetaPromotor(latToko, lngToko, batasRadius, latUser, lngUser);
 
                         const jarakMeter = hitungJarakHaversine(latUser, lngUser, latToko, lngToko);
