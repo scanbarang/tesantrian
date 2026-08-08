@@ -93,10 +93,13 @@
         .list-section-wrapper { margin-bottom: 20px; text-align: left; }
         .list-antrian { list-style: none; padding: 0; margin: 0 0 16px 0; }
         .list-antrian li { padding: 12px 14px; background: #ffffff; border-radius: 12px; margin-bottom: 8px; border: 2px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 700; }
+        
         .badge-status-item { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+        .badge-giliran-anda { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
         .badge-standby { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
         .badge-melayani { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
         .badge-cs { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+        .badge-ibadah { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
 
         .table-responsive { width: 100%; overflow-x: auto; margin-top: 10px; border-radius: 12px; border: 2px solid var(--border); background: #ffffff; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
@@ -117,13 +120,7 @@
         }
         
         .badge-normal { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
-        .badge-penalti { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; animation: pulseGlow 2s infinite; }
-
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.2); }
-            70% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
-        }
+        .badge-penalti { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.2s; padding: 16px; }
         .modal-overlay.active { opacity: 1; visibility: visible; }
@@ -135,8 +132,6 @@
         .modal-actions button { flex: 1; padding: 12px; font-size: 13px; }
 
         @media (max-width: 480px) { .timer-box-wrapper { grid-template-columns: 1fr; } }
-        
-        .sub-section-title { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 12px; margin-bottom: 4px; text-align: left; display: block; }
     </style>
 </head>
 <body>
@@ -166,19 +161,13 @@
                 </div>
             </div>
 
+            <!-- LIVE URUTAN KATEGORI HA & AV (DISAMAKAN DENGAN PROMOTOR) -->
             <div class="list-section-wrapper">
-                <div style="font-size: 13px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 10px; text-transform: uppercase;">LIVE URUTAN KATEGORI HA</div>
-                
-                <span class="sub-section-title">Mesin Cuci & Lemari Es</span>
-                <ul id="item-antrian-list-Mesin Cuci & Lemari Es" class="list-antrian"><li><span>Memuat...</span></li></ul>
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase;">LIVE URUTAN KATEGORI HA</div>
+                <ul id="list-HA" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
-                <span class="sub-section-title">AC</span>
-                <ul id="item-antrian-list-AC" class="list-antrian"><li><span>Memuat...</span></li></ul>
-
-                <div style="font-size: 13px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 16px; margin-bottom: 10px; text-transform: uppercase;">LIVE URUTAN KATEGORI AV</div>
-
-                <span class="sub-section-title">Audio Video (AV)</span>
-                <ul id="item-antrian-list-AV" class="list-antrian"><li><span>Memuat...</span></li></ul>
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 24px; margin-bottom: 12px; text-transform: uppercase;">LIVE URUTAN KATEGORI AV</div>
+                <ul id="list-AV" class="list-antrian"><li><span>Memuat...</span></li></ul>
             </div>
 
             <div class="section-title">Pengaturan Status GPS Validasi Toko</div>
@@ -199,13 +188,13 @@
             <div class="section-title">2. Manajemen Urutan & Waktu</div>
             <div class="admin-grid">
                 <button type="button" class="btn-teal" onclick="bukaModalTambahAntriAdmin()">+ Masukkan Antrian</button>
-                <button type="button" class="btn-warning" onclick="bukaModalFormAdminKategori('spvKeluarkanAntrian', 'Keluarkan dari Antrian', true)">- Keluarkan dari Antrian</button>
+                <button type="button" class="btn-warning" onclick="bukaModalFormAdminKategori('adminSelesaiMelayani', 'Keluarkan dari Antrian', true)">- Keluarkan dari Antrian</button>
             </div>
 
             <div class="section-title">3. Tindakan Khusus & Emergency</div>
             <div class="admin-grid">
-                <button type="button" class="btn-primary" onclick="bukaModalFormAdminKategori('spvAmbilAntrianBebas', 'Paksa Membawa Customer', true)">Paksa Bawa Customer</button>
-                <button type="button" class="btn-warning" style="background: #d97706;" onclick="bukaModalFormAdminKategori('selesaiMelayani', 'Paksa Selesai Melayani', true)">Paksa Selesai Melayani</button>
+                <button type="button" class="btn-primary" onclick="bukaModalFormAdminKategori('adminAmbilAntrianBebas', 'Paksa Membawa Customer', true)">Paksa Bawa Customer</button>
+                <button type="button" class="btn-warning" style="background: #d97706;" onclick="bukaModalFormAdminKategori('adminSelesaiMelayani', 'Paksa Selesai Melayani', true)">Paksa Selesai Melayani</button>
                 <button type="button" class="btn-darkred" onclick="bukaModalResetDeviceAdmin()">Reset Perangkat Promotor</button>
                 <button type="button" class="btn-danger" style="background: #991b1b;" onclick="bukaModalResetTotal()">RESET SEMUA ANTRIAN</button>
             </div>
@@ -297,7 +286,7 @@
                 const textAsli = btn.innerHTML;
                 btn.innerHTML = `<span class="spinner"></span> Memeriksa...`;
 
-                fetch(`${SCRIPT_URL}?aksi=loginSPV&pin=${encodeURIComponent(pin)}&t=${Date.now()}`)
+                fetch(`${SCRIPT_URL}?aksi=loginAdmin&pin=${encodeURIComponent(pin)}&t=${Date.now()}`)
                 .then(res => res.json())
                 .then(res => {
                     btn.innerHTML = textAsli;
@@ -352,131 +341,97 @@
                 if (koordinatTokoAdmin.lat && koordinatTokoAdmin.lat !== "") {
                     statusGpsLabel.innerHTML = `Status GPS: <b style="color:#10b981;">AKTIF</b> (Radius: ${koordinatTokoAdmin.radius}m)`;
                     if (btnOn && btnOff && !sedangDiprosesGlobal) {
-                        btnOn.disabled = true;
-                        btnOn.className = "btn-success btn-disabled";
-                        btnOff.disabled = false;
-                        btnOff.className = "btn-danger";
+                        btnOn.disabled = true; btnOn.className = "btn-success btn-disabled";
+                        btnOff.disabled = false; btnOff.className = "btn-danger";
                     }
                 } else {
                     statusGpsLabel.innerHTML = `Status GPS: <b style="color:#ef4444;">NONAKTIF (OFF)</b>`;
                     if (btnOn && btnOff && !sedangDiprosesGlobal) {
-                        btnOn.disabled = false;
-                        btnOn.className = "btn-success";
-                        btnOff.disabled = true;
-                        btnOff.className = "btn-danger btn-disabled";
+                        btnOn.disabled = false; btnOn.className = "btn-success";
+                        btnOff.disabled = true; btnOff.className = "btn-danger btn-disabled";
                     }
                 }
             }
 
-            let listMC = "", listAC = "", listAV = "";
-            let urutMC = 1, urutAC = 1, urutAV = 1;
+            let listHA = "", listAV = "";
+            let urutHA = 1, urutAV = 1;
             
             const data = res.data || [];
             daftarAntrianGlobal = data;
 
             const dataStandby = data.filter(item => item.status === "Standby");
-            const promotorHA = dataStandby.find(item => {
-                let sub = (item.subkategori || "").trim();
-                return sub === "Mesin Cuci & Lemari Es" || sub === "AC";
-            }) || null;
-            
-            const promotorAV = dataStandby.find(item => {
-                let sub = (item.subkategori || "").trim();
-                return sub === "AV" || sub === "Audio Video";
-            }) || null;
+            const promotorHA = dataStandby.find(item => String(item.kategori || "").trim().toUpperCase() === "HA") || null;
+            const promotorAV = dataStandby.find(item => String(item.kategori || "").trim().toUpperCase() === "AV") || null;
 
             document.getElementById('admin-nama-ha').textContent = promotorHA ? promotorHA.nama : "Belum Ada";
             document.getElementById('admin-nama-av').textContent = promotorAV ? promotorAV.nama : "Belum Ada";
 
-            if(data.length > 0) {
+            if (data.length > 0) {
                 data.forEach((item) => {
-                    let sub = item.subkategori ? String(item.subkategori).trim() : "Mesin Cuci & Lemari Es";
-                    
+                    let kat = item.kategori ? String(item.kategori).trim().toUpperCase() : "HA";
                     let itemHtml = "";
+
                     if (item.status === "Standby") {
                         let urut = 1;
-                        if (sub === "Mesin Cuci & Lemari Es") urut = urutMC++;
-                        else if (sub === "AC") urut = urutAC++;
-                        else if (sub === "AV" || sub === "Audio Video") urut = urutAV++;
+                        if (kat === "HA") urut = urutHA++;
+                        else if (kat === "AV") urut = urutAV++;
 
-                        let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-giliran-anda" style="background:#dcfce7; color:#166534; padding:2px 6px; border-radius:4px; font-size:11px;">Giliran Anda</span>` : `<span class="badge-status-item badge-standby" style="background:#dbeafe; color:#1e40af; padding:2px 6px; border-radius:4px; font-size:11px;">Standby (${urut})</span>`;
-                        itemHtml = `<li style="padding: 10px; background: #ffffff; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); font-size: 13px; font-weight: 700;"><b>${urut}. ${item.nama}</b> ${badgeHtml}</li>`;
+                        let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-giliran-anda">Giliran Utama</span>` : `<span class="badge-status-item badge-standby">Standby (${urut})</span>`;
+                        itemHtml = `<li><b>${urut}. ${item.nama}</b> ${badgeHtml}</li>`;
                     } else if (item.status === "Melayani") {
-                        itemHtml = `<li style="padding: 10px; background: #ffffff; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); font-size: 13px; font-weight: 700;"><b>${item.nama}</b> <span class="badge-status-item badge-melayani" style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:4px; font-size:11px;">Melayani</span></li>`;
+                        itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-melayani">Melayani</span></li>`;
                     } else if (item.status === "Dipanggil CS/GUDANG" || item.status === "Dipanggil CS") {
-                        itemHtml = `<li style="padding: 10px; background: #ffffff; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); font-size: 13px; font-weight: 700;"><b>${item.nama}</b> <span class="badge-status-item badge-cs" style="background:#f3e8ff; color:#6b21a8; padding:2px 6px; border-radius:4px; font-size:11px;">Dipanggil CS/Gudang</span></li>`;
+                        itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-cs">Dipanggil CS/Gudang</span></li>`;
+                    } else if (item.status === "Ibadah") {
+                        itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-ibadah">Sedang Ibadah</span></li>`;
                     }
 
-                    if (sub === "Mesin Cuci & Lemari Es") listMC += itemHtml;
-                    else if (sub === "AC") listAC += itemHtml;
-                    else if (sub === "AV" || sub === "Audio Video") listAV += itemHtml;
+                    if (kat === "HA") listHA += itemHtml;
+                    else if (kat === "AV") listAV += itemHtml;
                 });
             }
 
-            const kosongHtml = "<li><span style='color:#64748b; font-style:italic; font-size:12px;'>Belum ada antrian</span></li>";
-            document.getElementById('item-antrian-list-Mesin Cuci & Lemari Es').innerHTML = listMC || kosongHtml;
-            document.getElementById('item-antrian-list-AC').innerHTML = listAC || kosongHtml;
-            document.getElementById('item-antrian-list-AV').innerHTML = listAV || kosongHtml;
+            const kosongHtml = "<li><span style='color:#64748b; font-style:italic;'>Belum ada antrian</span></li>";
+            document.getElementById('list-HA').innerHTML = listHA || kosongHtml;
+            document.getElementById('list-AV').innerHTML = listAV || kosongHtml;
         }
 
         function toggleGPSAdmin(statusAktif) {
             amanKlikAdmin(function(selesai) {
                 const pin = getActivePinAdmin();
-                if (!pin) {
-                    alert("PIN Admin tidak ditemukan!");
-                    selesai();
-                    return;
-                }
+                if (!pin) { alert("PIN Admin tidak ditemukan!"); selesai(); return; }
 
                 const btnOn = document.getElementById('btn-on-gps');
                 const btnOff = document.getElementById('btn-off-gps');
 
                 if (!statusAktif) {
                     btnOff.innerHTML = `<span class="spinner"></span> Mematikan...`;
-
-                    fetch(`${SCRIPT_URL}?aksi=spvSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=&lng=&radius=50&t=${Date.now()}`)
-                    .then(r => r.json())
-                    .then(res => {
+                    fetch(`${SCRIPT_URL}?aksi=adminSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=&lng=&radius=50&t=${Date.now()}`)
+                    .then(r => r.json()).then(res => {
                         btnOff.innerHTML = `🔴 MATIKAN GPS`;
                         tampilkanModal("GPS Dinonaktifkan", "Validasi radius GPS toko berhasil dimatikan (OFF).");
-                        muatDataAntrian();
-                        selesai();
-                    }).catch(() => {
-                        btnOff.innerHTML = `🔴 MATIKAN GPS`;
-                        alert("Terjadi gangguan jaringan.");
-                        selesai();
-                    });
+                        muatDataAntrian(); selesai();
+                    }).catch(() => { btnOff.innerHTML = `🔴 MATIKAN GPS`; selesai(); });
                 } else {
                     btnOn.innerHTML = `<span class="spinner"></span> Mendeteksi GPS...`;
-
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(function(pos) {
                             const lat = pos.coords.latitude;
                             const lng = pos.coords.longitude;
                             const radius = "50";
 
-                            fetch(`${SCRIPT_URL}?aksi=spvSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&radius=${encodeURIComponent(radius)}&t=${Date.now()}`)
-                            .then(r => r.json())
-                            .then(res => {
+                            fetch(`${SCRIPT_URL}?aksi=adminSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&radius=${encodeURIComponent(radius)}&t=${Date.now()}`)
+                            .then(r => r.json()).then(res => {
                                 btnOn.innerHTML = `🟢 AKTIFKAN GPS`;
-                                tampilkanModal("GPS Diaktifkan", "Validasi radius GPS toko berhasil diaktifkan (ON).");
-                                muatDataAntrian();
-                                selesai();
-                            }).catch(() => {
-                                btnOn.innerHTML = `🟢 AKTIFKAN GPS`;
-                                alert("Terjadi gangguan jaringan ke server.");
-                                selesai();
-                            });
+                                tampilkanModal("GPS Diaktifkan", "Titik GPS & Radius Toko berhasil diset dari perangkat Anda.");
+                                muatDataAntrian(); selesai();
+                            }).catch(() => { btnOn.innerHTML = `🟢 AKTIFKAN GPS`; selesai(); });
                         }, function() {
                             btnOn.innerHTML = `🟢 AKTIFKAN GPS`;
-                            alert("Gagal mendeteksi lokasi perangkat Anda. Pastikan izin lokasi browser aktif.");
+                            alert("Gagal mendeteksi lokasi perangkat Anda.");
                             selesai();
                         }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 });
-                    } else {
-                        btnOn.innerHTML = `🟢 AKTIFKAN GPS`;
-                        alert("Browser Anda tidak mendukung geolokasi.");
-                        selesai();
-                    }
+                    } else { btnOn.innerHTML = `🟢 AKTIFKAN GPS`; selesai(); }
                 }
             });
         }
@@ -529,13 +484,10 @@
 
                 tutupModal();
                 amanKlikAdmin(function(selesai) {
-                    fetch(`${SCRIPT_URL}?aksi=spvLockPromotor&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&alasan=${encodeURIComponent(alasan)}&t=${Date.now()}`)
-                    .then(res => res.json())
-                    .then(res => {
+                    fetch(`${SCRIPT_URL}?aksi=adminLockPromotor&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&alasan=${encodeURIComponent(alasan)}&t=${Date.now()}`)
+                    .then(res => res.json()).then(res => {
                         tampilkanModal("Berhasil", res.pesan);
-                        muatMasterSales();
-                        muatDataAntrian();
-                        selesai();
+                        muatMasterSales(); muatDataAntrian(); selesai();
                     }).catch(() => selesai());
                 });
             };
@@ -547,13 +499,10 @@
             
             tampilkanModalKonfirmasi("Buka Kunci Promotor", `Buka kunci akun (${namaSales})?`, function() {
                 amanKlikAdmin(function(selesai) {
-                    fetch(`${SCRIPT_URL}?aksi=spvUnlockPromotor&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
-                    .then(res => res.json())
-                    .then(res => {
+                    fetch(`${SCRIPT_URL}?aksi=adminUnlockPromotor&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
+                    .then(res => res.json()).then(res => {
                         tampilkanModal("Berhasil", res.pesan);
-                        muatMasterSales();
-                        muatDataAntrian();
-                        selesai();
+                        muatMasterSales(); muatDataAntrian(); selesai();
                     }).catch(() => selesai());
                 });
             });
@@ -570,17 +519,11 @@
             tutupModal();
             amanKlikAdmin(function(selesai) {
                 const pin = getActivePinAdmin();
-                if(!pin) {
-                    alert("PIN Admin tidak ditemukan!");
-                    selesai();
-                    return;
-                }
-                fetch(`${SCRIPT_URL}?aksi=spvSetStatusAntrian&pin=${encodeURIComponent(pin)}&statusBaru=${targetStatus}&t=${Date.now()}`)
-                .then(res => res.json())
-                .then(res => {
+                if(!pin) { alert("PIN Admin tidak ditemukan!"); selesai(); return; }
+                fetch(`${SCRIPT_URL}?aksi=adminSetStatusAntrian&pin=${encodeURIComponent(pin)}&statusBaru=${targetStatus}&t=${Date.now()}`)
+                .then(res => res.json()).then(res => {
                     tampilkanModal("Status Sistem", res.pesan);
-                    muatDataAntrian();
-                    selesai();
+                    muatDataAntrian(); selesai();
                 }).catch(() => selesai());
             });
         }
@@ -596,24 +539,17 @@
             tutupModal();
             amanKlikAdmin(function(selesai) {
                 const pin = getActivePinAdmin();
-                if(!pin) {
-                    alert("PIN Admin tidak ditemukan!");
-                    selesai();
-                    return;
-                }
-                fetch(`${SCRIPT_URL}?aksi=spvResetAntrian&pin=${encodeURIComponent(pin)}&t=${Date.now()}`)
-                .then(res => res.json())
-                .then(res => {
+                if(!pin) { alert("PIN Admin tidak ditemukan!"); selesai(); return; }
+                fetch(`${SCRIPT_URL}?aksi=adminResetAntrian&pin=${encodeURIComponent(pin)}&t=${Date.now()}`)
+                .then(res => res.json()).then(res => {
                     tampilkanModal("Reset Total", res.pesan);
-                    muatDataAntrian();
-                    selesai();
+                    muatDataAntrian(); selesai();
                 }).catch(() => selesai());
             });
         }
 
         function bukaModalTambahAntriAdmin() {
             document.getElementById('modal-title').innerText = "Masukkan Promotor ke Antrian";
-            
             if (!masterSalesGlobal || masterSalesGlobal.length === 0) {
                 const cachedSales = localStorage.getItem('ufo_master_sales_cache');
                 if (cachedSales) { try { masterSalesGlobal = JSON.parse(cachedSales); } catch(e) {} }
@@ -625,8 +561,7 @@
             document.getElementById('modal-desc').innerHTML = `
                 Kategori:<br>
                 <select id="admin-select-kategori">
-                    <option value="Mesin Cuci & Lemari Es">Mesin Cuci & Lemari Es</option>
-                    <option value="AC">AC</option>
+                    <option value="HA">HA (Home Appliance)</option>
                     <option value="AV">AV (Audio Video)</option>
                 </select><br><br>
                 Promotor:<br>
@@ -639,8 +574,7 @@
         }
 
         function eksekusiTambahAntriAdmin() {
-            const subkat = document.getElementById('admin-select-kategori').value; 
-            const kategori = subkat === "AV" ? "AV" : "HA";
+            const kategori = document.getElementById('admin-select-kategori').value; 
             const namaSales = document.getElementById('admin-select-sales').value; 
             const posisi = document.getElementById('admin-input-posisi').value || "1"; 
             
@@ -648,19 +582,16 @@
             tutupModal();
             amanKlikAdmin(function(selesai) {
                 const pin = getActivePinAdmin();
-                fetch(`${SCRIPT_URL}?aksi=spvDaftarAntri&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategori)}&subkategori=${encodeURIComponent(subkat)}&posisi=${encodeURIComponent(posisi)}&t=${Date.now()}`)
-                .then(res => res.json())
-                .then(res => {
+                fetch(`${SCRIPT_URL}?aksi=adminDaftarAntri&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategori)}&posisi=${encodeURIComponent(posisi)}&t=${Date.now()}`)
+                .then(res => res.json()).then(res => {
                     tampilkanModal("Status Admin", res.pesan);
-                    muatDataAntrian();
-                    selesai();
+                    muatDataAntrian(); selesai();
                 }).catch(() => selesai());
             });
         }
 
         function bukaModalResetDeviceAdmin() {
             document.getElementById('modal-title').innerText = "Reset Perangkat Promotor";
-            
             if (!masterSalesGlobal || masterSalesGlobal.length === 0) {
                 const cachedSales = localStorage.getItem('ufo_master_sales_cache');
                 if (cachedSales) { try { masterSalesGlobal = JSON.parse(cachedSales); } catch(e) {} }
@@ -678,31 +609,11 @@
                 Pilih Promotor yang perangkatnya akan di-reset:<br><br>
                 <select id="admin-select-sales-reset" style="width:100%; padding:12px; border-radius:12px; border:2px solid var(--border); font-size:14px;">${optionsSales}</select>
             `;
-            
             document.getElementById('modal-actions').innerHTML = `
                 <button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button>
                 <button type="button" class="btn-danger" onclick="eksekusiResetDeviceAdmin()">Reset Perangkat</button>
             `;
             document.getElementById('custom-modal').classList.add('active');
-
-            if (!masterSalesGlobal || masterSalesGlobal.length === 0) {
-                fetch(`${SCRIPT_URL}?aksi=getMasterSales&t=${Date.now()}`)
-                .then(res => res.json())
-                .then(res => {
-                    if(res.status === "sukses" && res.data) {
-                        masterSalesGlobal = res.data;
-                        localStorage.setItem('ufo_master_sales_cache', JSON.stringify(res.data));
-                        
-                        let refreshedOptions = '<option value="">-- Pilih Promotor --</option>';
-                        res.data.forEach(n => {
-                            let nama = typeof n === 'object' ? n.nama : n;
-                            refreshedOptions += `<option value="${nama}">${nama}</option>`;
-                        });
-                        const selectEl = document.getElementById('admin-select-sales-reset');
-                        if (selectEl) selectEl.innerHTML = refreshedOptions;
-                    }
-                }).catch(() => {});
-            }
         }
 
         function eksekusiResetDeviceAdmin() {
@@ -713,17 +624,11 @@
             tutupModal();
             amanKlikAdmin(function(selesai) {
                 const pin = getActivePinAdmin();
-                if(!pin) {
-                    alert("PIN Admin tidak ditemukan!");
-                    selesai();
-                    return;
-                }
-                fetch(`${SCRIPT_URL}?aksi=spvResetDevice&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
-                .then(res => res.json())
-                .then(res => {
+                if(!pin) { alert("PIN Admin tidak ditemukan!"); selesai(); return; }
+                fetch(`${SCRIPT_URL}?aksi=adminResetDevice&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
+                .then(res => res.json()).then(res => {
                     tampilkanModal("Status Reset Perangkat", res.pesan);
-                    muatDataAntrian();
-                    selesai();
+                    muatDataAntrian(); selesai();
                 }).catch(() => {
                     tampilkanModal("Gagal", "Terjadi gangguan jaringan saat mereset perangkat.");
                     selesai();
@@ -733,7 +638,6 @@
 
         function bukaModalFormAdminKategori(aksiName, judulAksi, butuhPilihPromotor = true) {
             document.getElementById('modal-title').innerText = judulAksi;
-            
             if (!masterSalesGlobal || masterSalesGlobal.length === 0) {
                 const cachedSales = localStorage.getItem('ufo_master_sales_cache');
                 if (cachedSales) { try { masterSalesGlobal = JSON.parse(cachedSales); } catch(e) {} }
@@ -742,7 +646,7 @@
             let optionsSales = '<option value="">-- Pilih Promotor --</option>';
             masterSalesGlobal.forEach(n => { let nama = typeof n === 'object' ? n.nama : n; optionsSales += `<option value="${nama}">${nama}</option>`; });
             
-            let htmlContent = `Kategori:<br><select id="admin-select-kategori"><option value="Mesin Cuci & Lemari Es">Mesin Cuci & Lemari Es</option><option value="AC">AC</option><option value="AV">Audio Video (AV)</option></select><br><br>`;
+            let htmlContent = `Kategori:<br><select id="admin-select-kategori"><option value="HA">HA (Home Appliance)</option><option value="AV">AV (Audio Video)</option></select><br><br>`;
             if (butuhPilihPromotor) htmlContent += `Promotor:<br><select id="admin-select-sales">${optionsSales}</select>`;
             
             document.getElementById('modal-desc').innerHTML = htmlContent;
@@ -751,20 +655,17 @@
         }
 
         function eksekusiAksiAdminKategori(aksiName, butuhPilihPromotor) {
-            const subkat = document.getElementById('admin-select-kategori').value; 
-            const kategori = subkat === "AV" ? "AV" : "HA";
+            const kategori = document.getElementById('admin-select-kategori').value; 
             let namaSales = butuhPilihPromotor ? document.getElementById('admin-select-sales').value : ""; 
             if(butuhPilihPromotor && !namaSales) return alert("Pilih promotor!"); 
             
             tutupModal();
             amanKlikAdmin(function(selesai) {
                 const pin = getActivePinAdmin();
-                fetch(`${SCRIPT_URL}?aksi=${aksiName}&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategori)}&subkategori=${encodeURIComponent(subkat)}&t=${Date.now()}`)
-                .then(res => res.json())
-                .then(res => {
+                fetch(`${SCRIPT_URL}?aksi=${aksiName}&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategori)}&t=${Date.now()}`)
+                .then(res => res.json()).then(res => {
                     tampilkanModal("Status Admin", res.pesan);
-                    muatDataAntrian();
-                    selesai();
+                    muatDataAntrian(); selesai();
                 }).catch(() => selesai());
             });
         }
