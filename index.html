@@ -439,52 +439,14 @@
                     selesai();
                     return;
                 }
-
-                const btn = document.getElementById('btn-simpan-hp');
-                const textAsli = btn.innerHTML;
-                
-                const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
-                
-                if (gpsAktif && koordinatToko.lat && koordinatToko.lng && koordinatToko.lat !== "" && koordinatToko.lng !== "") {
-                    btn.innerHTML = `<span class="spinner" style="width:14px; height:14px; border:2px solid #fff; border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite; display:inline-block;"></span> Memeriksa Lokasi...`;
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(
-                            function(position) {
-                                const jarakMeter = hitungJarakHaversine(
-                                    position.coords.latitude, position.coords.longitude, 
-                                    Number(koordinatToko.lat), Number(koordinatToko.lng)
-                                );
-                                const batasRadius = Number(koordinatToko.radius) || 10;
-
-                                if (jarakMeter > batasRadius) {
-                                    btn.innerHTML = textAsli;
-                                    tampilkanModal("Diluar Radius Toko", `Gagal mendaftar! Anda berada di luar radius toko (${Math.round(jarakMeter)} meter dari titik toko). Batas maksimal adalah ${batasRadius} meter. Harap masuk ke area toko.`);
-                                    selesai();
-                                    return;
-                                }
-                                lanjutkanSimpanAkun(namaPilih, deviceId, btn, textAsli, selesai);
-                            },
-                            function(error) {
-                                btn.innerHTML = textAsli;
-                                tampilkanModal("GPS Tidak Aktif", "Gagal mendeteksi lokasi Anda. Harap aktifkan GPS / Lokasi perangkat Anda.");
-                                selesai();
-                            },
-                            { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-                        );
-                    } else {
-                        lanjutkanSimpanAkun(namaPilih, deviceId, btn, textAsli, selesai);
-                    }
-                } else {
-                    lanjutkanSimpanAkun(namaPilih, deviceId, btn, textAsli, selesai);
-                }
+                lanjutkanSimpanAkun(namaPilih, deviceId, selesai);
             });
         }
 
-        function lanjutkanSimpanAkun(namaPilih, deviceId, btn, textAsli, selesaiCallback) {
+        function lanjutkanSimpanAkun(namaPilih, deviceId, selesaiCallback) {
             fetch(`${SCRIPT_URL}?aksi=kunciPerangkat&namaSales=${encodeURIComponent(namaPilih)}&deviceId=${encodeURIComponent(deviceId)}&t=${Date.now()}`)
             .then(res => res.json())
             .then(res => {
-                btn.innerHTML = textAsli;
                 if(res.status === "sukses") {
                     namaSalesAktifGlobal = namaPilih;
                     localStorage.setItem('ufo_nama_sales_aktif', namaPilih);
@@ -497,7 +459,6 @@
                 }
                 selesaiCallback();
             }).catch(() => {
-                btn.innerHTML = textAsli;
                 tampilkanModal("Gagal", "Terjadi gangguan jaringan saat menyimpan perangkat.");
                 selesaiCallback();
             });
@@ -729,9 +690,8 @@
         }
 
         function validasiGpsDanJalankan(callbackBerhasil, selesaiCallback) {
-            const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
-
-            if (!gpsAktif || !koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+            // PAKSA VALIDASI JIKA KOORDINAT DI SHEET SUDAH TERISI (TANPA HARUS MENUNGGU STATUS ADMIN ON/OFF)
+            if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                 callbackBerhasil();
                 return;
             }
@@ -745,9 +705,9 @@
                         );
                         const batasRadius = Number(koordinatToko.radius) || 10;
 
-                        // PERBAIKAN: Jika masih di luar radius, pastikan selesaiCallback() dipanggil agar tombol kembali aktif & tidak bisa tembus daftar
+                        // Tampilkan modal berisi jarak terhitung agar Anda tahu angka aslinya di HP saat testing
                         if (jarakMeter > batasRadius) {
-                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean! Anda berada di luar radius toko (${Math.round(jarakMeter)} meter dari titik toko). Batas maksimal adalah ${batasRadius} meter. Harap masuk ke area toko.`);
+                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal: ${batasRadius} meter.\n\nAnda berada di luar area toko.`);
                             if (selesaiCallback) selesaiCallback();
                             return;
                         }
@@ -827,8 +787,7 @@
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(
                     function(position) {
-                        const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
-                        if (!gpsAktif || !koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+                        if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                             return; 
                         }
 
