@@ -46,10 +46,19 @@
             box-shadow: 0 0 50px rgba(239, 68, 68, 0.45) !important; 
         }
 
+        /* HEADER MERAH MENYALA DI MODE GELAP */
         body.dark-mode .gradient-header { 
             background: linear-gradient(135deg, #450a0a 0%, #1f0505 100%) !important; 
-            border: 2px solid #f87171 !important; 
-            box-shadow: 0 0 35px rgba(248, 113, 113, 0.6) !important;
+            border: 2px solid #ef4444 !important; 
+            box-shadow: 0 0 35px rgba(239, 68, 68, 0.6) !important;
+        }
+        body.dark-mode .gradient-header h2 {
+            color: #fca5a5 !important;
+            text-shadow: 0 0 15px rgba(239, 68, 68, 0.9) !important;
+        }
+        body.dark-mode .gradient-header p {
+            color: #f87171 !important;
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.7) !important;
         }
 
         .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
@@ -137,16 +146,16 @@
         }
 
         body.dark-mode button:not(.dark-mode-btn):not(.btn-disabled) {
-            background: #dc2626 !important;
+            background: #2563eb !important;
             color: #ffffff !important;
-            border: 2px solid #f87171 !important;
-            box-shadow: 0 0 25px rgba(248, 113, 113, 0.7) !important;
+            border: 2px solid #3b82f6 !important;
+            box-shadow: 0 0 25px rgba(37, 99, 235, 0.6) !important;
         }
 
         @keyframes pulseGlow {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(37, 99, 235, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
         }
         .btn-pulse { animation: pulseGlow 2s infinite; }
 
@@ -244,6 +253,7 @@
             <button type="button" class="dark-mode-btn" id="btn-toggle-dark" onclick="toggleDarkMode()">🌙 Gelap</button>
         </div>
 
+        <!-- HEADER DENGAN WARNA MERAH MENYALA DI MODE GELAP -->
         <div class="gradient-header">
             <h2>Antrian Walk-In Promotor</h2>
             <p>UFO Kebonsari</p>
@@ -274,7 +284,7 @@
                 <div id="map-promotor" style="width: 100%; height: 180px; border-radius: 14px; border: 2px solid var(--border); z-index: 1;"></div>
             </div>
 
-            <!-- KOTAK GILIRAN HA & AV (DISUSUN ATAS-BAWAH DENGAN TAMPILAN NEON SEPERTI GAMBAR) -->
+            <!-- KOTAK GILIRAN HA & AV -->
             <div class="timer-box-wrapper">
                 <div class="timer-card-admin ha">
                     <div>
@@ -300,6 +310,7 @@
                         <option value="AV">AV (Audio Video)</option>
                     </select>
                 </div>
+                <!-- TOMBOL KONFIRMASI KEHADIRAN WARNA BIRU -->
                 <button type="button" id="btn-hadir" class="btn-success btn-pulse" onclick="aksiHadirKerja()">Konfirmasi Kehadiran & Masuk Antri</button>
             </div>
 
@@ -313,6 +324,7 @@
                     </select>
                 </div>
 
+                <!-- TOMBOL DAFTAR ANTRIAN WARNA BIRU -->
                 <button type="button" id="btn-daftar-antrian" class="btn-success btn-pulse" onclick="aksiDaftarAntrianNormal()" style="display: none; margin-top: 4px;">Daftar Antrian</button>
                 <button type="button" id="btn-utama-customer" class="btn-customer btn-pulse" onclick="aksiUtamaCustomer()" style="display: none; margin-top: 12px;">Sudah Membawa Customer</button>
                 <button type="button" id="btn-selesai-closing" class="btn-closing" onclick="aksiSelesaiClosing()" style="display: none; margin-top: 10px;">SELESAI MELAYANI (DEAL / CLOSING)</button>
