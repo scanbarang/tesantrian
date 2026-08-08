@@ -342,7 +342,7 @@
 
                                 if (jarakMeter > batasRadius) {
                                     btn.innerHTML = textAsli;
-                                    tampilkanModal("Diluar Radius Toko", `Gagal! Anda berada di luar radius toko (${Math.round(jarakMeter)} meter). Batas maksimal adalah ${batasRadius} meter.`);
+                                    tampilkanModal("Diluar Radius Toko", `Gagal mendaftar! Anda berada di luar radius toko (${Math.round(jarakMeter)} meter dari titik toko). Batas maksimal adalah ${batasRadius} meter. Harap masuk ke area toko.`);
                                     selesai();
                                     return;
                                 }
@@ -350,7 +350,7 @@
                             },
                             function(error) {
                                 btn.innerHTML = textAsli;
-                                tampilkanModal("GPS Tidak Aktif", "Gagal mendeteksi lokasi Anda. Harap aktifkan GPS / Lokasi perangkat.");
+                                tampilkanModal("GPS Tidak Aktif", "Gagal mendeteksi lokasi Anda. Harap aktifkan GPS / Lokasi perangkat Anda.");
                                 selesai();
                             },
                             { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
@@ -604,6 +604,7 @@
             });
         }
 
+        // VALIDASI GPS DENGAN PEMBERITAHUAN JARAK & POPUP YANG BENAR
         function validasiGpsDanJalankan(callbackBerhasil, selesaiCallback) {
             if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                 callbackBerhasil();
@@ -620,20 +621,21 @@
                         const batasRadius = koordinatToko.radius || 50;
 
                         if (jarakMeter > batasRadius) {
-                            tampilkanModal("Diluar Radius Toko", `Gagal! Anda berada di luar radius toko (${Math.round(jarakMeter)} meter). Batas maksimal adalah ${batasRadius} meter.`);
+                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean! Anda berada di luar radius toko (${Math.round(jarakMeter)} meter dari titik toko). Batas maksimal adalah ${batasRadius} meter. Harap masuk ke area toko untuk mendaftar.`);
                             if (selesaiCallback) selesaiCallback();
                             return;
                         }
                         callbackBerhasil();
                     },
                     function(error) {
-                        tampilkanModal("GPS Tidak Aktif", "Gagal mendeteksi lokasi perangkat. Harap aktifkan GPS Anda.");
+                        tampilkanModal("GPS Tidak Aktif", "Gagal mendeteksi lokasi Anda. Harap aktifkan GPS / Lokasi di perangkat Anda untuk mendaftar.");
                         if (selesaiCallback) selesaiCallback();
                     },
                     { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
                 );
             } else {
-                callbackBerhasil();
+                tampilkanModal("Perangkat Tidak Mendukung", "Browser Anda tidak mendukung fitur GPS.");
+                if (selesaiCallback) selesaiCallback();
             }
         }
 
@@ -714,7 +716,7 @@
 
                         if (jarakMeter > batasRadius && statusSaya === "Standby") {
                             eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
-                            tampilkanModal("Auto-Exit GPS", `Anda berada di luar radius ${batasRadius} meter dari toko. Anda otomatis dikeluarkan dari antrean.`);
+                            tampilkanModal("Auto-Exit GPS", `Anda berada di luar radius ${Math.round(jarakMeter)} meter dari toko (Batas maksimal ${batasRadius} meter). Anda otomatis dikeluarkan dari antrean.`);
                         }
                     },
                     function(error) {},
