@@ -492,6 +492,8 @@
 
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
+            
+            // AUTO-SYNC KOORDINAT: Langsung perbarui koordinat toko secara real-time dari server
             if (koordinatServer) {
                 koordinatToko.lat = koordinatServer.lat || "";
                 koordinatToko.lng = koordinatServer.lng || "";
@@ -685,13 +687,12 @@
                         );
                         const batasRadius = Number(koordinatToko.radius) || 10;
 
-                        // JIKA DI LUAR RADIUS: BLOKIR TOTAL (TIDAK MEMANGGIL CALLBACK BERHASIL)
+                        // JIKA DI LUAR RADIUS: BLOKIR TOTAL
                         if (jarakMeter > batasRadius) {
                             tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal: ${batasRadius} meter.\n\nAnda berada di luar area toko.`);
                             return; 
                         }
                         
-                        // Jika dalam radius, jalankan pendaftaran
                         callbackBerhasil();
                     },
                     function(error) {
