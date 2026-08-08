@@ -40,6 +40,9 @@
         body.dark-mode .user-badge { background: #09090b !important; border: 2px solid #8b5cf6 !important; color: #ffffff !important; }
         body.dark-mode .list-antrian li { background: #09090b !important; border: 2px solid #06b6d4 !important; color: #ffffff !important; }
         body.dark-mode .modal-box { background: #09090b !important; border: 2px solid #52525b !important; color: #ffffff !important; }
+        
+        /* PERBAIKAN WARNA TOMBOL BATAL/NETRAL DI MODE GELAP */
+        body.dark-mode .btn-cancel { background: #27272a !important; color: #ffffff !important; border: 2px solid #52525b !important; }
 
         *, body, button, select, input { font-family: 'Plus Jakarta Sans', sans-serif !important; box-sizing: border-box; }
         body { background: var(--bg-color); color: var(--text-main); margin: 0; padding: 16px; display: flex; justify-content: center; min-height: 100vh; }
@@ -604,7 +607,6 @@
             });
         }
 
-        // VALIDASI GPS DENGAN PEMBERITAHUAN JARAK & POPUP YANG BENAR
         function validasiGpsDanJalankan(callbackBerhasil, selesaiCallback) {
             if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                 callbackBerhasil();
@@ -705,7 +707,6 @@
                             return; 
                         }
 
-                        // Jika status promotor sedang Dipanggil CS/Gudang, ABAIKAN validasi radius agar tidak auto-exit
                         let statusSaya = cekStatusSayaDariArray(daftarAntrianGlobal);
                         if (statusSaya === "Dipanggil CS/GUDANG" || statusSaya === "Dipanggil CS") {
                             return; 
