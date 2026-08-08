@@ -312,7 +312,6 @@
         let namaSalesAktifGlobal = "";
         let koordinatToko = { lat: "", lng: "", radius: 50, statusGps: "OFF" }; 
         let localActionActive = false;
-        let sedangDiprosesPromotor = false;
 
         window.onload = function() {
             initDarkMode();
@@ -339,18 +338,6 @@
                 cekStatusPerangkatSaya();
             }, 3000); 
         };
-
-        function amanKlikPromotor(callbackAksi) {
-            if (sedangDiprosesPromotor) return;
-            sedangDiprosesPromotor = true;
-            const semuaTombol = document.querySelectorAll('button');
-            semuaTombol.forEach(b => b.disabled = true);
-
-            callbackAksi(function() {
-                sedangDiprosesPromotor = false;
-                semuaTombol.forEach(b => b.disabled = false);
-            });
-        }
 
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
@@ -431,19 +418,19 @@
         }
 
         function simpanAkunHP() {
-            amanKlikPromotor(function(selesai) {
-                const namaPilih = document.getElementById('pilih-sales').value;
-                const deviceId = getDeviceId();
-                if(!namaPilih) {
-                    tampilkanModal("Perhatian", "Silakan pilih nama Anda!");
-                    selesai();
-                    return;
-                }
-                lanjutkanSimpanAkun(namaPilih, deviceId, selesai);
+            const namaPilih = document.getElementById('pilih-sales').value;
+            const deviceId = getDeviceId();
+            if(!namaPilih) {
+                tampilkanModal("Perhatian", "Silakan pilih nama Anda!");
+                return;
+            }
+
+            validasiGpsDanJalankan(function() {
+                lanjutkanSimpanAkun(namaPilih, deviceId);
             });
         }
 
-        function lanjutkanSimpanAkun(namaPilih, deviceId, selesaiCallback) {
+        function lanjutkanSimpanAkun(namaPilih, deviceId) {
             fetch(`${SCRIPT_URL}?aksi=kunciPerangkat&namaSales=${encodeURIComponent(namaPilih)}&deviceId=${encodeURIComponent(deviceId)}&t=${Date.now()}`)
             .then(res => res.json())
             .then(res => {
@@ -457,10 +444,8 @@
                 } else { 
                     tampilkanModal("Akses Ditolak", res.pesan); 
                 }
-                selesaiCallback();
             }).catch(() => {
                 tampilkanModal("Gagal", "Terjadi gangguan jaringan saat menyimpan perangkat.");
-                selesaiCallback();
             });
         }
 
@@ -644,12 +629,9 @@
             }).catch(() => {});
         }
 
-        function eksekusiAksiInstan(aksiServer, targetStatusSimulasi, katBaru = null, selesaiCallback = null) {
+        function eksekusiAksiInstan(aksiServer, targetStatusSimulasi, katBaru = null) {
             const namaSales = getAkunAktif().trim();
-            if (!namaSales) {
-                if (selesaiCallback) selesaiCallback();
-                return;
-            }
+            if (!namaSales) return;
 
             localActionActive = true;
             let katAktif = katBaru || document.getElementById('pilih-kategori-normal').value || "HA";
@@ -682,16 +664,15 @@
                 }
                 localActionActive = false;
                 renderUIRental(daftarAntrianGlobal, statusSistemGlobal, koordinatToko);
-                if (selesaiCallback) selesaiCallback();
             }).catch(() => { 
                 localActionActive = false; 
-                if (selesaiCallback) selesaiCallback();
             });
         }
 
-        function validasiGpsDanJalankan(callbackBerhasil, selesaiCallback) {
-            // PAKSA VALIDASI JIKA KOORDINAT DI SHEET SUDAH TERISI (TANPA HARUS MENUNGGU STATUS ADMIN ON/OFF)
-            if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+        function validasiGpsDanJalankan(callbackBerhasil) {
+            const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
+
+            if (!gpsAktif || !koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                 callbackBerhasil();
                 return;
             }
@@ -705,58 +686,46 @@
                         );
                         const batasRadius = Number(koordinatToko.radius) || 10;
 
-                        // Tampilkan modal berisi jarak terhitung agar Anda tahu angka aslinya di HP saat testing
                         if (jarakMeter > batasRadius) {
-                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal: ${batasRadius} meter.\n\nAnda berada di luar area toko.`);
-                            if (selesaiCallback) selesaiCallback();
+                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean! Anda berada di luar radius toko (${Math.round(jarakMeter)} meter dari titik toko). Batas maksimal adalah ${batasRadius} meter.`);
                             return;
                         }
                         callbackBerhasil();
                     },
                     function(error) {
-                        tampilkanModal("GPS Tidak Aktif", "Gagal mendeteksi lokasi Anda. Harap aktifkan GPS / Lokasi di perangkat Anda untuk mendaftar.");
-                        if (selesaiCallback) selesaiCallback();
+                        tampilkanModal("GPS Tidak Aktif", "Gagal mendeteksi lokasi Anda. Harap aktifkan GPS / Lokasi di perangkat Anda.");
                     },
-                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                    { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
                 );
             } else {
-                tampilkanModal("Perangkat Tidak Mendukung", "Browser Anda tidak mendukung fitur GPS.");
-                if (selesaiCallback) selesaiCallback();
+                callbackBerhasil();
             }
         }
 
         function aksiHadirKerja() {
-            amanKlikPromotor(function(selesai) {
-                validasiGpsDanJalankan(function() {
-                    const kategoriPilih = document.getElementById('pilih-kategori-hadir').value;
-                    localStorage.setItem('ufo_checkin_hari_ini', 'true');
-                    eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih, selesai);
-                }, selesai);
+            validasiGpsDanJalankan(function() {
+                const kategoriPilih = document.getElementById('pilih-kategori-hadir').value;
+                localStorage.setItem('ufo_checkin_hari_ini', 'true');
+                eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
             });
         }
 
         function aksiDaftarAntrianNormal() {
-            amanKlikPromotor(function(selesai) {
-                validasiGpsDanJalankan(function() {
-                    const kategoriPilih = document.getElementById('pilih-kategori-normal').value;
-                    eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih, selesai);
-                }, selesai);
+            validasiGpsDanJalankan(function() {
+                const kategoriPilih = document.getElementById('pilih-kategori-normal').value;
+                eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
             });
         }
 
         function aksiUtamaCustomer() {
             tampilkanModalKonfirmasi("Konfirmasi", "Sudah membawa customer?", function() {
-                amanKlikPromotor(function(selesai) {
-                    eksekusiAksiInstan('ambilAntrian', 'Melayani', null, selesai);
-                });
+                eksekusiAksiInstan('ambilAntrian', 'Melayani');
             });
         }
 
         function aksiSelesaiClosing() {
             tampilkanModalKonfirmasi("Konfirmasi Selesai", "Selesai melayani customer?", function() {
-                amanKlikPromotor(function(selesai) {
-                    eksekusiAksiInstan('selesaiMelayani', 'belum_ada', null, selesai);
-                });
+                eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
             });
         }
 
@@ -764,22 +733,16 @@
             const statusSekarang = cekStatusSayaDariArray(daftarAntrianGlobal);
             if (statusSekarang === "Standby") {
                 tampilkanModalKonfirmasi("Dipanggil CS/Gudang", "Posisi antrian Anda akan dikunci sementara.", function() {
-                    amanKlikPromotor(function(selesai) {
-                        eksekusiAksiInstan('panggilCS', 'Dipanggil CS', null, selesai);
-                    });
+                    eksekusiAksiInstan('panggilCS', 'Dipanggil CS');
                 });
             } else {
-                amanKlikPromotor(function(selesai) {
-                    eksekusiAksiInstan('selesaiCS', 'Standby', null, selesai);
-                });
+                eksekusiAksiInstan('selesaiCS', 'Standby');
             }
         }
 
         function bukaModalKeluarIstirahat() {
             tampilkanModalKonfirmasi("Keluar Antrian", "Yakin ingin keluar dari antrian?", function() {
-                amanKlikPromotor(function(selesai) {
-                    eksekusiAksiInstan('selesaiMelayani', 'belum_ada', null, selesai);
-                });
+                eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
             });
         }
 
@@ -787,7 +750,8 @@
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(
                     function(position) {
-                        if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+                        const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
+                        if (!gpsAktif || !koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                             return; 
                         }
 
@@ -800,9 +764,8 @@
                         const batasRadius = Number(koordinatToko.radius) || 10;
 
                         if (jarakMeter > batasRadius && statusSaya === "Standby") {
-                            eksekusiAksiInstan('selesaiMelayani', 'belum_ada', null, function() {
-                                tampilkanModal("Auto-Exit GPS", `Anda berada di luar radius ${Math.round(jarakMeter)} meter dari toko (Batas maksimal ${batasRadius} meter). Anda otomatis dikeluarkan dari antrean.`);
-                            });
+                            eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
+                            tampilkanModal("Auto-Exit GPS", `Anda berada di luar radius ${Math.round(jarakMeter)} meter dari toko (Batas maksimal ${batasRadius} meter). Anda otomatis dikeluarkan dari antrean.`);
                         }
                     },
                     function(error) {},
