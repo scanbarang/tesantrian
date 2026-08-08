@@ -33,107 +33,49 @@
         }
 
         body.dark-mode { background: #000000 !important; }
-        
-        body.dark-mode .app-container {
-            background: #050507 !important;
-            border: 2px solid #3f3f46 !important;
-            box-shadow: 0 0 35px rgba(255, 255, 255, 0.08), inset 0 0 15px rgba(255, 255, 255, 0.02) !important;
-        }
-
-        body.dark-mode .gradient-header {
-            background: #09090b !important;
-            border: 2px solid #ef4444 !important;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.6), inset 0 0 10px rgba(239, 68, 68, 0.3) !important;
-        }
-        body.dark-mode .gradient-header h2 {
-            color: #f87171 !important;
-            text-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.5) !important;
-        }
-        body.dark-mode .gradient-header p {
-            color: #ffffff !important;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6) !important;
-        }
-
-        body.dark-mode select, 
-        body.dark-mode input[type="text"] {
-            background: #09090b !important; 
-            color: #ffffff !important; 
-            border: 2px solid #3b82f6 !important; 
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.35), inset 0 0 6px rgba(59, 130, 246, 0.1) !important;
-        }
-        body.dark-mode select:disabled { background-color: #18181b !important; color: #71717a !important; border-color: #27272a !important; box-shadow: none !important; }
-
-        body.dark-mode .user-badge { 
-            background: #09090b !important; 
-            border: 2px solid #8b5cf6 !important; 
-            color: #ffffff !important; 
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4), inset 0 0 6px rgba(139, 92, 246, 0.15) !important; 
-        }
-
-        body.dark-mode .list-antrian li { 
-            background: #09090b !important; 
-            border: 2px solid #06b6d4 !important; 
-            color: #ffffff !important; 
-            box-shadow: 0 0 12px rgba(6, 182, 212, 0.3), inset 0 0 5px rgba(6, 182, 212, 0.1) !important; 
-        }
-
-        body.dark-mode .modal-box { background: #09090b !important; border: 2px solid #52525b !important; color: #ffffff !important; box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 15px rgba(255, 255, 255, 0.1) !important; }
-        body.dark-mode .modal-desc { color: #d4d4d8 !important; }
-        body.dark-mode .btn-cancel { background: #18181b !important; color: #ffffff !important; border: 1px solid #52525b; }
-        body.dark-mode .dark-mode-btn { background: #09090b !important; color: #ffffff !important; border-color: #52525b !important; box-shadow: 0 0 8px rgba(255, 255, 255, 0.1); }
-        
-        body.dark-mode #keterangan-lock-box { 
-            background: #09090b !important; 
-            border: 2px solid #ef4444 !important; 
-            color: #fca5a5 !important; 
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4), inset 0 0 6px rgba(239, 68, 68, 0.15) !important;
-        }
+        body.dark-mode .app-container { background: #050507 !important; border: 2px solid #3f3f46 !important; box-shadow: 0 0 35px rgba(255, 255, 255, 0.08); }
+        body.dark-mode .gradient-header { background: #09090b !important; border: 2px solid #ef4444 !important; }
+        body.dark-mode select, body.dark-mode input[type="text"] { background: #09090b !important; color: #ffffff !important; border: 2px solid #3b82f6 !important; }
+        body.dark-mode select:disabled { background-color: #18181b !important; color: #71717a !important; border-color: #27272a !important; }
+        body.dark-mode .user-badge { background: #09090b !important; border: 2px solid #8b5cf6 !important; color: #ffffff !important; }
+        body.dark-mode .list-antrian li { background: #09090b !important; border: 2px solid #06b6d4 !important; color: #ffffff !important; }
+        body.dark-mode .modal-box { background: #09090b !important; border: 2px solid #52525b !important; color: #ffffff !important; }
 
         *, body, button, select, input { font-family: 'Plus Jakarta Sans', sans-serif !important; box-sizing: border-box; }
-        body { background: var(--bg-color); color: var(--text-main); margin: 0; padding: 16px; display: flex; justify-content: center; min-height: 100vh; transition: background 0.3s ease, color 0.3s ease; }
-        .app-container { width: 100%; max-width: 500px; background: var(--card-bg); border-radius: 24px; padding: 24px; border: 2px solid var(--border); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.1); text-align: center; transition: all 0.3s ease; }
+        body { background: var(--bg-color); color: var(--text-main); margin: 0; padding: 16px; display: flex; justify-content: center; min-height: 100vh; }
+        .app-container { width: 100%; max-width: 500px; background: var(--card-bg); border-radius: 24px; padding: 24px; border: 2px solid var(--border); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.1); text-align: center; }
 
         .top-controls { display: flex; justify-content: flex-end; margin-bottom: 12px; }
-        .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); transition: all 0.2s ease; }
-        .dark-mode-btn:hover { transform: translateY(-1px); }
+        .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 
         .gradient-header { background: linear-gradient(135deg, #dc2626 0%, #ffffff 100%); border-radius: 18px; padding: 22px; color: white; margin-bottom: 18px; box-shadow: 0 8px 20px -4px rgba(220, 38, 38, 0.3); }
-        .gradient-header h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; text-shadow: 1px 1px 4px rgba(0,0,0,0.6); }
-        .gradient-header p { margin: 6px 0 0 0; opacity: 0.95; font-size: 13px; font-weight: 700; text-shadow: 1px 1px 4px rgba(0,0,0,0.6); }
+        .gradient-header h2 { margin: 0; font-size: 22px; font-weight: 800; text-shadow: 1px 1px 4px rgba(0,0,0,0.6); }
+        .gradient-header p { margin: 6px 0 0 0; font-size: 13px; font-weight: 700; text-shadow: 1px 1px 4px rgba(0,0,0,0.6); }
 
         .status-badge-sistem { display: inline-block; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; text-transform: uppercase; margin-bottom: 18px; letter-spacing: 0.5px; }
         .status-open { background: #dcfce7; color: #15803d; border: 2px solid #86efac; }
         .status-closed { background: #fee2e2; color: #b91c1c; border: 2px solid #fca5a5; }
 
         .input-group { margin-bottom: 16px; text-align: left; }
-        .input-group label { display: block; font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
+        .input-group label { display: block; font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
 
-        select, input[type="text"] { width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--border); background: #ffffff; font-size: 15px; font-weight: 600; color: var(--text-main); outline: none; transition: all 0.2s ease; }
-        select:focus, input[type="text"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
-
-        @keyframes glowBlue { 0%, 100% { box-shadow: 0 0 5px rgba(37, 99, 235, 0.4); } 50% { box-shadow: 0 0 16px rgba(37, 99, 235, 0.9); } }
-        @keyframes glowClosing { 0%, 100% { box-shadow: 0 0 5px rgba(220, 38, 38, 0.4); } 50% { box-shadow: 0 0 16px rgba(220, 38, 38, 0.9); } }
-        @keyframes glowPurple { 0%, 100% { box-shadow: 0 0 5px rgba(124, 58, 237, 0.4); } 50% { box-shadow: 0 0 16px rgba(124, 58, 237, 0.9); } }
-        @keyframes glowTeal { 0%, 100% { box-shadow: 0 0 5px rgba(13, 148, 136, 0.4); } 50% { box-shadow: 0 0 16px rgba(13, 148, 136, 0.9); } }
-        @keyframes glowAmber { 0%, 100% { box-shadow: 0 0 5px rgba(217, 119, 6, 0.4); } 50% { box-shadow: 0 0 16px rgba(217, 119, 6, 0.9); } }
-
-        button { width: 100%; padding: 14px 12px; border-radius: 14px; font-size: 13px; font-weight: 800; cursor: pointer; border: none; text-transform: uppercase; transition: all 0.2s ease; display: inline-flex; justify-content: center; align-items: center; gap: 8px; letter-spacing: 0.3px; line-height: 1.3; text-align: center; white-space: normal; word-break: break-word; }
+        select, input[type="text"] { width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--border); background: #ffffff; font-size: 15px; font-weight: 600; color: var(--text-main); outline: none; }
+        
+        button { width: 100%; padding: 14px 12px; border-radius: 14px; font-size: 13px; font-weight: 800; cursor: pointer; border: none; text-transform: uppercase; transition: all 0.2s ease; display: inline-flex; justify-content: center; align-items: center; gap: 8px; }
         button:active { transform: scale(0.98); }
 
-        .btn-success { background: var(--customer-blue); color: white; animation: glowBlue 2.5s infinite ease-in-out; }
-        .btn-customer { background: var(--customer-blue); color: white; animation: glowBlue 2.5s infinite ease-in-out; }
-        .btn-closing { background: var(--closing-red); color: white; animation: glowClosing 2.5s infinite ease-in-out; }
-        .btn-purple { background: var(--purple-cs); color: white; animation: glowPurple 2.5s infinite ease-in-out; }
-        .btn-teal { background: var(--teal-cs); color: white; animation: glowTeal 2.5s infinite ease-in-out; }
-        .btn-amber { background: var(--amber-rest); color: white; animation: glowAmber 2.5s infinite ease-in-out; }
-        
+        .btn-success { background: var(--customer-blue); color: white; }
+        .btn-customer { background: var(--customer-blue); color: white; }
+        .btn-closing { background: var(--closing-red); color: white; }
+        .btn-purple { background: var(--purple-cs); color: white; }
+        .btn-teal { background: var(--teal-cs); color: white; }
+        .btn-amber { background: var(--amber-rest); color: white; }
         .btn-cancel { background: #e2e8f0; color: var(--text-main); }
-        .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; box-shadow: none !important; animation: none !important; }
-        body.dark-mode .btn-disabled { background: #18181b !important; color: #52525b !important; border: 1px solid #27272a; }
+        .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; }
 
         .user-badge { background: #f8fafc; border: 2px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 18px; text-align: left; font-size: 14px; font-weight: 600; }
         .list-antrian { list-style: none; padding: 0; margin: 8px 0 0 0; text-align: left; }
-        .list-antrian li { padding: 12px 14px; background: #ffffff; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 2px solid var(--border); font-size: 14px; font-weight: 700; transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+        .list-antrian li { padding: 12px 14px; background: #ffffff; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 2px solid var(--border); font-size: 14px; font-weight: 700; }
         
         .badge-status-item { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
         .badge-giliran-anda { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
@@ -141,23 +83,15 @@
         .badge-melayani { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
         .badge-cs { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
 
-        @keyframes blinkWhatsApp { 0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 5px rgba(37, 211, 102, 0.4); } 50% { opacity: 0.7; transform: scale(0.97); box-shadow: 0 0 16px rgba(37, 211, 102, 0.9); } }
-        .wa-report-btn { margin-top: 12px; background: #25d366; border: 2px solid #1ebe57; color: white; font-size: 13px; padding: 14px; border-radius: 12px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 800; letter-spacing: 0.5px; animation: blinkWhatsApp 2s infinite ease-in-out; }
-        .wa-report-btn:hover { background: #20ba5a; animation: none; }
+        .wa-report-btn { margin-top: 12px; background: #25d366; border: 2px solid #1ebe57; color: white; font-size: 13px; padding: 14px; border-radius: 12px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 800; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 11, 20, 0.85); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.2s; padding: 16px; }
         .modal-overlay.active { opacity: 1; visibility: visible; }
-        .modal-box { background: white; width: 100%; max-width: 380px; padding: 24px; border-radius: 20px; text-align: center; border: 2px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .modal-box { background: white; width: 100%; max-width: 380px; padding: 24px; border-radius: 20px; text-align: center; border: 2px solid var(--border); }
         .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 10px; color: var(--text-main); }
-        .modal-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; font-weight: 600; }
+        .modal-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; font-weight: 600; text-align: left; }
         .modal-actions { display: flex; gap: 10px; }
         .modal-actions button { flex: 1; padding: 12px; font-size: 13px; }
-
-        .announcement-popup-box { background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%); border: 4px solid #f59e0b; }
-        body.dark-mode .announcement-popup-box { background: #09090b !important; border-color: #f59e0b !important; box-shadow: 0 0 25px rgba(245, 158, 11, 0.4) !important; }
-        .announcement-popup-text { font-size: 16px; font-weight: 800; color: #78350f; line-height: 1.6; background: rgba(255, 255, 255, 0.9); padding: 16px; border-radius: 12px; border: 2px solid #fde68a; margin-bottom: 20px; text-align: left; max-height: 250px; overflow-y: auto; }
-        body.dark-mode .announcement-popup-text { color: #fef3c7 !important; background: #18181b !important; border-color: #d97706 !important; }
-        
         .sub-section-title { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 16px; margin-bottom: 6px; text-align: left; display: block; }
     </style>
 </head>
@@ -177,6 +111,7 @@
             STATUS ANTRIAN: OPEN
         </div>
 
+        <!-- PANEL LOGIN / PILIH NAMA -->
         <div id="panel-login" style="display: none;">
             <div class="input-group">
                 <label>Pilih Nama Anda (Kunci Perangkat)</label>
@@ -185,85 +120,74 @@
             <button type="button" id="btn-simpan-hp" class="btn-customer" onclick="simpanAkunHP()">Simpan & Kunci di HP Ini</button>
         </div>
 
+        <!-- PANEL MENU UTAMA / CHECK-IN KEDATANGAN -->
         <div id="panel-menu-utama" style="display: none;">
             <div class="user-badge">
                 <span style="color: var(--text-muted);">Promotor:</span> <strong id="label-user-aktif" style="color:var(--primary-dark); font-size: 15px;">-</strong>
             </div>
 
-            <div class="input-group">
-                <label>Pilih Kategori Antrian</label>
-                <select id="pilih-kategori" onchange="updateSubKategori()">
-                    <option value="HA">HA (Home Appliance)</option>
-                    <option value="AV">AV (Audio Video)</option>
-                </select>
+            <!-- CHECK-IN / PILIH KATEGORI DI AWAL -->
+            <div id="section-checkin" style="display: none;">
+                <div class="input-group">
+                    <label>Check-in Kedatangan (Pilih Kategori)</label>
+                    <select id="pilih-kategori-checkin">
+                        <option value="Mesin Cuci & Lemari Es">Mesin Cuci & Lemari Es</option>
+                        <option value="AC">AC</option>
+                        <option value="AV">AV (Audio Video)</option>
+                    </select>
+                </div>
+                <button type="button" id="btn-checkin" class="btn-success" onclick="aksiCheckinKedatangan()">Check-In Kedatangan & Masuk Antrian</button>
             </div>
 
-            <div class="input-group" id="group-subkategori">
-                <label>Pilih Spesifikasi / Produk</label>
-                <select id="pilih-subkategori">
-                    <!-- Dinamis via JS -->
-                </select>
-            </div>
+            <!-- MENU SETELAH CHECK-IN -->
+            <div id="section-sudah-checkin" style="display: none;">
+                <div class="input-group">
+                    <label>Kategori Antrian Anda Saat Ini</label>
+                    <input type="text" id="label-kategori-aktif" readonly style="background: #f1f5f9; font-weight: 800; text-align: center;">
+                </div>
 
-            <button type="button" id="btn-utama-antri" class="btn-success" onclick="aksiUtamaAntri()">Daftar Antrian</button>
-            
-            <div id="keterangan-lock-box" style="display: none; margin-top: 10px; padding: 12px 14px; background: #fee2e2; border: 2px solid #fca5a5; color: #b91c1c; border-radius: 12px; font-size: 12px; font-weight: 700; text-align: left;">
-                🔒 <b>LOCK (Silahkan Lapor Untuk Membuka)</b><br>
-                <span id="teks-alasan-lock" style="font-weight: 600; font-size: 11px; opacity: 0.95; display: block; margin-top: 4px;">-</span>
-            </div>
+                <button type="button" id="btn-utama-antri" class="btn-success" style="display: none;">Daftar Antrian</button>
+                
+                <div id="keterangan-lock-box" style="display: none; margin-top: 10px; padding: 12px 14px; background: #fee2e2; border: 2px solid #fca5a5; color: #b91c1c; border-radius: 12px; font-size: 12px; font-weight: 700; text-align: left;">
+                    🔒 <b>LOCK (Silahkan Lapor Untuk Membuka)</b><br>
+                    <span id="teks-alasan-lock" style="font-weight: 600; font-size: 11px; opacity: 0.95; display: block; margin-top: 4px;">-</span>
+                </div>
 
-            <button type="button" id="btn-utama-customer" class="btn-customer" onclick="aksiUtamaCustomer()" style="display: none; margin-top: 12px;">Sudah Membawa Customer</button>
-            <button type="button" id="btn-selesai-closing" class="btn-closing" onclick="aksiSelesaiClosing()" style="display: none; margin-top: 10px;">SELESAI MELAYANI (DEAL / CLOSING)</button>
-            <button type="button" id="btn-utama-cs" class="btn-purple" onclick="aksiToggleCS()" style="display: none; margin-top: 12px;">DIPANGGIL CS/GUDANG (KUNCI POSISI)</button>
-            <button type="button" id="btn-keluar-istirahat" class="btn-amber" onclick="bukaModalKeluarIstirahat()" style="display: none; margin-top: 12px;">KELUAR ANTRIAN (ISTIRAHAT)</button>
+                <button type="button" id="btn-utama-customer" class="btn-customer" onclick="aksiUtamaCustomer()" style="display: none; margin-top: 12px;">Sudah Membawa Customer</button>
+                <button type="button" id="btn-selesai-closing" class="btn-closing" onclick="aksiSelesaiClosing()" style="display: none; margin-top: 10px;">SELESAI MELAYANI (DEAL / CLOSING)</button>
+                <button type="button" id="btn-utama-cs" class="btn-purple" onclick="aksiToggleCS()" style="display: none; margin-top: 12px;">DIPANGGIL CS/GUDANG (KUNCI POSISI)</button>
+                <button type="button" id="btn-keluar-istirahat" class="btn-amber" onclick="bukaModalKeluarIstirahat()" style="display: none; margin-top: 12px;">KELUAR ANTRIAN (ISTIRAHAT)</button>
+            </div>
         </div>
 
-        <!-- Live Urutan Sesuai Susunan Baru -->
+        <!-- LIVE URUTAN 3 KELOMPOK -->
         <div style="margin-top: 24px; text-align: left;">
-            <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase;">LIVE URUTAN HA (Lantai 1)</div>
+            <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase;">LIVE URUTAN KATEGORI HA</div>
             
-            <span class="sub-section-title">MESIN CUCI</span>
-            <ul id="list-Mesin Cuci" class="list-antrian"><li><span>Memuat...</span></li></ul>
-
-            <span class="sub-section-title">LEMARI ES</span>
-            <ul id="list-Lemari Es" class="list-antrian"><li><span>Memuat...</span></li></ul>
+            <span class="sub-section-title">MESIN CUCI & LEMARI ES</span>
+            <ul id="list-Mesin Cuci & Lemari Es" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
             <span class="sub-section-title">AC</span>
             <ul id="list-AC" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
-            <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 24px; margin-bottom: 12px; text-transform: uppercase;">LIVE URUTAN HA (Lantai 2)</div>
-
-            <span class="sub-section-title">FREEZER BOX / SHOWCASE / BARANG HA LAINNYA</span>
-            <ul id="list-Frezeer Box / Showcase" class="list-antrian"><li><span>Memuat...</span></li></ul>
-
             <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 24px; margin-bottom: 12px; text-transform: uppercase;">LIVE URUTAN KATEGORI AV</div>
 
-            <span class="sub-section-title">AUDIO VIDEO (UMUM)</span>
+            <span class="sub-section-title">AUDIO VIDEO (AV)</span>
             <ul id="list-AV" class="list-antrian"><li><span>Memuat...</span></li></ul>
         </div>
 
         <a href="https://wa.me/6289524391002" target="_blank" class="wa-report-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
             Laporkan via WhatsApp
         </a>
     </div>
 
+    <!-- MODAL -->
     <div id="custom-modal" class="modal-overlay">
         <div class="modal-box">
             <div id="modal-title" class="modal-title">Pemberitahuan</div>
             <div id="modal-desc" class="modal-desc">Isi pesan...</div>
             <div id="modal-actions" class="modal-actions">
                 <button type="button" class="btn-customer" onclick="tutupModal()">OK</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-pengumuman-spv" class="modal-overlay">
-        <div class="modal-box announcement-popup-box">
-            <div class="modal-title" style="color: #b45309;">🚨 PENGUMUMAN PENTING</div>
-            <div id="teks-pengumuman-popup" class="announcement-popup-text">-</div>
-            <div class="modal-actions">
-                <button type="button" class="btn-customer" style="background: #d97706;" onclick="konfirmasiSudahBacaPengumuman()">Saya Mengerti & Mengikuti</button>
             </div>
         </div>
     </div>
@@ -275,14 +199,13 @@
         let masterSalesGlobal = [];
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
-        let pengumumanTerakhirGlobal = "";
-        let localActionActive = false;
+        let koordinatToko = { lat: -7.9666, lng: 112.6326 }; // Koordinat default UFO Kebonsari (dapat di-update dari server)
+        let watchIdGPS = null;
 
         window.onload = function() {
             initDarkMode();
             muatMasterSalesInstant();
             muatCacheAntrianInstan();
-            updateSubKategori();
             
             const cachedNama = localStorage.getItem('ufo_nama_sales_aktif');
             if (cachedNama) {
@@ -297,30 +220,10 @@
 
             cekServerBg();
             muatMasterSales();
+            mulaiPemantauanGPS();
             
             setInterval(muatDataAntrian, 3000); 
         };
-
-        function updateSubKategori() {
-            const kategori = document.getElementById('pilih-kategori').value;
-            const subSelect = document.getElementById('pilih-subkategori');
-            const groupSub = document.getElementById('group-subkategori');
-            let optionsHtml = "";
-
-            if (kategori === "HA") {
-                groupSub.style.display = "block";
-                optionsHtml = `
-                    <option value="Mesin Cuci">Mesin Cuci</option>
-                    <option value="Lemari Es">Lemari Es</option>
-                    <option value="AC">AC</option>
-                    <option value="Frezeer Box / Showcase">Frezeer Box / Showcase</option>
-                `;
-                subSelect.innerHTML = optionsHtml;
-            } else if (kategori === "AV") {
-                groupSub.style.display = "none";
-                subSelect.innerHTML = `<option value="AV">AV</option>`;
-            }
-        }
 
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
@@ -330,8 +233,7 @@
         }
 
         function initDarkMode() {
-            const savedDark = localStorage.getItem('ufo_dark_mode');
-            if (savedDark === 'true') {
+            if (localStorage.getItem('ufo_dark_mode') === 'true') {
                 document.body.classList.add('dark-mode');
                 updateDarkButtonText(true);
             }
@@ -345,7 +247,7 @@
         function getDeviceId() {
             let localSalt = localStorage.getItem('ufo_device_salt');
             if (!localSalt) {
-                localSalt = typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now().toString(36);
+                localSalt = Math.random().toString(36).substring(2) + Date.now().toString(36);
                 localStorage.setItem('ufo_device_salt', localSalt);
             }
             let hash = 0;
@@ -358,7 +260,7 @@
             if (cachedAntrian) {
                 try {
                     const parsed = JSON.parse(cachedAntrian);
-                    renderUIRental(parsed.data, parsed.statusAntrian, parsed.pengumumanSPV);
+                    renderUIRental(parsed.data, parsed.statusAntrian, parsed.koordinatPusat);
                 } catch(e) {}
             }
         }
@@ -369,22 +271,16 @@
                 fetch(`${SCRIPT_URL}?aksi=cekBinding&deviceId=${encodeURIComponent(deviceId)}`).then(r => r.json()).catch(() => null),
                 fetch(`${SCRIPT_URL}?aksi=getAntrian`).then(r => r.json()).catch(() => null)
             ]).then(([resBinding, resAntrian]) => {
-                if (resBinding) {
-                    if (resBinding.status === "terkunci" && resBinding.nama) {
-                        namaSalesAktifGlobal = resBinding.nama;
-                        localStorage.setItem('ufo_nama_sales_aktif', resBinding.nama);
-                        document.getElementById('panel-login').style.display = 'none';
-                        document.getElementById('panel-menu-utama').style.display = 'block';
-                        document.getElementById('label-user-aktif').innerText = resBinding.nama;
-                    } else if (resBinding.status === "bebas") {
-                        localStorage.removeItem('ufo_nama_sales_aktif');
-                        document.getElementById('panel-login').style.display = 'block';
-                        document.getElementById('panel-menu-utama').style.display = 'none';
-                    }
+                if (resBinding && resBinding.status === "terkunci" && resBinding.nama) {
+                    namaSalesAktifGlobal = resBinding.nama;
+                    localStorage.setItem('ufo_nama_sales_aktif', resBinding.nama);
+                    document.getElementById('panel-login').style.display = 'none';
+                    document.getElementById('panel-menu-utama').style.display = 'block';
+                    document.getElementById('label-user-aktif').innerText = resBinding.nama;
                 }
                 if (resAntrian && resAntrian.status === "sukses") {
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(resAntrian));
-                    renderUIRental(resAntrian.data, resAntrian.statusAntrian, resAntrian.pengumumanSPV);
+                    renderUIRental(resAntrian.data, resAntrian.statusAntrian, resAntrian.koordinatPusat);
                 }
             });
         }
@@ -394,21 +290,17 @@
             const deviceId = getDeviceId();
             if(!namaPilih) return tampilkanModal("Perhatian", "Silakan pilih nama Anda!");
             
-            tampilkanModalKonfirmasi("Kunci Perangkat", `Kunci HP ini atas nama (${namaPilih})?`, function() {
-                fetch(`${SCRIPT_URL}?aksi=kunciPerangkat&namaSales=${encodeURIComponent(namaPilih)}&deviceId=${encodeURIComponent(deviceId)}`)
-                .then(res => res.json())
-                .then(res => {
-                    if(res.status === "sukses") {
-                        namaSalesAktifGlobal = namaPilih;
-                        localStorage.setItem('ufo_nama_sales_aktif', namaPilih);
-                        document.getElementById('panel-login').style.display = 'none';
-                        document.getElementById('panel-menu-utama').style.display = 'block';
-                        document.getElementById('label-user-aktif').innerText = namaPilih;
-                        muatDataAntrian(true);
-                    } else { tampilkanModal("Akses Ditolak", res.pesan); }
-                }).catch(() => {
-                    tampilkanModal("Gagal", "Koneksi ke server bermasalah.");
-                });
+            fetch(`${SCRIPT_URL}?aksi=kunciPerangkat&namaSales=${encodeURIComponent(namaPilih)}&deviceId=${encodeURIComponent(deviceId)}`)
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === "sukses") {
+                    namaSalesAktifGlobal = namaPilih;
+                    localStorage.setItem('ufo_nama_sales_aktif', namaPilih);
+                    document.getElementById('panel-login').style.display = 'none';
+                    document.getElementById('panel-menu-utama').style.display = 'block';
+                    document.getElementById('label-user-aktif').innerText = namaPilih;
+                    muatDataAntrian();
+                } else { tampilkanModal("Akses Ditolak", res.pesan); }
             });
         }
 
@@ -422,7 +314,9 @@
             if (cachedSales) {
                 try {
                     masterSalesGlobal = JSON.parse(cachedSales);
-                    updateDaftarSales(masterSalesGlobal);
+                    let html = '<option value="">-- Pilih Nama Anda --</option>';
+                    masterSalesGlobal.forEach(item => { html += `<option value="${item.nama}">${item.nama}</option>`; });
+                    document.getElementById('pilih-sales').innerHTML = html;
                 } catch(e) {}
             }
         }
@@ -434,16 +328,11 @@
                 if(res.status === "sukses" && res.data) {
                     masterSalesGlobal = res.data;
                     localStorage.setItem('ufo_master_sales_cache', JSON.stringify(res.data));
-                    updateDaftarSales(res.data);
+                    let html = '<option value="">-- Pilih Nama Anda --</option>';
+                    res.data.forEach(item => { html += `<option value="${item.nama}">${item.nama}</option>`; });
+                    document.getElementById('pilih-sales').innerHTML = html;
                 }
-            }).catch(() => {});
-        }
-
-        function updateDaftarSales(dataSales) {
-            let html = '<option value="">-- Pilih Nama Anda --</option>';
-            dataSales.forEach(item => { html += `<option value="${item.nama}">${item.nama}</option>`; });
-            const selectEl = document.getElementById('pilih-sales');
-            if (selectEl) selectEl.innerHTML = html;
+            });
         }
 
         function cekStatusSayaDariArray(dataAntrian) {
@@ -453,57 +342,35 @@
             return itemSaya ? itemSaya.status : "belum_ada";
         }
 
-        function renderUIRental(dataAntrian, statusSistem, pengumumanSPV) {
-            if (localActionActive) return;
-
+        function renderUIRental(dataAntrian, statusSistem, koordinatServer) {
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
-            const akunSaya = getAkunAktif().trim();
+            if (koordinatServer && koordinatServer.lat && koordinatServer.lng) {
+                koordinatToko = koordinatServer;
+            }
 
             const badge = document.getElementById('badge-status-sistem');
             badge.innerText = statusSistemGlobal === "BUKA" ? "STATUS ANTRIAN: OPEN" : "STATUS ANTRIAN: CLOSED";
             badge.className = statusSistemGlobal === "BUKA" ? "status-badge-sistem status-open" : "status-badge-sistem status-closed";
 
-            const modalPopupPengumuman = document.getElementById('modal-pengumuman-spv');
-            if (pengumumanSPV && pengumumanSPV.trim() !== "") {
-                document.getElementById('teks-pengumuman-popup').innerText = pengumumanSPV;
-                const lastReadAnnouncement = localStorage.getItem('ufo_last_read_announcement');
-                if (lastReadAnnouncement !== pengumumanSPV) modalPopupPengumuman.classList.add('active'); 
-                else modalPopupPengumuman.classList.remove('active'); 
-                pengumumanTerakhirGlobal = pengumumanSPV;
-            } else { modalPopupPengumuman.classList.remove('active'); }
-
-            let listMesinCuci = "", listLemariEs = "", listAC = "", listFreezer = "", listAV = "";
-            let urutMC = 1, urutLE = 1, urutAC = 1, urutFreezer = 1, urutAV = 1;
+            let listMC = "", listAC = "", listAV = "";
+            let urutMC = 1, urutAC = 1, urutAV = 1;
+            const akunSaya = getAkunAktif().trim().toLowerCase();
+            let kategoriSayaAktif = "";
 
             if (daftarAntrianGlobal.length > 0) {
                 daftarAntrianGlobal.forEach((item) => {
-                    let sub = item.subkategori ? String(item.subkategori).trim() : "";
-                    let kat = item.kategori ? String(item.kategori).trim() : "HA";
-                    
-                    let targetListKey = "Mesin Cuci";
-                    if (kat === "AV") {
-                        targetListKey = "AV";
-                    } else if (sub.includes("Mesin Cuci")) {
-                        targetListKey = "Mesin Cuci";
-                    } else if (sub.includes("Lemari Es")) {
-                        targetListKey = "Lemari Es";
-                    } else if (sub.includes("AC")) {
-                        targetListKey = "AC";
-                    } else if (sub.includes("Frezeer Box / Showcase")) {
-                        targetListKey = "Frezeer Box / Showcase";
-                    } else {
-                        targetListKey = "Mesin Cuci";
+                    let sub = item.subkategori ? String(item.subkategori).trim() : "Mesin Cuci & Lemari Es";
+                    if (String(item.nama).trim().toLowerCase() === akunSaya) {
+                        kategoriSayaAktif = sub;
                     }
 
                     let itemHtml = "";
                     if (item.status === "Standby") {
                         let urut = 1;
-                        if (targetListKey === "Mesin Cuci") urut = urutMC++;
-                        else if (targetListKey === "Lemari Es") urut = urutLE++;
-                        else if (targetListKey === "AC") urut = urutAC++;
-                        else if (targetListKey === "Frezeer Box / Showcase") urut = urutFreezer++;
-                        else if (targetListKey === "AV") urut = urutAV++;
+                        if (sub === "Mesin Cuci & Lemari Es") urut = urutMC++;
+                        else if (sub === "AC") urut = urutAC++;
+                        else if (sub === "AV") urut = urutAV++;
 
                         let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-giliran-anda">Giliran Anda</span>` : `<span class="badge-status-item badge-standby">Standby (${urut})</span>`;
                         itemHtml = `<li><b>${urut}. ${item.nama}</b> ${badgeHtml}</li>`;
@@ -513,222 +380,163 @@
                         itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-cs">Dipanggil CS/Gudang</span></li>`;
                     }
 
-                    if (targetListKey === "Mesin Cuci") listMesinCuci += itemHtml;
-                    else if (targetListKey === "Lemari Es") listLemariEs += itemHtml;
-                    else if (targetListKey === "AC") listAC += itemHtml;
-                    else if (targetListKey === "Frezeer Box / Showcase") listFreezer += itemHtml;
-                    else if (targetListKey === "AV") listAV += itemHtml;
+                    if (sub === "Mesin Cuci & Lemari Es") listMC += itemHtml;
+                    else if (sub === "AC") listAC += itemHtml;
+                    else if (sub === "AV") listAV += itemHtml;
                 });
             }
 
             const kosongHtml = "<li><span style='color:#64748b; font-style:italic;'>Belum ada antrian</span></li>";
-            document.getElementById('list-Mesin Cuci').innerHTML = listMesinCuci || kosongHtml;
-            document.getElementById('list-Lemari Es').innerHTML = listLemariEs || kosongHtml;
+            document.getElementById('list-Mesin Cuci & Lemari Es').innerHTML = listMC || kosongHtml;
             document.getElementById('list-AC').innerHTML = listAC || kosongHtml;
-            document.getElementById('list-Frezeer Box / Showcase').innerHTML = listFreezer || kosongHtml;
             document.getElementById('list-AV').innerHTML = listAV || kosongHtml;
 
             let statusSayaNyata = cekStatusSayaDariArray(daftarAntrianGlobal);
+            const sectionCheckin = document.getElementById('section-checkin');
+            const sectionSudahCheckin = document.getElementById('section-sudah-checkin');
 
-            let isLocked = false;
-            let alasanLockSPV = "";
-            if (akunSaya && masterSalesGlobal.length > 0) {
-                const sayaObj = masterSalesGlobal.find(item => String(item.nama).trim().toLowerCase() === akunSaya.toLowerCase());
-                if (sayaObj && String(sayaObj.statusLock).toUpperCase() === "LOCKED") {
-                    isLocked = true;
-                    alasanLockSPV = sayaObj.alasanLock ? sayaObj.alasanLock : "Tidak ada keterangan dari SPV.";
-                }
+            if (statusSayaNyata === "belum_ada") {
+                sectionCheckin.style.display = 'block';
+                sectionSudahCheckin.style.display = 'none';
+            } else {
+                sectionCheckin.style.display = 'none';
+                sectionSudahCheckin.style.display = 'block';
+                document.getElementById('label-kategori-aktif').value = kategoriSayaAktif;
             }
 
-            const btnAntri = document.getElementById('btn-utama-antri');
+            // Kontrol tombol aksi berdasarkan status sistem (Buka / Tutup oleh SPV)
             const btnCustomer = document.getElementById('btn-utama-customer');
             const btnClosing = document.getElementById('btn-selesai-closing');
             const btnCS = document.getElementById('btn-utama-cs');
             const btnKeluar = document.getElementById('btn-keluar-istirahat');
-            const selectKategori = document.getElementById('pilih-kategori');
-            const selectSubKategori = document.getElementById('pilih-subkategori');
-            const lockBoxEl = document.getElementById('keterangan-lock-box');
-            const teksAlasanEl = document.getElementById('teks-alasan-lock');
 
-            btnAntri.innerHTML = "Daftar Antrian"; btnAntri.className = "btn-success"; btnAntri.disabled = false;
-            btnCustomer.innerHTML = "Sudah Membawa Customer"; btnCustomer.className = "btn-customer"; btnCustomer.disabled = false;
-            btnClosing.innerHTML = "SELESAI MELAYANI (DEAL / CLOSING)"; btnClosing.className = "btn-closing"; btnClosing.disabled = false;
-            btnCS.innerHTML = "DIPANGGIL CS/GUDANG (KUNCI POSISI)"; btnCS.className = "btn-purple"; btnCS.disabled = false;
-            btnKeluar.innerHTML = "KELUAR ANTRIAN (ISTIRAHAT)"; btnKeluar.className = "btn-amber"; btnKeluar.disabled = false;
+            if (statusSistemGlobal === "TUTUP" && statusSayaNyata === "Standby") {
+                btnCustomer.disabled = true; btnCustomer.className = "btn-customer btn-disabled";
+                btnCS.disabled = true; btnCS.className = "btn-purple btn-disabled";
+            } else if (statusSayaNyata === "Standby") {
+                let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && (it.subkategori || "").trim() === kategoriSayaAktif);
+                let indexSaya = listSubStandby.findIndex(it => String(it.nama).trim().toLowerCase() === akunSaya);
+                let apakahSayaBisaAmbil = (indexSaya === 0 || indexSaya === 1);
 
-            if (isLocked) {
-                btnAntri.innerText = "Otomatis Terkunci"; btnAntri.className = "btn-closing btn-disabled"; btnAntri.disabled = true;
-                if (lockBoxEl && teksAlasanEl) {
-                    lockBoxEl.style.display = "block";
-                    teksAlasanEl.innerText = `Alasan: "${alasanLockSPV}"`;
-                }
+                btnCustomer.disabled = !apakahSayaBisaAmbil; 
+                btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer" : "btn-customer btn-disabled";
+                btnCS.disabled = false; btnCS.className = "btn-purple";
+            }
+
+            if (statusSayaNyata === "Melayani") {
+                btnCustomer.style.display = "none"; btnClosing.style.display = "block";
+                btnCS.style.display = "none"; btnKeluar.style.display = "none";
+            } else if (statusSayaNyata === "Standby") {
+                btnCustomer.style.display = "block"; btnClosing.style.display = "none";
+                btnCS.style.display = "block"; btnKeluar.style.display = "block";
+            } else if (statusSayaNyata === "Dipanggil CS/GUDANG" || statusSayaNyata === "Dipanggil CS") {
                 btnCustomer.style.display = "none"; btnClosing.style.display = "none";
-                btnCS.style.display = "none"; btnKeluar.style.display = "none"; 
-                selectKategori.disabled = true; selectSubKategori.disabled = true;
-            } else {
-                if (lockBoxEl) lockBoxEl.style.display = "none";
-
-                if (statusSayaNyata === "Melayani") {
-                    btnAntri.innerText = "Sedang Melayani Customer"; btnAntri.className = "btn-customer btn-disabled"; btnAntri.disabled = true;
-                    btnCustomer.style.display = "none"; btnClosing.style.display = "block"; btnClosing.className = "btn-closing";
-                    btnCS.style.display = "none"; btnKeluar.style.display = "none"; 
-                    selectKategori.disabled = true; selectSubKategori.disabled = true;
-                } else if (statusSayaNyata === "Standby") {
-                    btnAntri.innerText = "Anda Sudah Di Antrian"; btnAntri.className = "btn-success btn-disabled"; btnAntri.disabled = true;
-                    btnCustomer.style.display = "block"; btnClosing.style.display = "none";
-                    
-                    let promotorSaya = daftarAntrianGlobal.find(it => String(it.nama).trim().toLowerCase() === akunSaya.toLowerCase());
-                    let kategoriSaya = promotorSaya ? (promotorSaya.kategori || "HA") : "HA";
-                    let subSayaAktif = promotorSaya ? (promotorSaya.subkategori || "Mesin Cuci") : "Mesin Cuci";
-
-                    let listSubStandby = daftarAntrianGlobal.filter(it => {
-                        let katIt = it.kategori || "HA";
-                        let subIt = it.subkategori || "Mesin Cuci";
-                        if (katIt === "AV") {
-                            return it.status === "Standby" && katIt === "AV";
-                        } else {
-                            return it.status === "Standby" && katIt === kategoriSaya && subIt === subSayaAktif;
-                        }
-                    });
-                    
-                    let indexSaya = listSubStandby.findIndex(it => String(it.nama).trim().toLowerCase() === akunSaya.toLowerCase());
-                    let apakahSayaBisaAmbil = (indexSaya === 0 || indexSaya === 1);
-
-                    btnCustomer.disabled = !apakahSayaBisaAmbil; 
-                    btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer" : "btn-customer btn-disabled";
-
-                    btnCS.style.display = "block"; btnCS.className = "btn-purple";
-                    btnKeluar.style.display = "block"; btnKeluar.className = "btn-amber";
-                    selectKategori.disabled = true; selectSubKategori.disabled = true;
-                } else if (statusSayaNyata === "Dipanggil CS/GUDANG" || statusSayaNyata === "Dipanggil CS") {
-                    btnAntri.innerText = "Posisi Antrian Dikunci (Di CS/GUDANG)"; btnAntri.className = "btn-purple btn-disabled"; btnAntri.disabled = true;
-                    btnCustomer.style.display = "none"; btnClosing.style.display = "none";
-                    btnCS.style.display = "block"; btnCS.innerText = "SELESAI CS/GUDANG (KEMBALI ANTRI)"; btnCS.className = "btn-teal";
-                    btnKeluar.style.display = "none"; 
-                    selectKategori.disabled = true; selectSubKategori.disabled = true;
-                } else { 
-                    btnAntri.innerText = statusSistemGlobal === "TUTUP" ? "Antrian Ditutup Oleh SPV" : "Daftar Antrian";
-                    btnAntri.className = statusSistemGlobal === "TUTUP" ? "btn-closing btn-disabled" : "btn-success";
-                    btnAntri.disabled = (statusSistemGlobal === "TUTUP");
-                    btnCustomer.style.display = "none"; btnClosing.style.display = "none";
-                    btnCS.style.display = "none"; btnKeluar.style.display = "none"; 
-                    selectKategori.disabled = false; selectSubKategori.disabled = false;
-                }
+                btnCS.style.display = "block"; btnCS.innerText = "SELESAI CS/GUDANG (KEMBALI ANTRI)"; btnCS.className = "btn-teal";
+                btnKeluar.style.display = "none";
             }
         }
 
-        function muatDataAntrian(paksaTarik = false) {
-            if (localActionActive) return; 
+        function muatDataAntrian() {
             fetch(`${SCRIPT_URL}?aksi=getAntrian&t=${Date.now()}`)
-            .then(r => r.json())
+            .then(res => res.json())
             .then(res => {
-                if (res && res.status === "sukses" && !localActionActive) {
+                if (res && res.status === "sukses") {
                     localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
-                    renderUIRental(res.data, res.statusAntrian, res.pengumumanSPV);
+                    renderUIRental(res.data, res.statusAntrian, res.koordinatPusat);
                 }
             }).catch(() => {});
         }
 
-        function eksekusiAksiInstan(aksiServer, targetStatusSimulasi, kategoriBaru = null, subKategoriBaru = null) {
+        // Check-in kedatangan sekali di awal
+        function aksiCheckinKedatangan() {
+            const kategoriPilih = document.getElementById('pilih-kategori-checkin').value;
             const namaSales = getAkunAktif().trim();
             if (!namaSales) return;
 
-            localActionActive = true;
-
-            let kategoriAktifFinal = kategoriBaru || document.getElementById('pilih-kategori').value || "HA";
-            let subKategoriAktifFinal = "";
-            if (kategoriAktifFinal === "AV") {
-                subKategoriAktifFinal = "AV";
-            } else {
-                subKategoriAktifFinal = subKategoriBaru || document.getElementById('pilih-subkategori').value || "Mesin Cuci";
-            }
-
-            if (targetStatusSimulasi === "belum_ada") {
-                daftarAntrianGlobal = daftarAntrianGlobal.filter(item => String(item.nama).trim().toLowerCase() !== namaSales.toLowerCase());
-            } else {
-                let ketemu = false;
-                daftarAntrianGlobal.forEach(item => {
-                    if (String(item.nama).trim().toLowerCase() === namaSales.toLowerCase()) {
-                        item.status = targetStatusSimulasi;
-                        item.kategori = kategoriAktifFinal;
-                        item.subkategori = subKategoriAktifFinal;
-                        ketemu = true;
-                    }
-                });
-                if (!ketemu) {
-                    daftarAntrianGlobal.push({ 
-                        nama: namaSales, 
-                        status: targetStatusSimulasi, 
-                        kategori: kategoriAktifFinal, 
-                        subkategori: subKategoriAktifFinal 
-                    });
-                }
-            }
-
-            localActionActive = false;
-            renderUIRental(daftarAntrianGlobal, statusSistemGlobal, pengumumanTerakhirGlobal);
-            localActionActive = true;
-
-            let urlParam = `${SCRIPT_URL}?aksi=${aksiServer}&namaSales=${encodeURIComponent(namaSales)}`;
-            urlParam += `&kategori=${encodeURIComponent(kategoriAktifFinal)}`;
-            urlParam += `&subkategori=${encodeURIComponent(subKategoriAktifFinal)}`;
-            urlParam += `&t=${Date.now()}`;
-
-            fetch(urlParam).then(res => res.json()).then(res => {
-                if (res && res.status === "sukses" && res.data) {
-                    daftarAntrianGlobal = res.data;
-                    localStorage.setItem('ufo_antrian_cache', JSON.stringify(res));
-                }
-                localActionActive = false;
-                renderUIRental(daftarAntrianGlobal, statusSistemGlobal, pengumumanTerakhirGlobal);
-            }).catch(() => {
-                localActionActive = false;
+            fetch(`${SCRIPT_URL}?aksi=daftarAntri&namaSales=${encodeURIComponent(namaSales)}&kategori=HA&subkategori=${encodeURIComponent(kategoriPilih)}&t=${Date.now()}`)
+            .then(res => res.json())
+            .then(res => {
+                tampilkanModal("Check-In", res.pesan);
+                muatDataAntrian();
             });
-        }
-
-        function aksiUtamaAntri() {
-            const kategoriPilih = document.getElementById('pilih-kategori').value;
-            const subKategoriPilih = kategoriPilih === "AV" ? "AV" : document.getElementById('pilih-subkategori').value;
-            eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih, subKategoriPilih);
         }
 
         function aksiUtamaCustomer() {
             tampilkanModalKonfirmasi("Konfirmasi", "Sudah membawa customer?", function() {
-                eksekusiAksiInstan('ambilAntrian', 'Melayani');
+                const namaSales = getAkunAktif().trim();
+                fetch(`${SCRIPT_URL}?aksi=ambilAntrian&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
+                .then(r => r.json()).then(() => muatDataAntrian());
             });
         }
 
         function aksiSelesaiClosing() {
-            tampilkanModalKonfirmasi("Konfirmasi Selesai", "Selesai melayani customer? Anda akan dikeluarkan dari antrian.", function() {
-                eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
+            tampilkanModalKonfirmasi("Konfirmasi Selesai", "Selesai melayani customer?", function() {
+                const namaSales = getAkunAktif().trim();
+                fetch(`${SCRIPT_URL}?aksi=selesaiMelayani&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
+                .then(r => r.json()).then(() => muatDataAntrian());
             });
         }
 
         function aksiToggleCS() {
             const statusSekarang = cekStatusSayaDariArray(daftarAntrianGlobal);
-
+            const namaSales = getAkunAktif().trim();
             if (statusSekarang === "Standby") {
-                tampilkanModalKonfirmasi("Status Dipanggil CS/GUDANG", "Dipanggil oleh CS/GUDANG? Posisi antrian Anda akan dikunci.", function() {
-                    eksekusiAksiInstan('panggilCS', 'Dipanggil CS/GUDANG');
+                tampilkanModalKonfirmasi("Dipanggil CS/Gudang", "Posisi antrian Anda akan dikunci sementara.", function() {
+                    fetch(`${SCRIPT_URL}?aksi=panggilCS&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
+                    .then(r => r.json()).then(() => muatDataAntrian());
                 });
-            } else if (statusSekarang === "Dipanggil CS/GUDANG" || statusSekarang === "Dipanggil CS") {
-                tampilkanModalKonfirmasi("Selesai Urusan CS/GUDANG", "Urusan CS/GUDANG sudah selesai? Kembali aktif di antrian.", function() {
-                    eksekusiAksiInstan('selesaiCS', 'Standby');
-                });
+            } else {
+                fetch(`${SCRIPT_URL}?aksi=selesaiCS&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
+                .then(r => r.json()).then(() => muatDataAntrian());
             }
         }
 
         function bukaModalKeluarIstirahat() {
-            tampilkanModalKonfirmasi("Keluar Antrian", "Apakah Anda yakin ingin keluar dari antrian untuk istirahat / ada keperluan?", function() {
-                eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
+            tampilkanModalKonfirmasi("Keluar Antrian", "Yakin ingin keluar dari antrian?", function() {
+                const namaSales = getAkunAktif().trim();
+                fetch(`${SCRIPT_URL}?aksi=selesaiMelayani&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
+                .then(r => r.json()).then(() => muatDataAntrian());
             });
         }
 
-        function konfirmasiSudahBacaPengumuman() {
-            if (pengumumanTerakhirGlobal) {
-                localStorage.setItem('ufo_last_read_announcement', pengumumanTerakhirGlobal);
+        // --- FITUR GPS AUTO-EXIT 50 METER ---
+        function mulaiPemantauanGPS() {
+            if (navigator.geolocation) {
+                watchIdGPS = navigator.geolocation.watchPosition(
+                    function(position) {
+                        const latPromotor = position.coords.latitude;
+                        const lonPromotor = position.coords.longitude;
+                        const jarakMeter = hitungJarakHaversine(latPromotor, lonPromotor, koordinatToko.lat, koordinatToko.lng);
+
+                        // Jika jarak > 50 meter dan status promotor sedang standby di antrian
+                        const statusSaya = cekStatusSayaDariArray(daftarAntrianGlobal);
+                        if (jarakMeter > 50 && statusSaya === "Standby") {
+                            const namaSales = getAkunAktif().trim();
+                            if (namaSales) {
+                                fetch(`${SCRIPT_URL}?aksi=selesaiMelayani&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
+                                .then(r => r.json())
+                                .then(() => {
+                                    tampilkanModal("Auto-Exit GPS", "Anda berada di luar radius 50 meter dari toko. Anda otomatis dikeluarkan dari antrian.");
+                                    muatDataAntrian();
+                                });
+                            }
+                        }
+                    },
+                    function(error) { console.log("GPS Error: ", error.message); },
+                    { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+                );
             }
-            document.getElementById('modal-pengumuman-spv').classList.remove('active');
+        }
+
+        function hitungJarakHaversine(lat1, lon1, lat2, lon2) {
+            const R = 6371000; // Radius bumi dalam meter
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c; // Jarak dalam meter
         }
 
         function tampilkanModal(judul, desc) {
