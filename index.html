@@ -41,13 +41,24 @@
         body.dark-mode .list-antrian li { background: #09090b !important; border: 2px solid #06b6d4 !important; color: #ffffff !important; }
         body.dark-mode .modal-box { background: #09090b !important; border: 2px solid #52525b !important; color: #ffffff !important; }
 
-        /* KOTAK GILIRAN HA & AV (GAYA ADMIN: GELAP ELEGAN DENGAN GARIS ATAS) */
+        /* KOTAK GILIRAN HA & AV (STANDAR) */
         .timer-box-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
         .timer-card-admin { background: #0f172a; border-radius: 18px; padding: 16px 14px; color: #ffffff; text-align: center; border: 2px solid var(--card-bg); box-shadow: 0 10px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
-        body.dark-mode .timer-card-admin { background: #09090b !important; border: 2px solid #3f3f46 !important; }
         .timer-card-admin::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; }
         .timer-card-admin.ha::before { background: #3b82f6; }
         .timer-card-admin.av::before { background: #a855f7; }
+
+        /* KOTAK GILIRAN HA & AV (NEON BOX DI MODE GELAP) */
+        body.dark-mode .timer-card-admin.ha {
+            background: #050b14 !important;
+            border: 2px solid #3b82f6 !important;
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.5) !important;
+        }
+        body.dark-mode .timer-card-admin.av {
+            background: #0e0514 !important;
+            border: 2px solid #a855f7 !important;
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.5) !important;
+        }
 
         .timer-badge-title { font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: inline-block; }
         .ha .timer-badge-title { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
@@ -55,12 +66,12 @@
 
         .promotor-nama-aktif { font-size: 15px; font-weight: 800; color: #ffffff; margin-top: 2px; line-height: 1.3; min-height: 36px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
 
-        /* TOMBOL SUDAH MEMBAWA CUSTOMER MENYALA KHUSUS MODE GELAP */
+        /* TOMBOL "SUDAH MEMBAWA CUSTOMER" NEON BIRU MENYALA KHUSUS MODE GELAP */
         body.dark-mode .btn-customer {
-            background: #3b82f6 !important;
+            background: #2563eb !important;
             color: #ffffff !important;
             border: 2px solid #60a5fa !important;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6) !important;
+            box-shadow: 0 0 25px rgba(37, 99, 235, 0.8) !important;
         }
 
         *, body, button, select, input { font-family: 'Plus Jakarta Sans', sans-serif !important; box-sizing: border-box; }
@@ -170,21 +181,19 @@
                     <label>Check-in Kehadiran (Awal Masuk Kerja)</label>
                     <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 8px 0; text-align: left;">Silakan pilih kategori utama Anda untuk hari ini:</p>
                     <select id="pilih-kategori-hadir">
-                        <option value="Mesin Cuci & Lemari Es">Mesin Cuci & Lemari Es</option>
-                        <option value="AC">AC</option>
+                        <option value="HA">HA (Home Appliance)</option>
                         <option value="AV">AV (Audio Video)</option>
                     </select>
                 </div>
                 <button type="button" id="btn-hadir" class="btn-success" onclick="aksiHadirKerja()">Konfirmasi Kehadiran & Masuk Antri</button>
             </div>
 
-            <!-- SISTEM NORMAL KEMBALI SEPERTI SEMULA -->
+            <!-- SISTEM NORMAL -->
             <div id="section-normal" style="display: none;">
                 <div class="input-group" id="group-pilih-kategori-normal">
                     <label>Pilih Kategori Antrian</label>
                     <select id="pilih-kategori-normal">
-                        <option value="Mesin Cuci & Lemari Es">Mesin Cuci & Lemari Es</option>
-                        <option value="AC">AC</option>
+                        <option value="HA">HA (Home Appliance)</option>
                         <option value="AV">AV (Audio Video)</option>
                     </select>
                 </div>
@@ -197,19 +206,12 @@
             </div>
         </div>
 
-        <!-- LIVE URUTAN 3 KELOMPOK -->
+        <!-- LIVE URUTAN KATEGORI HA & AV (KEMBALI KE 2 KATEGORI UTAMA) -->
         <div style="margin-top: 24px; text-align: left;">
             <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase;">LIVE URUTAN KATEGORI HA</div>
-            
-            <span class="sub-section-title">MESIN CUCI & LEMARI ES</span>
-            <ul id="list-Mesin Cuci & Lemari Es" class="list-antrian"><li><span>Memuat...</span></li></ul>
-
-            <span class="sub-section-title">AC</span>
-            <ul id="list-AC" class="list-antrian"><li><span>Memuat...</span></li></ul>
+            <ul id="list-HA" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
             <div style="font-size: 14px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 24px; margin-bottom: 12px; text-transform: uppercase;">LIVE URUTAN KATEGORI AV</div>
-
-            <span class="sub-section-title">AUDIO VIDEO (AV)</span>
             <ul id="list-AV" class="list-antrian"><li><span>Memuat...</span></li></ul>
         </div>
 
@@ -478,38 +480,30 @@
             badge.innerText = statusSistemGlobal === "BUKA" ? "STATUS ANTRIAN: OPEN" : "STATUS ANTRIAN: CLOSED";
             badge.className = statusSistemGlobal === "BUKA" ? "status-badge-sistem status-open" : "status-badge-sistem status-closed";
 
-            let listMC = "", listAC = "", listAV = "";
-            let urutMC = 1, urutAC = 1, urutAV = 1;
+            let listHA = "", listAV = "";
+            let urutHA = 1, urutAV = 1;
             const akunSaya = getAkunAktif().trim().toLowerCase();
             let kategoriSayaAktif = "";
 
             const dataStandby = daftarAntrianGlobal.filter(item => item.status === "Standby");
-            const promotorHA = dataStandby.find(item => {
-                let sub = (item.subkategori || "").trim();
-                return sub === "Mesin Cuci & Lemari Es" || sub === "AC";
-            }) || null;
-            
-            const promotorAV = dataStandby.find(item => {
-                let sub = (item.subkategori || "").trim();
-                return sub === "AV" || sub === "Audio Video";
-            }) || null;
+            const promotorHA = dataStandby.find(item => String(item.kategori || "").trim().toUpperCase() === "HA") || null;
+            const promotorAV = dataStandby.find(item => String(item.kategori || "").trim().toUpperCase() === "AV") || null;
 
             document.getElementById('promotor-nama-ha').textContent = promotorHA ? promotorHA.nama : "Belum Ada";
             document.getElementById('promotor-nama-av').textContent = promotorAV ? promotorAV.nama : "Belum Ada";
 
             if (daftarAntrianGlobal.length > 0) {
                 daftarAntrianGlobal.forEach((item) => {
-                    let sub = item.subkategori ? String(item.subkategori).trim() : "Mesin Cuci & Lemari Es";
+                    let kat = item.kategori ? String(item.kategori).trim().toUpperCase() : "HA";
                     if (String(item.nama).trim().toLowerCase() === akunSaya) {
-                        kategoriSayaAktif = sub;
+                        kategoriSayaAktif = kat;
                     }
 
                     let itemHtml = "";
                     if (item.status === "Standby") {
                         let urut = 1;
-                        if (sub === "Mesin Cuci & Lemari Es") urut = urutMC++;
-                        else if (sub === "AC") urut = urutAC++;
-                        else if (sub === "AV") urut = urutAV++;
+                        if (kat === "HA") urut = urutHA++;
+                        else if (kat === "AV") urut = urutAV++;
 
                         let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-giliran-anda">Giliran Anda</span>` : `<span class="badge-status-item badge-standby">Standby (${urut})</span>`;
                         itemHtml = `<li><b>${urut}. ${item.nama}</b> ${badgeHtml}</li>`;
@@ -519,15 +513,13 @@
                         itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-cs">Dipanggil CS/Gudang</span></li>`;
                     }
 
-                    if (sub === "Mesin Cuci & Lemari Es") listMC += itemHtml;
-                    else if (sub === "AC") listAC += itemHtml;
-                    else if (sub === "AV") listAV += itemHtml;
+                    if (kat === "HA") listHA += itemHtml;
+                    else if (kat === "AV") listAV += itemHtml;
                 });
             }
 
             const kosongHtml = "<li><span style='color:#64748b; font-style:italic;'>Belum ada antrian</span></li>";
-            document.getElementById('list-Mesin Cuci & Lemari Es').innerHTML = listMC || kosongHtml;
-            document.getElementById('list-AC').innerHTML = listAC || kosongHtml;
+            document.getElementById('list-HA').innerHTML = listHA || kosongHtml;
             document.getElementById('list-AV').innerHTML = listAV || kosongHtml;
 
             let statusSayaNyata = cekStatusSayaDariArray(daftarAntrianGlobal);
@@ -578,7 +570,7 @@
                             btnCS.disabled = true; btnCS.className = "btn-purple btn-disabled";
                             btnKeluar.disabled = true; btnKeluar.className = "btn-amber btn-disabled";
                         } else {
-                            let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && (it.subkategori || "").trim() === kategoriSayaAktif);
+                            let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && String(it.kategori || "").trim().toUpperCase() === kategoriSayaAktif);
                             let indexSaya = listSubStandby.findIndex(it => String(it.nama).trim().toLowerCase() === akunSaya);
                             let apakahSayaBisaAmbil = (indexSaya === 0 || indexSaya === 1);
 
@@ -611,7 +603,7 @@
             }).catch(() => {});
         }
 
-        function eksekusiAksiInstan(aksiServer, targetStatusSimulasi, subKatBaru = null, selesaiCallback = null) {
+        function eksekusiAksiInstan(aksiServer, targetStatusSimulasi, katBaru = null, selesaiCallback = null) {
             const namaSales = getAkunAktif().trim();
             if (!namaSales) {
                 if (selesaiCallback) selesaiCallback();
@@ -619,7 +611,7 @@
             }
 
             localActionActive = true;
-            let subKatAktif = subKatBaru || document.getElementById('pilih-kategori-normal').value || "Mesin Cuci & Lemari Es";
+            let katAktif = katBaru || document.getElementById('pilih-kategori-normal').value || "HA";
 
             if (targetStatusSimulasi === "belum_ada") {
                 daftarAntrianGlobal = daftarAntrianGlobal.filter(item => String(item.nama).trim().toLowerCase() !== namaSales.toLowerCase());
@@ -628,12 +620,12 @@
                 daftarAntrianGlobal.forEach(item => {
                     if (String(item.nama).trim().toLowerCase() === namaSales.toLowerCase()) {
                         item.status = targetStatusSimulasi;
-                        if (subKatBaru) item.subkategori = subKatBaru;
+                        if (katBaru) item.kategori = katBaru;
                         ketemu = true;
                     }
                 });
                 if (!ketemu) {
-                    daftarAntrianGlobal.push({ nama: namaSales, status: targetStatusSimulasi, kategori: "HA", subkategori: subKatAktif });
+                    daftarAntrianGlobal.push({ nama: namaSales, status: targetStatusSimulasi, kategori: katAktif });
                 }
             }
 
@@ -641,7 +633,7 @@
             renderUIRental(daftarAntrianGlobal, statusSistemGlobal, koordinatToko);
             localActionActive = true;
 
-            fetch(`${SCRIPT_URL}?aksi=${aksiServer}&namaSales=${encodeURIComponent(namaSales)}&subkategori=${encodeURIComponent(subKatAktif)}&t=${Date.now()}`)
+            fetch(`${SCRIPT_URL}?aksi=${aksiServer}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(katAktif)}&subkategori=${encodeURIComponent(katAktif)}&t=${Date.now()}`)
             .then(res => res.json())
             .then(res => {
                 if (res && res.status === "sukses" && res.data) {
