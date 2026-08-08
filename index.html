@@ -313,6 +313,13 @@
 
         window.onload = function() {
             initDarkMode();
+            
+            // Muat cache koordinat toko dari localStorage agar instan pasca-refresh
+            const cachedKoordinat = localStorage.getItem('ufo_koordinat_toko_cache');
+            if (cachedKoordinat) {
+                try { koordinatToko = JSON.parse(cachedKoordinat); } catch(e) {}
+            }
+
             muatMasterSalesInstant();
             muatCacheAntrianInstan();
             
@@ -502,6 +509,9 @@
                 koordinatToko.lat = koordinatServer.lat || "";
                 koordinatToko.lng = koordinatServer.lng || "";
                 koordinatToko.radius = Number(koordinatServer.radius) || 50;
+                
+                // Simpan cache koordinat toko agar instan
+                localStorage.setItem('ufo_koordinat_toko_cache', JSON.stringify(koordinatToko));
             }
 
             const badge = document.getElementById('badge-status-sistem');
@@ -706,15 +716,23 @@
             }
         }
 
-   function validasiGpsDanJalankan(callbackBerhasil, callbackBatal) {
-            // Jika koordinat toko kosong atau belum diset oleh admin, langsung lewatkan
+        function validasiGpsDanJalankan(callbackBerhasil, callbackBatal) {
+            // Jika koordinat toko kosong, cek cache localStorage
+            if (!koordinatToko.lat || !koordinatToko.lng) {
+                const cachedKoordinat = localStorage.getItem('ufo_koordinat_toko_cache');
+                if (cachedKoordinat) {
+                    try { koordinatToko = JSON.parse(cachedKoordinat); } catch(e) {}
+                }
+            }
+
+            // Jika masih kosong atau belum diset admin, langsung lewatkan
             if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                 if (typeof callbackBerhasil === 'function') callbackBerhasil();
                 return;
             }
 
             if (navigator.geolocation) {
-                // Menggunakan timeout 6 detik dengan cache ringan agar cepat merespons tapi tetap akurat
+                // Timeout 8 detik dengan toleransi cache agar stabil setelah refresh browser
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
                         const jarakMeter = hitungJarakHaversine(
@@ -733,9 +751,9 @@
                     },
                     function(error) {
                         if (typeof callbackBatal === 'function') callbackBatal();
-                        tampilkanModal("GPS Wajib Aktif", "Pastikan GPS Anda aktif dan izin lokasi browser diizinkan (Allow) untuk mendaftar antrean.");
+                        tampilkanModal("GPS Wajib Aktif", "Pastikan GPS Anda aktif dan pastikan izin lokasi (Location Permission) di browser sudah diatur ke 'Allow' / Diizinkan.");
                     },
-                    { enableHighAccuracy: true, timeout: 6000, maximumAge: 10000 }
+                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
                 );
             } else {
                 if (typeof callbackBatal === 'function') callbackBatal();
