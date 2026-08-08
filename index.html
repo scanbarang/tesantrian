@@ -120,7 +120,7 @@
             <button type="button" id="btn-simpan-hp" class="btn-customer" onclick="simpanAkunHP()">Simpan & Kunci di HP Ini</button>
         </div>
 
-        <!-- PANEL MENU UTAMA / CHECK-IN KEDATANGAN -->
+        <!-- PANEL MENU UTAMA -->
         <div id="panel-menu-utama" style="display: none;">
             <div class="user-badge">
                 <span style="color: var(--text-muted);">Promotor:</span> <strong id="label-user-aktif" style="color:var(--primary-dark); font-size: 15px;">-</strong>
@@ -144,13 +144,6 @@
                 <div class="input-group">
                     <label>Kategori Antrian Anda Saat Ini</label>
                     <input type="text" id="label-kategori-aktif" readonly style="background: #f1f5f9; font-weight: 800; text-align: center;">
-                </div>
-
-                <button type="button" id="btn-utama-antri" class="btn-success" style="display: none;">Daftar Antrian</button>
-                
-                <div id="keterangan-lock-box" style="display: none; margin-top: 10px; padding: 12px 14px; background: #fee2e2; border: 2px solid #fca5a5; color: #b91c1c; border-radius: 12px; font-size: 12px; font-weight: 700; text-align: left;">
-                    🔒 <b>LOCK (Silahkan Lapor Untuk Membuka)</b><br>
-                    <span id="teks-alasan-lock" style="font-weight: 600; font-size: 11px; opacity: 0.95; display: block; margin-top: 4px;">-</span>
                 </div>
 
                 <button type="button" id="btn-utama-customer" class="btn-customer" onclick="aksiUtamaCustomer()" style="display: none; margin-top: 12px;">Sudah Membawa Customer</button>
@@ -199,8 +192,7 @@
         let masterSalesGlobal = [];
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
-        let koordinatToko = { lat: -7.9666, lng: 112.6326 }; // Koordinat default UFO Kebonsari (dapat di-update dari server)
-        let watchIdGPS = null;
+        let koordinatToko = { lat: -7.9666, lng: 112.6326 }; 
 
         window.onload = function() {
             initDarkMode();
@@ -404,34 +396,40 @@
                 document.getElementById('label-kategori-aktif').value = kategoriSayaAktif;
             }
 
-            // Kontrol tombol aksi berdasarkan status sistem (Buka / Tutup oleh SPV)
             const btnCustomer = document.getElementById('btn-utama-customer');
             const btnClosing = document.getElementById('btn-selesai-closing');
             const btnCS = document.getElementById('btn-utama-cs');
             const btnKeluar = document.getElementById('btn-keluar-istirahat');
 
-            if (statusSistemGlobal === "TUTUP" && statusSayaNyata === "Standby") {
-                btnCustomer.disabled = true; btnCustomer.className = "btn-customer btn-disabled";
-                btnCS.disabled = true; btnCS.className = "btn-purple btn-disabled";
-            } else if (statusSayaNyata === "Standby") {
-                let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && (it.subkategori || "").trim() === kategoriSayaAktif);
-                let indexSaya = listSubStandby.findIndex(it => String(it.nama).trim().toLowerCase() === akunSaya);
-                let apakahSayaBisaAmbil = (indexSaya === 0 || indexSaya === 1);
+            // ATUR KONDISI TOMBOL AKSI BERDASARKAN STATUS BUKA/TUTUP SPV
+            if (statusSayaNyata === "Standby") {
+                btnCustomer.style.display = "block"; 
+                btnClosing.style.display = "none";
+                btnCS.style.display = "block"; 
+                btnKeluar.style.display = "block";
 
-                btnCustomer.disabled = !apakahSayaBisaAmbil; 
-                btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer" : "btn-customer btn-disabled";
-                btnCS.disabled = false; btnCS.className = "btn-purple";
-            }
+                if (statusSistemGlobal === "TUTUP") {
+                    // Jika SPV menutup antrian, tombol aksi dikunci/tidak aktif
+                    btnCustomer.disabled = true; btnCustomer.className = "btn-customer btn-disabled";
+                    btnCS.disabled = true; btnCS.className = "btn-purple btn-disabled";
+                    btnKeluar.disabled = true; btnKeluar.className = "btn-amber btn-disabled";
+                } else {
+                    // Jika SPV membuka antrian, cek posisi giliran 1 atau 2
+                    let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && (it.subkategori || "").trim() === kategoriSayaAktif);
+                    let indexSaya = listSubStandby.findIndex(it => String(it.nama).trim().toLowerCase() === akunSaya);
+                    let apakahSayaBisaAmbil = (indexSaya === 0 || indexSaya === 1);
 
-            if (statusSayaNyata === "Melayani") {
+                    btnCustomer.disabled = !apakahSayaBisaAmbil; 
+                    btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer" : "btn-customer btn-disabled";
+                    btnCS.disabled = false; btnCS.className = "btn-purple";
+                    btnKeluar.disabled = false; btnKeluar.className = "btn-amber";
+                }
+            } else if (statusSayaNyata === "Melayani") {
                 btnCustomer.style.display = "none"; btnClosing.style.display = "block";
                 btnCS.style.display = "none"; btnKeluar.style.display = "none";
-            } else if (statusSayaNyata === "Standby") {
-                btnCustomer.style.display = "block"; btnClosing.style.display = "none";
-                btnCS.style.display = "block"; btnKeluar.style.display = "block";
             } else if (statusSayaNyata === "Dipanggil CS/GUDANG" || statusSayaNyata === "Dipanggil CS") {
                 btnCustomer.style.display = "none"; btnClosing.style.display = "none";
-                btnCS.style.display = "block"; btnCS.innerText = "SELESAI CS/GUDANG (KEMBALI ANTRI)"; btnCS.className = "btn-teal";
+                btnCS.style.display = "block"; btnCS.innerText = "SELESAI CS/GUDANG (KEMBALI ANTRI)"; btnCS.className = "btn-teal"; btnCS.disabled = false;
                 btnKeluar.style.display = "none";
             }
         }
@@ -447,7 +445,6 @@
             }).catch(() => {});
         }
 
-        // Check-in kedatangan sekali di awal
         function aksiCheckinKedatangan() {
             const kategoriPilih = document.getElementById('pilih-kategori-checkin').value;
             const namaSales = getAkunAktif().trim();
@@ -499,16 +496,14 @@
             });
         }
 
-        // --- FITUR GPS AUTO-EXIT 50 METER ---
         function mulaiPemantauanGPS() {
             if (navigator.geolocation) {
-                watchIdGPS = navigator.geolocation.watchPosition(
+                navigator.geolocation.watchPosition(
                     function(position) {
                         const latPromotor = position.coords.latitude;
                         const lonPromotor = position.coords.longitude;
                         const jarakMeter = hitungJarakHaversine(latPromotor, lonPromotor, koordinatToko.lat, koordinatToko.lng);
 
-                        // Jika jarak > 50 meter dan status promotor sedang standby di antrian
                         const statusSaya = cekStatusSayaDariArray(daftarAntrianGlobal);
                         if (jarakMeter > 50 && statusSaya === "Standby") {
                             const namaSales = getAkunAktif().trim();
@@ -522,21 +517,21 @@
                             }
                         }
                     },
-                    function(error) { console.log("GPS Error: ", error.message); },
+                    function(error) {},
                     { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
                 );
             }
         }
 
         function hitungJarakHaversine(lat1, lon1, lat2, lon2) {
-            const R = 6371000; // Radius bumi dalam meter
+            const R = 6371000; 
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
                       Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
                       Math.sin(dLon/2) * Math.sin(dLon/2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c; // Jarak dalam meter
+            return R * c; 
         }
 
         function tampilkanModal(judul, desc) {
