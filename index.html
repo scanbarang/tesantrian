@@ -24,135 +24,38 @@
             --border: #cbd5e1;
         }
 
-        /* --- STYLING MODE GELAP: NEON BOX MERAH MENYALA KEMBALI SEPERTI SEMULA --- */
         body.dark-mode {
-            --bg-color: #030712 !important;
-            --card-bg: #0f172a !important;
-            --text-main: #f8fafc !important;
-            --text-muted: #94a3b8 !important;
-            --border: #334155 !important;
-            background: #030712 !important;
+            --bg-color: #000000 !important;
+            --card-bg: #050507 !important;
+            --text-main: #ffffff !important;
+            --text-muted: #a1a1aa !important;
+            --border: #3f3f46 !important;
         }
 
-        body.dark-mode .app-container {
-            background: #090d16 !important;
-            border: 2px solid #ef4444 !important;
-            box-shadow: 0 0 35px rgba(239, 68, 68, 0.4), inset 0 0 15px rgba(239, 68, 68, 0.15);
-        }
+        body.dark-mode { background: #000000 !important; }
+        body.dark-mode .app-container { background: #050507 !important; border: 2px solid #3f3f46 !important; box-shadow: 0 0 35px rgba(255, 255, 255, 0.08); }
+        body.dark-mode .gradient-header { background: #09090b !important; border: 2px solid #ef4444 !important; }
+        body.dark-mode select, body.dark-mode input[type="text"] { background: #09090b !important; color: #ffffff !important; border: 2px solid #3b82f6 !important; }
+        body.dark-mode select:disabled { background-color: #18181b !important; color: #71717a !important; border-color: #27272a !important; }
+        body.dark-mode .user-badge { background: #09090b !important; border: 2px solid #8b5cf6 !important; color: #ffffff !important; }
+        body.dark-mode .list-antrian li { background: #09090b !important; border: 2px solid #06b6d4 !important; color: #ffffff !important; }
+        body.dark-mode .timer-card-promotor { background: #09090b !important; border: 2px solid #3f3f46 !important; }
+        body.dark-mode .modal-box { background: #09090b !important; border: 2px solid #52525b !important; color: #ffffff !important; }
 
-        body.dark-mode .gradient-header {
-            background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%) !important;
-            border: 2px solid #f87171 !important;
-            box-shadow: 0 0 25px rgba(248, 113, 113, 0.6);
-        }
-
-        body.dark-mode select, body.dark-mode input[type="text"] {
-            background: #020617 !important;
-            color: #ffffff !important;
-            border: 2px solid #ef4444 !important;
-            box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
-        }
-
-        body.dark-mode select:disabled {
-            background-color: #1e293b !important;
-            color: #64748b !important;
-            border-color: #475569 !important;
-            box-shadow: none !important;
-        }
-
-        body.dark-mode .user-badge {
-            background: #020617 !important;
-            border: 2px solid #ef4444 !important;
-            color: #ffffff !important;
-            box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
-        }
-
-        body.dark-mode .list-antrian li {
-            background: #020617 !important;
-            border: 2px solid #f87171 !important;
-            color: #ffffff !important;
-            box-shadow: 0 0 10px rgba(248, 113, 113, 0.25);
-        }
-
-        body.dark-mode .modal-box {
-            background: #0f172a !important;
-            border: 2px solid #ef4444 !important;
-            color: #ffffff !important;
-            box-shadow: 0 0 35px rgba(239, 68, 68, 0.5);
-        }
-
-        /* NEON BOX MERAH MENYALA UNTUK TOMBOL UTAMA DI MODE GELAP */
-        body.dark-mode .btn-success, 
+        /* KODE TOMBOL BIRU MENYALA KHUSUS MODE GELAP */
         body.dark-mode .btn-customer {
-            background: #991b1b !important;
+            background: #3b82f6 !important;
             color: #ffffff !important;
-            border: 2px solid #f87171 !important;
-            box-shadow: 0 0 15px rgba(248, 113, 113, 0.7), inset 0 0 8px rgba(248, 113, 113, 0.4);
+            border: 2px solid #60a5fa !important;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6) !important;
         }
-
-        body.dark-mode .btn-closing {
-            background: #7f1d1d !important;
-            color: #ffffff !important;
-            border: 2px solid #fca5a5 !important;
-            box-shadow: 0 0 15px rgba(252, 165, 165, 0.7), inset 0 0 8px rgba(252, 165, 165, 0.4);
-        }
-
-        body.dark-mode .btn-purple {
-            background: #581c87 !important;
-            color: #ffffff !important;
-            border: 2px solid #c084fc !important;
-            box-shadow: 0 0 15px rgba(192, 132, 252, 0.7), inset 0 0 8px rgba(192, 132, 252, 0.4);
-        }
-
-        body.dark-mode .btn-teal {
-            background: #115e59 !important;
-            color: #ffffff !important;
-            border: 2px solid #2dd4bf !important;
-            box-shadow: 0 0 15px rgba(45, 212, 191, 0.7), inset 0 0 8px rgba(45, 212, 191, 0.4);
-        }
-
-        body.dark-mode .btn-amber {
-            background: #9a3412 !important;
-            color: #ffffff !important;
-            border: 2px solid #fbbf24 !important;
-            box-shadow: 0 0 15px rgba(251, 191, 36, 0.7), inset 0 0 8px rgba(251, 191, 36, 0.4);
-        }
-
-        body.dark-mode .btn-cancel {
-            background: #334155 !important;
-            color: #f8fafc !important;
-            border: 2px solid #94a3b8 !important;
-            box-shadow: 0 0 12px rgba(148, 163, 184, 0.4);
-        }
-
-        /* ANIMASI KEDIP MENYALA (PULSING NEON) PADA TOMBOL WHATSAPP */
-        @keyframes neonPulseGreen {
-            0% { box-shadow: 0 0 8px rgba(74, 222, 128, 0.4), inset 0 0 5px rgba(74, 222, 128, 0.2); border-color: #15803d; }
-            50% { box-shadow: 0 0 25px rgba(74, 222, 128, 0.9), inset 0 0 12px rgba(74, 222, 128, 0.6); border-color: #4ade80; }
-            100% { box-shadow: 0 0 8px rgba(74, 222, 128, 0.4), inset 0 0 5px rgba(74, 222, 128, 0.2); border-color: #15803d; }
-        }
-
-        body.dark-mode .wa-report-btn {
-            background: #14532d !important;
-            border: 2px solid #4ade80 !important;
-            color: #ffffff !important;
-            animation: neonPulseGreen 2s infinite ease-in-out !important;
-        }
-
-        body.dark-mode .dark-mode-btn {
-            background: #0f172a !important;
-            border: 2px solid #ef4444 !important;
-            color: #f87171 !important;
-            box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
-        }
-        /* ----------------------------------------------------------------- */
 
         *, body, button, select, input { font-family: 'Plus Jakarta Sans', sans-serif !important; box-sizing: border-box; }
         body { background: var(--bg-color); color: var(--text-main); margin: 0; padding: 16px; display: flex; justify-content: center; min-height: 100vh; }
-        .app-container { width: 100%; max-width: 500px; background: var(--card-bg); border-radius: 24px; padding: 24px; border: 2px solid var(--border); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.1); text-align: center; transition: all 0.3s ease; }
+        .app-container { width: 100%; max-width: 500px; background: var(--card-bg); border-radius: 24px; padding: 24px; border: 2px solid var(--border); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.1); text-align: center; }
 
         .top-controls { display: flex; justify-content: flex-end; margin-bottom: 12px; }
-        .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 
         .gradient-header { background: linear-gradient(135deg, #dc2626 0%, #ffffff 100%); border-radius: 18px; padding: 22px; color: white; margin-bottom: 18px; box-shadow: 0 8px 20px -4px rgba(220, 38, 38, 0.3); }
         .gradient-header h2 { margin: 0; font-size: 22px; font-weight: 800; text-shadow: 1px 1px 4px rgba(0,0,0,0.6); }
@@ -161,6 +64,18 @@
         .status-badge-sistem { display: inline-block; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; text-transform: uppercase; margin-bottom: 18px; letter-spacing: 0.5px; }
         .status-open { background: #dcfce7; color: #15803d; border: 2px solid #86efac; }
         .status-closed { background: #fee2e2; color: #b91c1c; border: 2px solid #fca5a5; }
+
+        /* KOTAK GILIRAN HA & AV */
+        .timer-box-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+        .timer-card-promotor { background: #0f172a; border-radius: 16px; padding: 14px 10px; color: #ffffff; text-align: center; border: 2px solid var(--border); box-shadow: 0 8px 16px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+        .timer-card-promotor::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+        .timer-card-promotor.ha::before { background: #3b82f6; }
+        .timer-card-promotor.av::before { background: #a855f7; }
+
+        .timer-badge-title { font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; display: inline-block; }
+        .ha .timer-badge-title { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .av .timer-badge-title { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
+        .promotor-nama-aktif { font-size: 14px; font-weight: 800; color: #ffffff; margin-top: 2px; line-height: 1.3; min-height: 32px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
 
         .input-group { margin-bottom: 16px; text-align: left; }
         .input-group label { display: block; font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
@@ -171,13 +86,13 @@
         button:active { transform: scale(0.98); }
 
         .btn-success { background: var(--customer-blue); color: white; }
-        .btn-customer { background: var(--customer-blue); color: white; }
+        .btn-customer { background: #2563eb; color: white; }
         .btn-closing { background: var(--closing-red); color: white; }
         .btn-purple { background: var(--purple-cs); color: white; }
         .btn-teal { background: var(--teal-cs); color: white; }
         .btn-amber { background: var(--amber-rest); color: white; }
         .btn-cancel { background: #e2e8f0; color: var(--text-main); }
-        .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; box-shadow: none !important; }
+        .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; }
 
         .user-badge { background: #f8fafc; border: 2px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 18px; text-align: left; font-size: 14px; font-weight: 600; }
         .list-antrian { list-style: none; padding: 0; margin: 8px 0 0 0; text-align: left; }
@@ -232,6 +147,22 @@
                 <span style="color: var(--text-muted);">Promotor:</span> <strong id="label-user-aktif" style="color:var(--primary-dark); font-size: 15px;">-</strong>
             </div>
 
+            <!-- KOTAK GILIRAN HA & AV -->
+            <div class="timer-box-wrapper">
+                <div class="timer-card-promotor ha">
+                    <div>
+                        <span class="timer-badge-title">Giliran HA</span>
+                        <div id="promotor-nama-ha" class="promotor-nama-aktif">Memuat...</div>
+                    </div>
+                </div>
+                <div class="timer-card-promotor av">
+                    <div>
+                        <span class="timer-badge-title">Giliran AV</span>
+                        <div id="promotor-nama-av" class="promotor-nama-aktif">Memuat...</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- CHECK-IN KEDATANGAN (HANYA MUNCUL SEKALI DI AWAL HADIR KERJA) -->
             <div id="section-checkin-awal" style="display: none;">
                 <div class="input-group">
@@ -282,7 +213,6 @@
         </div>
 
         <a href="https://wa.me/6289524391002" target="_blank" class="wa-report-btn">
-            <svg style="width:20px;height:20px;fill:currentColor;" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
             Laporkan via WhatsApp
         </a>
     </div>
@@ -552,6 +482,20 @@
             const akunSaya = getAkunAktif().trim().toLowerCase();
             let kategoriSayaAktif = "";
 
+            const dataStandby = daftarAntrianGlobal.filter(item => item.status === "Standby");
+            const promotorHA = dataStandby.find(item => {
+                let sub = (item.subkategori || "").trim();
+                return sub === "Mesin Cuci & Lemari Es" || sub === "AC";
+            }) || null;
+            
+            const promotorAV = dataStandby.find(item => {
+                let sub = (item.subkategori || "").trim();
+                return sub === "AV" || sub === "Audio Video";
+            }) || null;
+
+            document.getElementById('promotor-nama-ha').textContent = promotorHA ? promotorHA.nama : "Belum Ada";
+            document.getElementById('promotor-nama-av').textContent = promotorAV ? promotorAV.nama : "Belum Ada";
+
             if (daftarAntrianGlobal.length > 0) {
                 daftarAntrianGlobal.forEach((item) => {
                     let sub = item.subkategori ? String(item.subkategori).trim() : "Mesin Cuci & Lemari Es";
@@ -727,7 +671,7 @@
                         const batasRadius = koordinatToko.radius || 50;
 
                         if (jarakMeter > batasRadius) {
-                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean! Anda berada di luar radius toko (${Math.round(jarakMeter)} meter dari titik toko). Batas maksimal adalah ${batasRadius} meter. Harap masuk ke area toko untuk mendaftar.`);
+                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean! Anda berada di luar radius toko (${Math.round(jarakMeter)} meter dari titik toko). Batas maksimal adalah ${batasRadius} meter. Harap masuk ke area toko.`);
                             if (selesaiCallback) selesaiCallback();
                             return;
                         }
@@ -820,8 +764,9 @@
                         const batasRadius = koordinatToko.radius || 50;
 
                         if (jarakMeter > batasRadius && statusSaya === "Standby") {
-                            eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
-                            tampilkanModal("Auto-Exit GPS", `Anda berada di luar radius ${Math.round(jarakMeter)} meter dari toko (Batas maksimal ${batasRadius} meter). Anda otomatis dikeluarkan dari antrean.`);
+                            eksekusiAksiInstan('selesaiMelayani', 'belum_ada', null, function() {
+                                tampilkanModal("Auto-Exit GPS", `Anda berada di luar radius ${Math.round(jarakMeter)} meter dari toko (Batas maksimal ${batasRadius} meter). Anda otomatis dikeluarkan dari antrean.`);
+                            });
                         }
                     },
                     function(error) {},
