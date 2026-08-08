@@ -220,7 +220,10 @@
             muatMasterSales();
             mulaiPemantauanGPS();
             
-            setInterval(muatDataAntrian, 3000); 
+            setInterval(() => {
+                muatDataAntrian();
+                cekStatusPerangkatSaya();
+            }, 3000); 
         };
 
         function toggleDarkMode() {
@@ -283,7 +286,24 @@
             });
         }
 
-       function simpanAkunHP() {
+        function cekStatusPerangkatSaya() {
+            const namaSaya = localStorage.getItem('ufo_nama_sales_aktif');
+            const deviceId = getDeviceId();
+            if (!namaSaya) return;
+
+            fetch(`${SCRIPT_URL}?aksi=cekBinding&deviceId=${encodeURIComponent(deviceId)}&t=${Date.now()}`)
+            .then(res => res.json())
+            .then(res => {
+                if (res.status !== "terkunci" || !res.nama || res.nama.trim().toLowerCase() !== namaSaya.trim().toLowerCase()) {
+                    localStorage.removeItem('ufo_nama_sales_aktif');
+                    localStorage.removeItem('ufo_checkin_hari_ini');
+                    alert("Perangkat Anda telah di-reset oleh Admin. Silakan pilih ulang nama Anda.");
+                    window.location.reload();
+                }
+            }).catch(() => {});
+        }
+
+        function simpanAkunHP() {
             const namaPilih = document.getElementById('pilih-sales').value;
             const deviceId = getDeviceId();
             if(!namaPilih) return tampilkanModal("Perhatian", "Silakan pilih nama Anda!");
@@ -293,37 +313,32 @@
             btn.disabled = true; 
             btn.innerHTML = `<span class="spinner" style="width:14px; height:14px; border:2px solid #fff; border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite; display:inline-block;"></span> Memeriksa Lokasi & Perangkat...`;
 
-            // 1. Validasi GPS Terlebih Dahulu Sebelum Kunci Perangkat
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        // Jika koordinat toko sudah dimuat dari server, lakukan pengecekan jarak
-                        if (koordinatToko.lat && koordinatToko.lng && koordinatToko.lat !== "" && koordinatToko.lng !== "") {
+            if (koordinatToko.lat && koordinatToko.lng && koordinatToko.lat !== "" && koordinatToko.lng !== "") {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
                             const jarakMeter = hitungJarakHaversine(
-                                position.coords.latitude, 
-                                position.coords.longitude, 
-                                Number(koordinatToko.lat), 
-                                Number(koordinatToko.lng)
+                                position.coords.latitude, position.coords.longitude, 
+                                Number(koordinatToko.lat), Number(koordinatToko.lng)
                             );
                             const batasRadius = koordinatToko.radius || 50;
 
                             if (jarakMeter > batasRadius) {
-                                btn.disabled = false;
-                                btn.innerHTML = textAsli;
-                                tampilkanModal("Diluar Radius Toko", `Gagal mendaftar! Anda berada di luar radius toko (${Math.round(jarakMeter)} meter dari titik toko). Batas maksimal adalah ${batasRadius} meter.`);
+                                btn.disabled = false; btn.innerHTML = textAsli;
+                                tampilkanModal("Diluar Radius Toko", `Gagal mendaftar! Anda berada di luar radius toko (${Math.round(jarakMeter)} meter). Batas maksimal adalah ${batasRadius} meter.`);
                                 return;
                             }
-                        }
-                        // Jika dalam radius atau koordinat belum diset admin, lanjutkan binding ke server
-                        lanjutkanSimpanAkun(namaPilih, deviceId, btn, textAsli);
-                    },
-                    function(error) {
-                        btn.disabled = false;
-                        btn.innerHTML = textAsli;
-                        tampilkanModal("GPS Tidak Aktif", "Gagal mendeteksi lokasi Anda. Harap aktifkan GPS / Lokasi di perangkat Anda untuk mendaftar.");
-                    },
-                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-                );
+                            lanjutkanSimpanAkun(namaPilih, deviceId, btn, textAsli);
+                        },
+                        function(error) {
+                            btn.disabled = false; btn.innerHTML = textAsli;
+                            tampilkanModal("GPS Tidak Aktif", "Gagal mendeteksi lokasi Anda. Harap aktifkan GPS / Lokasi di perangkat Anda.");
+                        },
+                        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                    );
+                } else {
+                    lanjutkanSimpanAkun(namaPilih, deviceId, btn, textAsli);
+                }
             } else {
                 lanjutkanSimpanAkun(namaPilih, deviceId, btn, textAsli);
             }
@@ -333,8 +348,7 @@
             fetch(`${SCRIPT_URL}?aksi=kunciPerangkat&namaSales=${encodeURIComponent(namaPilih)}&deviceId=${encodeURIComponent(deviceId)}&t=${Date.now()}`)
             .then(res => res.json())
             .then(res => {
-                btn.disabled = false; 
-                btn.innerHTML = textAsli;
+                btn.disabled = false; btn.innerHTML = textAsli;
                 if(res.status === "sukses") {
                     namaSalesAktifGlobal = namaPilih;
                     localStorage.setItem('ufo_nama_sales_aktif', namaPilih);
@@ -346,8 +360,7 @@
                     tampilkanModal("Akses Ditolak", res.pesan); 
                 }
             }).catch(() => {
-                btn.disabled = false;
-                btn.innerHTML = textAsli;
+                btn.disabled = false; btn.innerHTML = textAsli;
                 tampilkanModal("Gagal", "Terjadi gangguan jaringan saat menyimpan perangkat.");
             });
         }
@@ -450,11 +463,9 @@
             let sudahCheckinPernahHariIni = localStorage.getItem('ufo_checkin_hari_ini') === 'true';
 
             if (!sudahCheckinPernahHariIni) {
-                // Hanya muncul sekali di awal hadir kerja
                 sectionCheckinAwal.style.display = 'block';
                 sectionNormal.style.display = 'none';
             } else {
-                // Kembali ke sistem normal
                 sectionCheckinAwal.style.display = 'none';
                 sectionNormal.style.display = 'block';
 
@@ -564,17 +575,51 @@
             }).catch(() => { localActionActive = false; });
         }
 
-        // HANYA SEKALI SAAT PERTAMA HADIR KERJA
-        function aksiHadirKerja() {
-            const kategoriPilih = document.getElementById('pilih-kategori-hadir').value;
-            localStorage.setItem('ufo_checkin_hari_ini', 'true');
-            eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
+        // VALIDASI GPS SEBELUM DAFTAR/CHECK-IN (MENGIKUTI ON/OFF ADMIN)
+        function validasiGpsDanJalankan(callbackBerhasil) {
+            if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+                callbackBerhasil(); // GPS dimatikan / dikosongkan oleh admin
+                return;
+            }
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const jarakMeter = hitungJarakHaversine(
+                            position.coords.latitude, position.coords.longitude, 
+                            Number(koordinatToko.lat), Number(koordinatToko.lng)
+                        );
+                        const batasRadius = koordinatToko.radius || 50;
+
+                        if (jarakMeter > batasRadius) {
+                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar! Anda berada di luar radius toko (${Math.round(jarakMeter)} meter). Batas maksimal adalah ${batasRadius} meter.`);
+                            return;
+                        }
+                        callbackBerhasil();
+                    },
+                    function(error) {
+                        tampilkanModal("GPS Tidak Aktif", "Gagal mendeteksi lokasi Anda. Harap aktifkan GPS / Lokasi di perangkat Anda.");
+                    },
+                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                );
+            } else {
+                callbackBerhasil();
+            }
         }
 
-        // SISTEM NORMAL KEMBALI SEPERTI SEMULA (BEBAS PILIH KATEGORI SETIAP MAU DAFTAR)
+        function aksiHadirKerja() {
+            validasiGpsDanJalankan(function() {
+                const kategoriPilih = document.getElementById('pilih-kategori-hadir').value;
+                localStorage.setItem('ufo_checkin_hari_ini', 'true');
+                eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
+            });
+        }
+
         function aksiDaftarAntrianNormal() {
-            const kategoriPilih = document.getElementById('pilih-kategori-normal').value;
-            eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
+            validasiGpsDanJalankan(function() {
+                const kategoriPilih = document.getElementById('pilih-kategori-normal').value;
+                eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
+            });
         }
 
         function aksiUtamaCustomer() {
