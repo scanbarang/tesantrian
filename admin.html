@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard SPV - UFO Kebonsari</title>
+    <title>Dashboard Admin - UFO Kebonsari</title>
     <link rel="shortcut icon" href="#">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
@@ -143,17 +143,17 @@
 
     <div class="spv-container">
         <div class="header-spv">
-            <h2>🔑 Control Panel SPV</h2>
+            <h2>🔑 Control Panel Admin</h2>
             <p>Antrian Promotor UFO Kebonsari</p>
             <div id="badge-status-sistem" class="status-badge status-open">STATUS: OPEN</div>
         </div>
 
         <div id="login-spv-box">
             <div class="input-group">
-                <label>Masukkan PIN SPV Khusus</label>
-                <input type="password" id="input-pin-spv" placeholder="PIN SPV" style="text-align: center; font-size: 18px; letter-spacing: 3px;">
+                <label>Masukkan PIN Admin Khusus</label>
+                <input type="password" id="input-pin-spv" placeholder="PIN ADMIN" style="text-align: center; font-size: 18px; letter-spacing: 3px;">
             </div>
-            <button type="button" id="btn-login-spv" class="btn-purple" onclick="prosesLoginSPV()">Masuk Panel Kontrol</button>
+            <button type="button" id="btn-login-spv" class="btn-purple" onclick="prosesLoginAdmin()">Masuk Panel Kontrol</button>
         </div>
 
         <div id="controls-spv-box" style="display: none;">
@@ -186,7 +186,7 @@
                 <input type="text" id="input-lat-toko" placeholder="Latitude Toko (Cth: -7.9666)">
                 <input type="text" id="input-lng-toko" placeholder="Longitude Toko (Cth: 112.6326)">
                 <input type="number" id="input-radius-toko" placeholder="Radius (Meter, Cth: 50)">
-                <button type="button" class="btn-teal" onclick="simpanLokasiTokoSPV()">Simpan Pengaturan GPS Toko</button>
+                <button type="button" class="btn-teal" onclick="simpanLokasiTokoAdmin()">Simpan Pengaturan GPS Toko</button>
             </div>
 
             <div class="section-title">1. Kontrol Sistem Antrian</div>
@@ -197,15 +197,15 @@
 
             <div class="section-title">2. Manajemen Urutan & Waktu</div>
             <div class="spv-grid">
-                <button type="button" class="btn-teal" onclick="bukaModalTambahAntriSpv()">+ Masukkan Antrian</button>
-                <button type="button" class="btn-warning" onclick="bukaModalFormSPVKategori('spvKeluarkanAntrian', 'Keluarkan dari Antrian', true)">- Keluarkan dari Antrian</button>
+                <button type="button" class="btn-teal" onclick="bukaModalTambahAntriAdmin()">+ Masukkan Antrian</button>
+                <button type="button" class="btn-warning" onclick="bukaModalFormAdminKategori('spvKeluarkanAntrian', 'Keluarkan dari Antrian', true)">- Keluarkan dari Antrian</button>
             </div>
 
             <div class="section-title">3. Tindakan Khusus & Emergency</div>
             <div class="spv-grid">
-                <button type="button" class="btn-primary" onclick="bukaModalFormSPVKategori('spvAmbilAntrianBebas', 'Paksa Membawa Customer', true)">Paksa Bawa Customer</button>
-                <button type="button" class="btn-warning" style="background: #d97706;" onclick="bukaModalFormSPVKategori('selesaiMelayani', 'Paksa Selesai Melayani', true)">Paksa Selesai Melayani</button>
-                <button type="button" class="btn-darkred" onclick="bukaModalFormSPVKategori('spvResetDevice', 'Reset Perangkat Sales', true)">Reset Perangkat Promotor</button>
+                <button type="button" class="btn-primary" onclick="bukaModalFormAdminKategori('spvAmbilAntrianBebas', 'Paksa Membawa Customer', true)">Paksa Bawa Customer</button>
+                <button type="button" class="btn-warning" style="background: #d97706;" onclick="bukaModalFormAdminKategori('selesaiMelayani', 'Paksa Selesai Melayani', true)">Paksa Selesai Melayani</button>
+                <button type="button" class="btn-darkred" onclick="bukaModalResetDeviceAdmin()">Reset Perangkat Promotor</button>
                 <button type="button" class="btn-danger" style="background: #991b1b;" onclick="bukaModalResetTotal()">RESET SEMUA ANTRIAN</button>
             </div>
 
@@ -216,7 +216,7 @@
                         <tr>
                             <th>Nama Promotor</th>
                             <th>Status Akun</th>
-                            <th>Aksi SPV</th>
+                            <th>Aksi Admin</th>
                         </tr>
                     </thead>
                     <tbody id="tabel-penalti-spv">
@@ -225,7 +225,7 @@
                 </table>
             </div>
 
-            <button type="button" class="btn-cancel" style="margin-top: 20px; font-weight: 800;" onclick="logoutSPV()">🔒 Kunci Panel SPV</button>
+            <button type="button" class="btn-cancel" style="margin-top: 20px; font-weight: 800;" onclick="logoutAdmin()">🔒 Kunci Panel Admin</button>
         </div>
     </div>
 
@@ -239,7 +239,7 @@
         </div>
     </div>
 
-   <script>
+    <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8myEtrkGtRKwOjSQ6SEYdHYsh4FIKSis9gqGoSE_SYx-5HNWEQ1vC-OCs9XXCLk0nwg/exec";
         
         let masterSalesGlobal = [];
@@ -251,7 +251,7 @@
             muatMasterSalesInstant();
             muatCacheAntrianInstan();
 
-            savedPinSPV = localStorage.getItem('ufo_spv_pin') || "";
+            savedPinSPV = localStorage.getItem('ufo_admin_pin') || "";
             if (savedPinSPV) {
                 document.getElementById('input-pin-spv').value = savedPinSPV;
                 document.getElementById('login-spv-box').style.display = 'none';
@@ -267,11 +267,11 @@
             setInterval(muatDataAntrian, 3000); 
         };
 
-        function getActivePinSPV() { return savedPinSPV || document.getElementById('input-pin-spv').value || localStorage.getItem('ufo_spv_pin') || ""; }
+        function getActivePinAdmin() { return savedPinSPV || document.getElementById('input-pin-spv').value || localStorage.getItem('ufo_admin_pin') || ""; }
 
-        function prosesLoginSPV() {
+        function prosesLoginAdmin() {
             const pin = document.getElementById('input-pin-spv').value.trim();
-            if(!pin) return tampilkanModal("Perhatian", "Masukkan PIN SPV!");
+            if(!pin) return tampilkanModal("Perhatian", "Masukkan PIN Admin!");
 
             const btn = document.getElementById('btn-login-spv');
             const textAsli = btn.innerHTML;
@@ -282,31 +282,31 @@
             .then(res => {
                 btn.disabled = false; btn.innerHTML = textAsli;
                 if(res.status === "sukses") {
-                    savedPinSPV = pin; localStorage.setItem('ufo_spv_pin', pin);
+                    savedPinSPV = pin; localStorage.setItem('ufo_admin_pin', pin);
                     document.getElementById('login-spv-box').style.display = 'none';
                     document.getElementById('controls-spv-box').style.display = 'block';
                 } else { tampilkanModal("Gagal Login", res.pesan); }
             }).catch(() => { btn.disabled = false; btn.innerHTML = textAsli; tampilkanModal("Gagal", "Terjadi gangguan jaringan saat login."); });
         }
 
-        function logoutSPV() {
-            localStorage.removeItem('ufo_spv_pin'); savedPinSPV = "";
+        function logoutAdmin() {
+            localStorage.removeItem('ufo_admin_pin'); savedPinSPV = "";
             document.getElementById('input-pin-spv').value = "";
             document.getElementById('login-spv-box').style.display = 'block';
             document.getElementById('controls-spv-box').style.display = 'none';
         }
 
         function muatCacheAntrianInstan() {
-            const cachedAntrian = localStorage.getItem('ufo_spv_antrian_cache');
+            const cachedAntrian = localStorage.getItem('ufo_admin_antrian_cache');
             if (cachedAntrian) { try { const res = JSON.parse(cachedAntrian); renderUIWithData(res); } catch(e) {} }
         }
 
         function muatMasterSalesInstant() {
             const cachedSales = localStorage.getItem('ufo_master_sales_cache');
-            if (cachedSales) { try { masterSalesGlobal = JSON.parse(cachedSales) || []; renderTabelStatusAkunSPV(masterSalesGlobal); } catch(e) {} }
+            if (cachedSales) { try { masterSalesGlobal = JSON.parse(cachedSales) || []; renderTabelStatusAkunAdmin(masterSalesGlobal); } catch(e) {} }
         }
 
-       function renderUIWithData(res) {
+        function renderUIWithData(res) {
             if (sedangProsesAksiSPV) return;
 
             const statusSistem = res.statusAntrian || "BUKA";
@@ -326,7 +326,6 @@
             const data = res.data || [];
             daftarAntrianGlobal = data;
 
-            // Sinkonisasi penanda promotor standby di kartu atas
             const dataStandby = data.filter(item => item.status === "Standby");
             const promotorHA = dataStandby.find(item => {
                 let sub = (item.subkategori || "").trim();
@@ -372,7 +371,7 @@
             document.getElementById('item-antrian-list-AV').innerHTML = listAV || kosongHtml;
         }
 
-        function renderTabelStatusAkunSPV(dataSales) {
+        function renderTabelStatusAkunAdmin(dataSales) {
             let html = "";
             if (!dataSales || dataSales.length === 0) {
                 html = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 20px;">Belum ada data promotor</td></tr>`;
@@ -398,8 +397,8 @@
         }
 
         function lockPromotor(namaSales) {
-            const pin = getActivePinSPV();
-            if(!pin) return alert("PIN SPV tidak ditemukan!");
+            const pin = getActivePinAdmin();
+            if(!pin) return alert("PIN Admin tidak ditemukan!");
             
             const modal = document.getElementById('custom-modal');
             document.getElementById('modal-title').innerText = "Lock Akun Promotor";
@@ -430,8 +429,8 @@
         }
 
         function unlockPromotor(namaSales) {
-            const pin = getActivePinSPV();
-            if(!pin) return alert("PIN SPV tidak ditemukan!");
+            const pin = getActivePinAdmin();
+            if(!pin) return alert("PIN Admin tidak ditemukan!");
             
             tampilkanModalKonfirmasi("Buka Kunci Promotor", `Buka kunci akun (${namaSales})?`, function() {
                 fetch(`${SCRIPT_URL}?aksi=spvUnlockPromotor&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
@@ -444,12 +443,12 @@
             });
         }
 
-        function simpanLokasiTokoSPV() {
-            const pin = getActivePinSPV();
+        function simpanLokasiTokoAdmin() {
+            const pin = getActivePinAdmin();
             const lat = document.getElementById('input-lat-toko').value.trim();
             const lng = document.getElementById('input-lng-toko').value.trim();
             const radius = document.getElementById('input-radius-toko').value.trim() || "50";
-            if (!pin) return alert("PIN SPV tidak ditemukan!");
+            if (!pin) return alert("PIN Admin tidak ditemukan!");
             
             fetch(`${SCRIPT_URL}?aksi=spvSetLokasiToko&pin=${encodeURIComponent(pin)}&lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&radius=${encodeURIComponent(radius)}&t=${Date.now()}`)
             .then(r => r.json()).then(res => tampilkanModal("Pengaturan GPS Toko", res.pesan));
@@ -463,8 +462,8 @@
         }
 
         function eksekusiToggleSistem(targetStatus) {
-            const pin = getActivePinSPV();
-            if(!pin) return alert("PIN SPV tidak ditemukan!");
+            const pin = getActivePinAdmin();
+            if(!pin) return alert("PIN Admin tidak ditemukan!");
             tutupModal();
             fetch(`${SCRIPT_URL}?aksi=spvSetStatusAntrian&pin=${encodeURIComponent(pin)}&statusBaru=${targetStatus}&t=${Date.now()}`)
             .then(res => res.json())
@@ -479,15 +478,15 @@
         }
 
         function eksekusiResetTotal() {
-            const pin = getActivePinSPV();
-            if(!pin) return alert("PIN SPV tidak ditemukan!");
+            const pin = getActivePinAdmin();
+            if(!pin) return alert("PIN Admin tidak ditemukan!");
             tutupModal();
             fetch(`${SCRIPT_URL}?aksi=spvResetAntrian&pin=${encodeURIComponent(pin)}&t=${Date.now()}`)
             .then(res => res.json())
             .then(res => { tampilkanModal("Reset Total", res.pesan); muatDataAntrian(); });
         }
 
-        function bukaModalTambahAntriSpv() {
+        function bukaModalTambahAntriAdmin() {
             document.getElementById('modal-title').innerText = "Masukkan Promotor ke Antrian";
             let optionsSales = '<option value="">-- Pilih Promotor --</option>';
             masterSalesGlobal.forEach(n => { let nama = typeof n === 'object' ? n.nama : n; optionsSales += `<option value="${nama}">${nama}</option>`; });
@@ -504,50 +503,88 @@
                 Posisi Urutan:<br>
                 <input type="number" id="spv-input-posisi" value="1" min="1">
             `;
-            document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button><button type="button" class="btn-primary" onclick="eksekusiTambahAntriSpv()">Proses</button>`;
+            document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button><button type="button" class="btn-primary" onclick="eksekusiTambahAntriAdmin()">Proses</button>`;
             document.getElementById('custom-modal').classList.add('active');
         }
 
-        function eksekusiTambahAntriSpv() {
+        function eksekusiTambahAntriAdmin() {
             const subkat = document.getElementById('spv-select-kategori').value; 
             const kategori = subkat === "AV" ? "AV" : "HA";
             const namaSales = document.getElementById('spv-select-sales').value; 
             const posisi = document.getElementById('spv-input-posisi').value || "1"; 
-            const pin = getActivePinSPV();
+            const pin = getActivePinAdmin();
             
             if(!namaSales) return alert("Pilih promotor!"); 
             tutupModal();
             fetch(`${SCRIPT_URL}?aksi=spvDaftarAntri&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategori)}&subkategori=${encodeURIComponent(subkat)}&posisi=${encodeURIComponent(posisi)}&t=${Date.now()}`)
-            .then(res => res.json()).then(res => { tampilkanModal("Status SPV", res.pesan); muatDataAntrian(); });
+            .then(res => res.json()).then(res => { tampilkanModal("Status Admin", res.pesan); muatDataAntrian(); });
         }
 
-        function bukaModalFormSPVKategori(aksiName, judulAksi, butuhPilihPromotor = true) {
+        // KHUSUS RESET PERANGKAT (HANYA PILIH NAMA PROMOTOR TANPA KATEGORI)
+        function bukaModalResetDeviceAdmin() {
+            document.getElementById('modal-title').innerText = "Reset Perangkat Promotor";
+            
+            let optionsSales = '<option value="">-- Pilih Promotor --</option>';
+            masterSalesGlobal.forEach(n => { 
+                let nama = typeof n === 'object' ? n.nama : n; 
+                optionsSales += `<option value="${nama}">${nama}</option>`; 
+            });
+
+            document.getElementById('modal-desc').innerHTML = `
+                Pilih Promotor yang perangkatnya akan di-reset:<br><br>
+                <select id="spv-select-sales-reset" style="width:100%; padding:12px; border-radius:12px; border:2px solid var(--border); font-size:14px;">${optionsSales}</select>
+            `;
+            
+            document.getElementById('modal-actions').innerHTML = `
+                <button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button>
+                <button type="button" class="btn-danger" onclick="eksekusiResetDeviceAdmin()">Reset Perangkat</button>
+            `;
+            document.getElementById('custom-modal').classList.add('active');
+        }
+
+        function eksekusiResetDeviceAdmin() {
+            const namaSales = document.getElementById('spv-select-sales-reset').value;
+            const pin = getActivePinAdmin();
+
+            if (!namaSales) return alert("Pilih nama promotor terlebih dahulu!");
+            if (!pin) return alert("PIN Admin tidak ditemukan!");
+
+            tutupModal();
+            fetch(`${SCRIPT_URL}?aksi=spvResetDevice&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&t=${Date.now()}`)
+            .then(res => res.json())
+            .then(res => {
+                tampilkanModal("Status Reset Perangkat", res.pesan);
+                muatDataAntrian();
+            });
+        }
+
+        function bukaModalFormAdminKategori(aksiName, judulAksi, butuhPilihPromotor = true) {
             document.getElementById('modal-title').innerText = judulAksi;
             let optionsSales = '<option value="">-- Pilih Promotor --</option>';
             masterSalesGlobal.forEach(n => { let nama = typeof n === 'object' ? n.nama : n; optionsSales += `<option value="${nama}">${nama}</option>`; });
             let htmlContent = `Kategori:<br><select id="spv-select-kategori"><option value="Mesin Cuci & Lemari Es">Mesin Cuci & Lemari Es</option><option value="AC">AC</option><option value="AV">Audio Video (AV)</option></select><br><br>`;
             if (butuhPilihPromotor) htmlContent += `Promotor:<br><select id="spv-select-sales">${optionsSales}</select>`;
             document.getElementById('modal-desc').innerHTML = htmlContent;
-            document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button><button type="button" class="btn-primary" onclick="eksekusiAksiSPVKategori('${aksiName}', ${butuhPilihPromotor})">Proses</button>`;
+            document.getElementById('modal-actions').innerHTML = `<button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button><button type="button" class="btn-primary" onclick="eksekusiAksiAdminKategori('${aksiName}', ${butuhPilihPromotor})">Proses</button>`;
             document.getElementById('custom-modal').classList.add('active');
         }
 
-        function eksekusiAksiSPVKategori(aksiName, butuhPilihPromotor) {
+        function eksekusiAksiAdminKategori(aksiName, butuhPilihPromotor) {
             const subkat = document.getElementById('spv-select-kategori').value; 
             const kategori = subkat === "AV" ? "AV" : "HA";
             let namaSales = butuhPilihPromotor ? document.getElementById('spv-select-sales').value : ""; 
-            const pin = getActivePinSPV();
+            const pin = getActivePinAdmin();
             if(butuhPilihPromotor && !namaSales) return alert("Pilih promotor!"); 
             tutupModal();
             fetch(`${SCRIPT_URL}?aksi=${aksiName}&pin=${encodeURIComponent(pin)}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(kategori)}&subkategori=${encodeURIComponent(subkat)}&t=${Date.now()}`)
-            .then(res => res.json()).then(res => { tampilkanModal("Status SPV", res.pesan); muatDataAntrian(); });
+            .then(res => res.json()).then(res => { tampilkanModal("Status Admin", res.pesan); muatDataAntrian(); });
         }
 
         function muatMasterSales() {
             fetch(`${SCRIPT_URL}?aksi=getMasterSales&t=${Date.now()}`)
             .then(res => res.json())
             .then(res => {
-                if(res.status === "sukses") { masterSalesGlobal = res.data || []; localStorage.setItem('ufo_master_sales_cache', JSON.stringify(masterSalesGlobal)); renderTabelStatusAkunSPV(masterSalesGlobal); }
+                if(res.status === "sukses") { masterSalesGlobal = res.data || []; localStorage.setItem('ufo_master_sales_cache', JSON.stringify(masterSalesGlobal)); renderTabelStatusAkunAdmin(masterSalesGlobal); }
             });
         }
 
@@ -555,7 +592,7 @@
             if(sedangProsesAksiSPV) return; 
             fetch(`${SCRIPT_URL}?aksi=getAntrian&t=${Date.now()}`)
             .then(res => res.json())
-            .then(res => { if(!sedangProsesAksiSPV && res.status === "sukses") { localStorage.setItem('ufo_spv_antrian_cache', JSON.stringify(res)); renderUIWithData(res); } });
+            .then(res => { if(!sedangProsesAksiSPV && res.status === "sukses") { localStorage.setItem('ufo_admin_antrian_cache', JSON.stringify(res)); renderUIWithData(res); } });
         }
 
         function tampilkanModal(judul, pesan) {
