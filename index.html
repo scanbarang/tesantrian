@@ -24,49 +24,49 @@
             --border: #cbd5e1;
         }
 
-        /* STYLING MODE GELAP DENGAN NEON BOX MENYALA & BACKGROUND BERWARNA DI TIAP ELEMEN */
+        /* STYLING MODE GELAP: SEMUA ELEMEN & TOMBOL MENJADI MERAH MENYALA */
         body.dark-mode {
-            --bg-color: #030008 !important;
-            --card-bg: #0b0718 !important;
+            --bg-color: #080203 !important;
+            --card-bg: #140406 !important;
             --text-main: #ffffff !important;
-            --text-muted: #cbd5e1 !important;
-            --border: #334155 !important;
+            --text-muted: #fca5a5 !important;
+            --border: #ef4444 !important;
         }
 
-        body.dark-mode { background: #030008 !important; }
+        body.dark-mode { background: #080203 !important; }
         
-        /* 1. KOTAK UTAMA: Pendaran Biru Cyan Menyala */
+        /* KOTAK UTAMA: Neon Merah Menyala */
         body.dark-mode .app-container { 
-            background: #080b18 !important; 
-            border: 2px solid #06b6d4 !important; 
-            box-shadow: 0 0 50px rgba(6, 182, 212, 0.4) !important; 
+            background: #140406 !important; 
+            border: 2px solid #ef4444 !important; 
+            box-shadow: 0 0 50px rgba(239, 68, 68, 0.45) !important; 
         }
 
-        /* 2. HEADER WALK-IN: Pendaran Merah/Pink Menyala */
+        /* HEADER: Neon Merah Terang */
         body.dark-mode .gradient-header { 
-            background: linear-gradient(135deg, #2b0a14 0%, #1a050b 100%) !important; 
-            border: 2px solid #f43f5e !important; 
-            box-shadow: 0 0 35px rgba(244, 63, 94, 0.6) !important;
+            background: linear-gradient(135deg, #450a0a 0%, #1f0505 100%) !important; 
+            border: 2px solid #f87171 !important; 
+            box-shadow: 0 0 35px rgba(248, 113, 113, 0.6) !important;
         }
 
-        /* TOMBOL TEMA / DARK MODE */
+        /* TOMBOL TEMA */
         .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
-        body.dark-mode .dark-mode-btn { background: #1e1b4b !important; color: #ffffff !important; border: 2px solid #a855f7 !important; box-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
+        body.dark-mode .dark-mode-btn { background: #450a0a !important; color: #ffffff !important; border: 2px solid #f87171 !important; box-shadow: 0 0 20px rgba(248, 113, 113, 0.6); }
 
-        /* 3. STATUS BADGE: Pendaran Hijau Emerald Menyala */
+        /* STATUS BADGE */
         body.dark-mode .status-badge-sistem {
-            background: #022c22 !important;
-            color: #34d399 !important;
-            border: 2px solid #10b981 !important;
-            box-shadow: 0 0 25px rgba(16, 185, 129, 0.7) !important;
+            background: #450a0a !important;
+            color: #fca5a5 !important;
+            border: 2px solid #ef4444 !important;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.7) !important;
         }
 
-        /* 4. INPUT & SELECT: Pendaran Biru Royal Menyala */
+        /* INPUT & SELECT */
         body.dark-mode select, body.dark-mode input[type="text"] { 
-            background: #0c1427 !important; 
+            background: #1f0505 !important; 
             color: #ffffff !important; 
-            border: 2px solid #3b82f6 !important; 
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5) !important;
+            border: 2px solid #ef4444 !important; 
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5) !important;
         }
 
         body.dark-mode select:disabled { 
@@ -76,55 +76,46 @@
             box-shadow: none !important;
         }
 
-        /* 5. USER BADGE: Pendaran Ungu Menyala */
+        /* USER BADGE */
         body.dark-mode .user-badge { 
-            background: #1e1b4b !important; 
-            border: 2px solid #c084fc !important; 
+            background: #2b0a0d !important; 
+            border: 2px solid #f87171 !important; 
             color: #ffffff !important; 
-            box-shadow: 0 0 25px rgba(192, 132, 252, 0.6) !important;
+            box-shadow: 0 0 25px rgba(248, 113, 113, 0.6) !important;
         }
 
-        /* 6. KOTAK GILIRAN HA & AV (MENYALA TERANG BERWARNA) */
+        /* KOTAK GILIRAN HA & AV */
         .timer-box-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
         .timer-card-admin { background: #f8fafc; border-radius: 14px; padding: 14px; text-align: center; border: 2px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
         
-        /* HA: Pendaran Biru Terang */
-        body.dark-mode .timer-card-admin.ha {
-            background: #081229 !important;
-            border: 2px solid #3b82f6 !important;
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.7) !important;
-        }
-        /* AV: Pendaran Ungu/Violet Terang */
-        body.dark-mode .timer-card-admin.av {
-            background: #180829 !important;
-            border: 2px solid #a855f7 !important;
-            box-shadow: 0 0 30px rgba(168, 85, 247, 0.7) !important;
+        body.dark-mode .timer-card-admin.ha, body.dark-mode .timer-card-admin.av {
+            background: #1f0505 !important;
+            border: 2px solid #ef4444 !important;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.7) !important;
         }
 
         .timer-badge-title { font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; display: block; }
         .ha .timer-badge-title { color: #2563eb; }
-        body.dark-mode .ha .timer-badge-title { color: #60a5fa !important; text-shadow: 0 0 10px rgba(96, 165, 250, 0.8); }
-
         .av .timer-badge-title { color: #7c3aed; }
-        body.dark-mode .av .timer-badge-title { color: #c084fc !important; text-shadow: 0 0 10px rgba(192, 132, 252, 0.8); }
+        body.dark-mode .timer-badge-title { color: #fca5a5 !important; text-shadow: 0 0 10px rgba(252, 165, 165, 0.8); }
 
         .promotor-nama-aktif { font-size: 15px; font-weight: 800; color: var(--text-main); margin-top: 2px; line-height: 1.3; min-height: 36px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
         body.dark-mode .promotor-nama-aktif { color: #ffffff !important; }
 
-        /* 7. LIVE URUTAN ANTRIAN (ITEM LIST MENYALA TERANG DENGAN PENDARAN TOSCA) */
+        /* LIVE URUTAN ANTRIAN */
         body.dark-mode .list-antrian li { 
-            background: #042f2e !important; 
-            border: 2px solid #2dd4bf !important; 
+            background: #1f0505 !important; 
+            border: 2px solid #f87171 !important; 
             color: #ffffff !important; 
-            box-shadow: 0 0 20px rgba(45, 212, 191, 0.4) !important;
+            box-shadow: 0 0 20px rgba(248, 113, 113, 0.5) !important;
         }
 
-        /* 8. MODAL BOX: Pendaran Kuning/Amber Menyala */
+        /* MODAL BOX */
         body.dark-mode .modal-box { 
-            background: #271a02 !important; 
-            border: 2px solid #fbbf24 !important; 
+            background: #2b0a0d !important; 
+            border: 2px solid #ef4444 !important; 
             color: #ffffff !important; 
-            box-shadow: 0 0 40px rgba(251, 191, 36, 0.6) !important;
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.6) !important;
         }
 
         body.dark-mode .btn-cancel {
@@ -134,53 +125,19 @@
             box-shadow: 0 0 15px rgba(113, 113, 122, 0.5) !important;
         }
 
-        /* EFEK NEON WARNA-WARNI PADA TOMBOL AKSI */
-        body.dark-mode .btn-success, body.dark-mode .btn-customer {
-            background: #1d4ed8 !important;
+        /* PAKSA SEMUA TOMBOL DI MODE GELAP MENJADI MERAH MENYALA */
+        body.dark-mode button:not(.dark-mode-btn):not(.btn-disabled) {
+            background: #dc2626 !important;
             color: #ffffff !important;
-            border: 2px solid #38bdf8 !important;
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.8) !important;
+            border: 2px solid #f87171 !important;
+            box-shadow: 0 0 25px rgba(248, 113, 113, 0.7) !important;
         }
 
-        body.dark-mode .btn-closing {
-            background: #991b1b !important;
-            color: #ffffff !important;
-            border: 2px solid #fb7185 !important;
-            box-shadow: 0 0 30px rgba(251, 113, 133, 0.8) !important;
-        }
-
-        body.dark-mode .btn-purple {
-            background: #581c87 !important;
-            color: #ffffff !important;
-            border: 2px solid #e879f9 !important;
-            box-shadow: 0 0 30px rgba(232, 121, 249, 0.8) !important;
-        }
-
-        body.dark-mode .btn-teal {
-            background: #115e59 !important;
-            color: #ffffff !important;
-            border: 2px solid #5eead4 !important;
-            box-shadow: 0 0 30px rgba(94, 234, 212, 0.8) !important;
-        }
-
-        body.dark-mode .btn-amber {
-            background: #b45309 !important;
-            color: #ffffff !important;
-            border: 2px solid #fde047 !important;
-            box-shadow: 0 0 30px rgba(253, 224, 71, 0.8) !important;
-        }
-
-        body.dark-mode .wa-report-btn {
-            background: #065f46 !important;
-            border: 2px solid #4ade80 !important;
-            box-shadow: 0 0 30px rgba(74, 222, 128, 0.8) !important;
-        }
-
-        /* EFEK DENYUT (PULSE) WARNA-WARNI PADA TOMBOL UTAMA */
+        /* EFEK DENYUT (PULSE) MERAH */
         @keyframes pulseGlow {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.6); }
-            70% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(56, 189, 248, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
         .btn-pulse { animation: pulseGlow 2s infinite; }
 
@@ -206,13 +163,12 @@
         button { width: 100%; padding: 14px 12px; border-radius: 14px; font-size: 13px; font-weight: 800; cursor: pointer; border: none; text-transform: uppercase; transition: all 0.2s ease; display: inline-flex; justify-content: center; align-items: center; gap: 8px; }
         button:active { transform: scale(0.98); }
 
-        .btn-success { background: var(--customer-blue); color: white; }
+        .btn-success { background: #2563eb; color: white; }
         .btn-customer { background: #2563eb; color: white; }
         .btn-closing { background: var(--closing-red); color: white; }
-        .btn-purple { background: var(--purple-cs); color: white; }
-        .btn-teal { background: var(--teal-cs); color: white; }
-        .btn-amber { background: var(--amber-rest); color: white; }
-        .btn-cancel { background: #e2e8f0; color: var(--text-main); }
+        .btn-purple { background: #7c3aed; color: white; }
+        .btn-teal { background: #0d9488; color: white; }
+        .btn-amber { background: #d97706; color: white; }
         .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; box-shadow: none !important; animation: none !important; }
 
         .user-badge { background: #f8fafc; border: 2px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 18px; text-align: left; font-size: 14px; font-weight: 600; }
@@ -225,6 +181,7 @@
         .badge-melayani { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
         .badge-cs { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
 
+        /* Logo WhatsApp Resmi Warna Hijau Android seperti semula */
         .wa-report-btn { margin-top: 16px; background: #25d366; border: 2px solid #1ebe57; color: white; font-size: 13px; padding: 14px; border-radius: 12px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 800; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 11, 20, 0.85); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.2s; padding: 16px; }
@@ -234,7 +191,6 @@
         .modal-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; font-weight: 600; text-align: left; }
         .modal-actions { display: flex; gap: 10px; }
         .modal-actions button { flex: 1; padding: 12px; font-size: 13px; }
-        .sub-section-title { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 16px; margin-bottom: 6px; text-align: left; display: block; }
     </style>
 </head>
 <body>
@@ -616,7 +572,7 @@
                         if (kat === "HA") urut = urutHA++;
                         else if (kat === "AV") urut = urutAV++;
 
-                        let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-giliran-anda">Giliran Anda</span>` : `<span class="badge-status-item badge-standby">Standby (${urut})</span>`;
+                        let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-giliran-anda">Giliran Utama</span>` : `<span class="badge-status-item badge-standby">Standby (${urut})</span>`;
                         itemHtml = `<li><b>${urut}. ${item.nama}</b> ${badgeHtml}</li>`;
                     } else if (item.status === "Melayani") {
                         itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-melayani">Melayani</span></li>`;
@@ -681,9 +637,10 @@
                             btnCS.disabled = true; btnCS.className = "btn-purple btn-disabled";
                             btnKeluar.disabled = true; btnKeluar.className = "btn-amber btn-disabled";
                         } else {
+                            // Mengizinkan urutan 1, 2, dan 3 untuk mengambil aksi
                             let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && String(it.kategori || "").trim().toUpperCase() === kategoriSayaAktif);
                             let indexSaya = listSubStandby.findIndex(it => String(it.nama).trim().toLowerCase() === akunSaya);
-                            let apakahSayaBisaAmbil = (indexSaya === 0 || indexSaya === 1);
+                            let apakahSayaBisaAmbil = (indexSaya >= 0 && indexSaya <= 2);
 
                             btnCustomer.disabled = !apakahSayaBisaAmbil; 
                             btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer btn-pulse" : "btn-customer btn-disabled";
