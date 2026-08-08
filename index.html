@@ -126,24 +126,24 @@
                 <span style="color: var(--text-muted);">Promotor:</span> <strong id="label-user-aktif" style="color:var(--primary-dark); font-size: 15px;">-</strong>
             </div>
 
-            <!-- CHECK-IN / PILIH KATEGORI DI AWAL -->
-            <div id="section-checkin" style="display: none;">
+            <!-- KONTROL DAFTAR ANTRIAN DENGAN PILIHAN KATEGORI BEBAS -->
+            <div id="section-daftar-antri" style="display: none;">
                 <div class="input-group">
-                    <label>Check-in Kedatangan (Pilih Kategori)</label>
-                    <select id="pilih-kategori-checkin">
+                    <label>Pilih Kategori Antrian</label>
+                    <select id="pilih-kategori-bebas">
                         <option value="Mesin Cuci & Lemari Es">Mesin Cuci & Lemari Es</option>
                         <option value="AC">AC</option>
                         <option value="AV">AV (Audio Video)</option>
                     </select>
                 </div>
-                <button type="button" id="btn-checkin" class="btn-success" onclick="aksiCheckinKedatangan()">Check-In Kedatangan & Masuk Antrian</button>
+                <button type="button" id="btn-daftar-antrian" class="btn-success" onclick="aksiDaftarAntrianBebas()">Daftar Antrian</button>
             </div>
 
-            <!-- MENU SETELAH CHECK-IN -->
-            <div id="section-sudah-checkin" style="display: none;">
+            <!-- MENU AKSI SAAT DALAM ANTRIAN / MELAYANI -->
+            <div id="section-aksi-aktif" style="display: none;">
                 <div class="input-group">
-                    <label>Kategori Antrian Anda Saat Ini</label>
-                    <input type="text" id="label-kategori-aktif" readonly style="background: #f1f5f9; font-weight: 800; text-align: center;">
+                    <label>Status / Kategori Anda Saat Ini</label>
+                    <input type="text" id="label-info-status" readonly style="background: #f1f5f9; font-weight: 800; text-align: center;">
                 </div>
 
                 <button type="button" id="btn-utama-customer" class="btn-customer" onclick="aksiUtamaCustomer()" style="display: none; margin-top: 12px;">Sudah Membawa Customer</button>
@@ -388,16 +388,23 @@
             document.getElementById('list-AV').innerHTML = listAV || kosongHtml;
 
             let statusSayaNyata = cekStatusSayaDariArray(daftarAntrianGlobal);
-            const sectionCheckin = document.getElementById('section-checkin');
-            const sectionSudahCheckin = document.getElementById('section-sudah-checkin');
+            const sectionDaftarAntri = document.getElementById('section-daftar-antri');
+            const sectionAksiAktif = document.getElementById('section-aksi-aktif');
 
             if (statusSayaNyata === "belum_ada") {
-                sectionCheckin.style.display = 'block';
-                sectionSudahCheckin.style.display = 'none';
+                sectionDaftarAntri.style.display = 'block';
+                sectionAksiAktif.style.display = 'none';
+
+                const btnDaftar = document.getElementById('btn-daftar-antrian');
+                if (statusSistemGlobal === "TUTUP") {
+                    btnDaftar.disabled = true; btnDaftar.className = "btn-success btn-disabled";
+                } else {
+                    btnDaftar.disabled = false; btnDaftar.className = "btn-success";
+                }
             } else {
-                sectionCheckin.style.display = 'none';
-                sectionSudahCheckin.style.display = 'block';
-                document.getElementById('label-kategori-aktif').value = kategoriSayaAktif;
+                sectionDaftarAntri.style.display = 'none';
+                sectionAksiAktif.style.display = 'block';
+                document.getElementById('label-info-status').value = `${statusSayaNyata} (${kategoriSayaAktif})`;
             }
 
             const btnCustomer = document.getElementById('btn-utama-customer');
@@ -452,7 +459,7 @@
             if (!namaSales) return;
 
             localActionActive = true;
-            let subKatAktif = subKatBaru || document.getElementById('pilih-kategori-checkin').value || "Mesin Cuci & Lemari Es";
+            let subKatAktif = subKatBaru || document.getElementById('pilih-kategori-bebas').value || "Mesin Cuci & Lemari Es";
 
             if (targetStatusSimulasi === "belum_ada") {
                 daftarAntrianGlobal = daftarAntrianGlobal.filter(item => String(item.nama).trim().toLowerCase() !== namaSales.toLowerCase());
@@ -485,8 +492,8 @@
             }).catch(() => { localActionActive = false; });
         }
 
-        function aksiCheckinKedatangan() {
-            const kategoriPilih = document.getElementById('pilih-kategori-checkin').value;
+        function aksiDaftarAntrianBebas() {
+            const kategoriPilih = document.getElementById('pilih-kategori-bebas').value;
             eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
         }
 
