@@ -310,6 +310,8 @@
         let masterSalesGlobal = [];
         let statusSistemGlobal = "BUKA";
         let namaSalesAktifGlobal = "";
+        
+        // VARIABEL KOORDINAT & PENGATURAN TOKO (MURNI DARI SHEET)
         let koordinatToko = { lat: "", lng: "", radius: 50, statusGps: "OFF" }; 
         let localActionActive = false;
 
@@ -493,7 +495,7 @@
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
             
-            // AUTO-SYNC KOORDINAT: Langsung perbarui koordinat toko secara real-time dari server
+            // SINKRONISASI OTOMATIS: Koordinat, radius, dan status GPS mutlak diambil dari Sheet
             if (koordinatServer) {
                 koordinatToko.lat = koordinatServer.lat || "";
                 koordinatToko.lng = koordinatServer.lng || "";
@@ -672,8 +674,11 @@
         }
 
         function validasiGpsDanJalankan(callbackBerhasil) {
-            // Jika koordinat di Sheet kosong, loloskan
-            if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+            // Cek apakah GPS di Sheet berstatus ON dan koordinatnya terisi
+            const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
+
+            if (!gpsAktif || !koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+                // Jika GPS di Sheet di-OFF-kan, maka lewati validasi (bisa daftar dari mana saja)
                 callbackBerhasil();
                 return;
             }
@@ -687,9 +692,9 @@
                         );
                         const batasRadius = Number(koordinatToko.radius) || 10;
 
-                        // JIKA DI LUAR RADIUS: BLOKIR TOTAL
+                        // JIKA DI LUAR RADIUS DARI SHEET: BLOKIR TOTAL
                         if (jarakMeter > batasRadius) {
-                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal: ${batasRadius} meter.\n\nAnda berada di luar area toko.`);
+                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal dari Sheet: ${batasRadius} meter.\n\nAnda berada di luar area toko.`);
                             return; 
                         }
                         
@@ -753,7 +758,8 @@
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(
                     function(position) {
-                        if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+                        const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
+                        if (!gpsAktif || !koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                             return; 
                         }
 
