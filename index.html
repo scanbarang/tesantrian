@@ -230,8 +230,8 @@
                 <span style="color: var(--text-muted);">Promotor:</span> <strong id="label-user-aktif" style="color:var(--primary-dark); font-size: 15px;">-</strong>
             </div>
 
-            <!-- PETA MINI VISUALISASI POSISI -->
-            <div class="input-group">
+            <!-- PETA MINI VISUALISASI POSISI (Dibatasi tampil saat Standby / Belum daftar) -->
+            <div class="input-group" id="section-peta-gps">
                 <label>Peta Posisi Anda & Radius Toko</label>
                 <div id="map-promotor" style="width: 100%; height: 180px; border-radius: 14px; border: 2px solid var(--border); z-index: 1;"></div>
             </div>
@@ -327,7 +327,7 @@
         let circleTokoPeta = null;
         let markerSayaPeta = null;
 
-        // Fungsi Helper untuk format tanggal Indonesia dd-mm-yyyy
+        // Helper Format Tanggal Indonesia dd-mm-yyyy
         function getTanggalIndo() {
             const now = new Date();
             const dd = String(now.getDate()).padStart(2, '0');
@@ -597,6 +597,15 @@
             const sectionCheckinAwal = document.getElementById('section-checkin-awal');
             const sectionNormal = document.getElementById('section-normal');
             
+            // Atur Tampilan Peta GPS (Sembunyikan saat sedang Melayani)
+            const sectionPetaGps = document.getElementById('section-peta-gps');
+            if (statusSayaNyata === "belum_ada" || statusSayaNyata === "Standby") {
+                if (sectionPetaGps) sectionPetaGps.style.display = "block";
+                setTimeout(() => { if (mapPromotor) mapPromotor.invalidateSize(); }, 200);
+            } else {
+                if (sectionPetaGps) sectionPetaGps.style.display = "none";
+            }
+
             let sudahCheckinPernahHariIni = localStorage.getItem('ufo_checkin_hari_ini') === 'true';
 
             if (statusSayaNyata !== "belum_ada") {
@@ -910,6 +919,13 @@
                             return; 
                         }
 
+                        let statusSaya = cekStatusSayaDariArray(daftarAntrianGlobal);
+                        
+                        // GPS Auto-Exit HANYA BERLAKU jika statusnya Standby
+                        if (statusSaya !== "Standby") {
+                            return; 
+                        }
+
                         let latUser = position.coords.latitude;
                         let lngUser = position.coords.longitude;
                         let latToko = Number(koordinatToko.lat);
@@ -919,14 +935,9 @@
                         // Perbarui Peta Visual Secara Live
                         initAtauUpdatePetaPromotor(latToko, lngToko, batasRadius, latUser, lngUser);
 
-                        let statusSaya = cekStatusSayaDariArray(daftarAntrianGlobal);
-                        if (statusSaya === "Dipanggil CS/GUDANG" || statusSaya === "Dipanggil CS" || statusSaya === "Ibadah") {
-                            return; 
-                        }
-
                         const jarakMeter = hitungJarakHaversine(latUser, lngUser, latToko, lngToko);
 
-                        if (jarakMeter > batasRadius && statusSaya === "Standby") {
+                        if (jarakMeter > batasRadius) {
                             eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
                             tampilkanModal("Auto-Exit GPS", `Anda berada di luar radius ${Math.round(jarakMeter)} meter dari toko (Batas maksimal ${batasRadius} meter). Anda otomatis dikeluarkan dari antrean.`);
                         }
