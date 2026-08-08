@@ -39,10 +39,23 @@
         body.dark-mode select:disabled { background-color: #18181b !important; color: #71717a !important; border-color: #27272a !important; }
         body.dark-mode .user-badge { background: #09090b !important; border: 2px solid #8b5cf6 !important; color: #ffffff !important; }
         body.dark-mode .list-antrian li { background: #09090b !important; border: 2px solid #06b6d4 !important; color: #ffffff !important; }
-        body.dark-mode .timer-card-promotor { background: #09090b !important; border: 2px solid #3f3f46 !important; }
         body.dark-mode .modal-box { background: #09090b !important; border: 2px solid #52525b !important; color: #ffffff !important; }
 
-        /* KODE TOMBOL BIRU MENYALA KHUSUS MODE GELAP */
+        /* KOTAK GILIRAN HA & AV (GAYA ADMIN: GELAP ELEGAN DENGAN GARIS ATAS) */
+        .timer-box-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+        .timer-card-admin { background: #0f172a; border-radius: 18px; padding: 16px 14px; color: #ffffff; text-align: center; border: 2px solid var(--card-bg); box-shadow: 0 10px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+        body.dark-mode .timer-card-admin { background: #09090b !important; border: 2px solid #3f3f46 !important; }
+        .timer-card-admin::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; }
+        .timer-card-admin.ha::before { background: #3b82f6; }
+        .timer-card-admin.av::before { background: #a855f7; }
+
+        .timer-badge-title { font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: inline-block; }
+        .ha .timer-badge-title { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .av .timer-badge-title { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
+
+        .promotor-nama-aktif { font-size: 15px; font-weight: 800; color: #ffffff; margin-top: 2px; line-height: 1.3; min-height: 36px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
+
+        /* TOMBOL SUDAH MEMBAWA CUSTOMER MENYALA KHUSUS MODE GELAP */
         body.dark-mode .btn-customer {
             background: #3b82f6 !important;
             color: #ffffff !important;
@@ -65,18 +78,6 @@
         .status-open { background: #dcfce7; color: #15803d; border: 2px solid #86efac; }
         .status-closed { background: #fee2e2; color: #b91c1c; border: 2px solid #fca5a5; }
 
-        /* KOTAK GILIRAN HA & AV */
-        .timer-box-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
-        .timer-card-promotor { background: #0f172a; border-radius: 16px; padding: 14px 10px; color: #ffffff; text-align: center; border: 2px solid var(--border); box-shadow: 0 8px 16px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
-        .timer-card-promotor::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
-        .timer-card-promotor.ha::before { background: #3b82f6; }
-        .timer-card-promotor.av::before { background: #a855f7; }
-
-        .timer-badge-title { font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; display: inline-block; }
-        .ha .timer-badge-title { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
-        .av .timer-badge-title { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
-        .promotor-nama-aktif { font-size: 14px; font-weight: 800; color: #ffffff; margin-top: 2px; line-height: 1.3; min-height: 32px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
-
         .input-group { margin-bottom: 16px; text-align: left; }
         .input-group label { display: block; font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
 
@@ -92,7 +93,7 @@
         .btn-teal { background: var(--teal-cs); color: white; }
         .btn-amber { background: var(--amber-rest); color: white; }
         .btn-cancel { background: #e2e8f0; color: var(--text-main); }
-        .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; }
+        .btn-disabled { background: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed !important; box-shadow: none !important; }
 
         .user-badge { background: #f8fafc; border: 2px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 18px; text-align: left; font-size: 14px; font-weight: 600; }
         .list-antrian { list-style: none; padding: 0; margin: 8px 0 0 0; text-align: left; }
@@ -149,13 +150,13 @@
 
             <!-- KOTAK GILIRAN HA & AV -->
             <div class="timer-box-wrapper">
-                <div class="timer-card-promotor ha">
+                <div class="timer-card-admin ha">
                     <div>
                         <span class="timer-badge-title">Giliran HA</span>
                         <div id="promotor-nama-ha" class="promotor-nama-aktif">Memuat...</div>
                     </div>
                 </div>
-                <div class="timer-card-promotor av">
+                <div class="timer-card-admin av">
                     <div>
                         <span class="timer-badge-title">Giliran AV</span>
                         <div id="promotor-nama-av" class="promotor-nama-aktif">Memuat...</div>
