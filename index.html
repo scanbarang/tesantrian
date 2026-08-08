@@ -821,17 +821,16 @@
             }
         }
 
-        function aksiToggleIbadah() {
+   function aksiToggleIbadah() {
             const statusSekarang = cekStatusSayaDariArray(daftarAntrianGlobal);
             if (statusSekarang === "Standby") {
                 tampilkanModalKonfirmasi("Ibadah", "Posisi antrian Anda akan dikunci sementara selama ibadah.", function() {
-                    eksekusiAksiInstan('panggilCS', 'Ibadah');
+                    eksekusiAksiInstan('panggilIbadah', 'Ibadah');
                 });
             } else {
-                eksekusiAksiInstan('selesaiCS', 'Standby');
+                eksekusiAksiInstan('selesaiIbadah', 'Standby');
             }
         }
-
         function bukaModalKeluarIstirahat() {
             tampilkanModalKonfirmasi("Keluar Antrian", "Yakin ingin keluar dari antrian?", function() {
                 eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
