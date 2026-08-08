@@ -670,9 +670,8 @@
         }
 
         function validasiGpsDanJalankan(callbackBerhasil) {
-            const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
-
-            if (!gpsAktif || !koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+            // Jika koordinat di Sheet kosong, loloskan
+            if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                 callbackBerhasil();
                 return;
             }
@@ -686,19 +685,22 @@
                         );
                         const batasRadius = Number(koordinatToko.radius) || 10;
 
+                        // JIKA DI LUAR RADIUS: BLOKIR TOTAL (TIDAK MEMANGGIL CALLBACK BERHASIL)
                         if (jarakMeter > batasRadius) {
-                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean! Anda berada di luar radius toko (${Math.round(jarakMeter)} meter dari titik toko). Batas maksimal adalah ${batasRadius} meter.`);
-                            return;
+                            tampilkanModal("Diluar Radius Toko", `Gagal mendaftar antrean!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal: ${batasRadius} meter.\n\nAnda berada di luar area toko.`);
+                            return; 
                         }
+                        
+                        // Jika dalam radius, jalankan pendaftaran
                         callbackBerhasil();
                     },
                     function(error) {
-                        tampilkanModal("GPS Tidak Aktif", "Gagal mendeteksi lokasi Anda. Harap aktifkan GPS / Lokasi di perangkat Anda.");
+                        tampilkanModal("GPS Wajib Aktif", "Gagal mendeteksi lokasi GPS Anda. Harap aktifkan GPS / izinkan akses lokasi pada perangkat Anda untuk mendaftar.");
                     },
-                    { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
                 );
             } else {
-                callbackBerhasil();
+                tampilkanModal("Tidak Mendukung", "Browser Anda tidak mendukung fitur GPS.");
             }
         }
 
@@ -750,8 +752,7 @@
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(
                     function(position) {
-                        const gpsAktif = (koordinatToko.statusGps && String(koordinatToko.statusGps).toUpperCase() === "ON");
-                        if (!gpsAktif || !koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+                        if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
                             return; 
                         }
 
