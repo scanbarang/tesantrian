@@ -416,6 +416,9 @@
         let circleTokoPeta = null;
         let markerSayaPeta = null;
 
+        // Variabel counter untuk meredam GPS loncat-loncat
+        let counterLuarRadiusGPS = 0;
+
         function getTanggalIndo() {
             const now = new Date();
             const dd = String(now.getDate()).padStart(2, '0');
@@ -869,6 +872,13 @@
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
+                        const akurasi = position.coords.accuracy;
+                        // Filter akurasi GPS buruk diabaikan agar tidak salah validasi
+                        if (akurasi > 50) {
+                            if (typeof callbackBerhasil === 'function') callbackBerhasil();
+                            return;
+                        }
+
                         const jarakMeter = hitungJarakHaversine(
                             position.coords.latitude, position.coords.longitude, 
                             Number(koordinatToko.lat), Number(koordinatToko.lng)
@@ -1023,7 +1033,14 @@
 
                         let statusSaya = cekStatusSayaDariArray(daftarAntrianGlobal);
                         if (statusSaya !== "Standby") {
+                            counterLuarRadiusGPS = 0; // Reset counter jika tidak sedang standby
                             return; 
+                        }
+
+                        let akurasi = position.coords.accuracy;
+                        // Abaikan pembacaan GPS jika akurasi sangat buruk (loncat-loncat sinyal lemah)
+                        if (akurasi > 40) {
+                            return;
                         }
 
                         let latUser = position.coords.latitude;
@@ -1034,11 +1051,19 @@
 
                         initAtauUpdatePetaPromotor(latToko, lngToko, batasRadius, latUser, lngUser);
 
-                        const jarakMeter = hitungJarakHaversine(latUser, lngUser, latToko, lngToko);
+                        let jarakMeter = hitungJarakHaversine(latUser, lngUser, latToko, lngToko);
 
                         if (jarakMeter > batasRadius) {
-                            eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
-                            tampilkanModal("Auto-Exit GPS", `Anda berada di luar radius ${Math.round(jarakMeter)} meter dari toko (Batas maksimal ${batasRadius} meter). Anda otomatis dikeluarkan dari antrean.`);
+                            counterLuarRadiusGPS++;
+                            // Konfirmasi berturut-turut sebanyak 3 kali pembacaan untuk menghindari false-positive GPS loncat
+                            if (counterLuarRadiusGPS >= 3) {
+                                counterLuarRadiusGPS = 0;
+                                eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
+                                tampilkanModal("Auto-Exit GPS", `Anda berada di luar radius ${Math.round(jarakMeter)} meter dari toko (Batas maksimal ${batasRadius} meter). Anda otomatis dikeluarkan dari antrean.`);
+                            }
+                        } else {
+                            // Reset counter jika kembali di dalam radius
+                            counterLuarRadiusGPS = 0;
                         }
                     },
                     function(error) {},
