@@ -46,10 +46,19 @@
             box-shadow: 0 0 50px rgba(239, 68, 68, 0.45) !important; 
         }
 
+        /* HEADER MERAH MENYALA DI MODE GELAP */
         body.dark-mode .gradient-header { 
             background: linear-gradient(135deg, #450a0a 0%, #1f0505 100%) !important; 
-            border: 2px solid #f87171 !important; 
-            box-shadow: 0 0 35px rgba(248, 113, 113, 0.6) !important;
+            border: 2px solid #ef4444 !important; 
+            box-shadow: 0 0 35px rgba(239, 68, 68, 0.6) !important;
+        }
+        body.dark-mode .gradient-header h2 {
+            color: #fca5a5 !important;
+            text-shadow: 0 0 15px rgba(239, 68, 68, 0.9) !important;
+        }
+        body.dark-mode .gradient-header p {
+            color: #f87171 !important;
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.7) !important;
         }
 
         .dark-mode-btn { background: #ffffff; border: 2px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
@@ -84,22 +93,36 @@
             box-shadow: 0 0 25px rgba(248, 113, 113, 0.6) !important;
         }
 
-        .timer-box-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
-        .timer-card-admin { background: #f8fafc; border-radius: 14px; padding: 14px; text-align: center; border: 2px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
+        /* KOTAK GILIRAN HA & AV DISUSUN ATAS-BAWAH (VERTIKAL) */
+        .timer-box-wrapper { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+        .timer-card-admin { background: #f8fafc; border-radius: 14px; padding: 16px; text-align: center; border: 2px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
         
-        body.dark-mode .timer-card-admin.ha, body.dark-mode .timer-card-admin.av {
-            background: #1f0505 !important;
-            border: 2px solid #ef4444 !important;
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.7) !important;
+        /* EFEK NEON PERSIS GAMBAR (ATAS-BAWAH) KHUSUS MODE GELAP */
+        body.dark-mode .timer-card-admin.ha {
+            background: #000000 !important;
+            border: 3px solid #facc15 !important;
+            border-radius: 20px !important;
+            box-shadow: 0 0 25px rgba(250, 204, 21, 0.6), inset 0 0 15px rgba(250, 204, 21, 0.2) !important;
+        }
+        body.dark-mode .timer-card-admin.av {
+            background: #000000 !important;
+            border: 3px solid #22c55e !important;
+            border-radius: 20px !important;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.6), inset 0 0 15px rgba(34, 197, 94, 0.2) !important;
         }
 
         .timer-badge-title { font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; display: block; }
         .ha .timer-badge-title { color: #2563eb; }
         .av .timer-badge-title { color: #7c3aed; }
-        body.dark-mode .timer-badge-title { color: #fca5a5 !important; text-shadow: 0 0 10px rgba(252, 165, 165, 0.8); }
 
-        .promotor-nama-aktif { font-size: 15px; font-weight: 800; color: var(--text-main); margin-top: 2px; line-height: 1.3; min-height: 36px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
-        body.dark-mode .promotor-nama-aktif { color: #ffffff !important; }
+        /* TEKS & GLOW JUDUL & NAMA DI MODE GELAP */
+        body.dark-mode .timer-card-admin.ha .timer-badge-title { color: #fde047 !important; text-shadow: 0 0 10px rgba(253, 224, 71, 0.8); }
+        body.dark-mode .timer-card-admin.av .timer-badge-title { color: #86efac !important; text-shadow: 0 0 10px rgba(134, 239, 172, 0.8); }
+
+        .promotor-nama-aktif { font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 2px; line-height: 1.3; min-height: 36px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
+        
+        body.dark-mode .timer-card-admin.ha .promotor-nama-aktif { color: #fef08a !important; text-shadow: 0 0 15px rgba(254, 240, 138, 0.9); }
+        body.dark-mode .timer-card-admin.av .promotor-nama-aktif { color: #bbf7d0 !important; text-shadow: 0 0 15px rgba(187, 247, 208, 0.9); }
 
         body.dark-mode .list-antrian li { 
             background: #1f0505 !important; 
@@ -122,17 +145,59 @@
             box-shadow: 0 0 15px rgba(113, 113, 122, 0.5) !important;
         }
 
-        body.dark-mode button:not(.dark-mode-btn):not(.btn-disabled) {
+        /* EFEK MENYALA KHUSUS TOMBOL DAFTAR ANTRIAN & HADIR (WARNA BIRU) */
+        body.dark-mode .btn-success,
+        body.dark-mode .btn-customer {
+            background: #2563eb !important;
+            color: #ffffff !important;
+            border: 2px solid #3b82f6 !important;
+            box-shadow: 0 0 25px rgba(37, 99, 235, 0.7) !important;
+        }
+
+        /* EFEK MENYALA KHUSUS TOMBOL SELESAI / CLOSING (WARNA MERAH ASLI) */
+        body.dark-mode .btn-closing {
             background: #dc2626 !important;
             color: #ffffff !important;
             border: 2px solid #f87171 !important;
-            box-shadow: 0 0 25px rgba(248, 113, 113, 0.7) !important;
+            box-shadow: 0 0 25px rgba(220, 38, 38, 0.7) !important;
+        }
+
+        /* EFEK MENYALA KHUSUS TOMBOL CS (WARNA UNGU ASLI) */
+        body.dark-mode .btn-purple {
+            background: #7c3aed !important;
+            color: #ffffff !important;
+            border: 2px solid #a78bfa !important;
+            box-shadow: 0 0 25px rgba(124, 58, 237, 0.7) !important;
+        }
+
+        /* EFEK MENYALA KHUSUS TOMBOL TEAL (WARNA HIJAU TOSCA ASLI) */
+        body.dark-mode .btn-teal {
+            background: #0d9488 !important;
+            color: #ffffff !important;
+            border: 2px solid #2dd4bf !important;
+            box-shadow: 0 0 25px rgba(13, 148, 136, 0.7) !important;
+        }
+
+        /* EFEK MENYALA KHUSUS TOMBOL IBADAH (WARNA INDIGO ASLI) */
+        body.dark-mode .btn-indigo {
+            background: #4f46e5 !important;
+            color: #ffffff !important;
+            border: 2px solid #818cf8 !important;
+            box-shadow: 0 0 25px rgba(79, 70, 229, 0.7) !important;
+        }
+
+        /* EFEK MENYALA KHUSUS TOMBOL KELUAR / AMBER ASLI */
+        body.dark-mode .btn-amber {
+            background: #d97706 !important;
+            color: #ffffff !important;
+            border: 2px solid #fbbf24 !important;
+            box-shadow: 0 0 25px rgba(217, 119, 6, 0.7) !important;
         }
 
         @keyframes pulseGlow {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(37, 99, 235, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
         }
         .btn-pulse { animation: pulseGlow 2s infinite; }
 
@@ -143,7 +208,6 @@
         }
         .wa-pulse { animation: pulseGreen 2s infinite; }
 
-        /* SPINNER / LOADING ANIMATION */
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .spinner { display: inline-block; width: 16px; height: 16px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s ease-in-out infinite; vertical-align: middle; margin-right: 6px; }
 
@@ -164,7 +228,6 @@
         .input-group { margin-bottom: 16px; text-align: left; }
         .input-group label { display: block; font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
 
-        /* MODIFIKASI MODERN DROPDOWN SELECT & INPUT */
         select, input[type="text"] { 
             width: 100%; 
             padding: 14px 16px; 
@@ -232,6 +295,7 @@
             <button type="button" class="dark-mode-btn" id="btn-toggle-dark" onclick="toggleDarkMode()">🌙 Gelap</button>
         </div>
 
+        <!-- HEADER DENGAN WARNA MERAH MENYALA DI MODE GELAP -->
         <div class="gradient-header">
             <h2>Antrian Walk-In Promotor</h2>
             <p>UFO Kebonsari</p>
@@ -256,7 +320,7 @@
                 <span style="color: var(--text-muted);">Promotor:</span> <strong id="label-user-aktif" style="color:var(--primary-dark); font-size: 15px;">-</strong>
             </div>
 
-            <!-- PETA MINI VISUALISASI POSISI (Instan dimuat dari Cache) -->
+            <!-- PETA MINI VISUALISASI POSISI -->
             <div class="input-group" id="section-peta-gps">
                 <label>Peta Posisi Anda & Radius Toko</label>
                 <div id="map-promotor" style="width: 100%; height: 180px; border-radius: 14px; border: 2px solid var(--border); z-index: 1;"></div>
@@ -266,13 +330,13 @@
             <div class="timer-box-wrapper">
                 <div class="timer-card-admin ha">
                     <div>
-                        <span class="timer-badge-title">Giliran HA</span>
+                        <span class="timer-badge-title">GILIRAN HA SAAT INI</span>
                         <div id="promotor-nama-ha" class="promotor-nama-aktif">Memuat...</div>
                     </div>
                 </div>
                 <div class="timer-card-admin av">
                     <div>
-                        <span class="timer-badge-title">Giliran AV</span>
+                        <span class="timer-badge-title">GILIRAN AV SAAT INI</span>
                         <div id="promotor-nama-av" class="promotor-nama-aktif">Memuat...</div>
                     </div>
                 </div>
@@ -347,13 +411,11 @@
         let koordinatToko = { lat: "", lng: "", radius: 50 }; 
         let localActionActive = false;
 
-        // Variabel Peta Mini Leaflet
         let mapPromotor = null;
         let markerTokoPeta = null;
         let circleTokoPeta = null;
         let markerSayaPeta = null;
 
-        // Helper Format Tanggal Indonesia dd-mm-yyyy
         function getTanggalIndo() {
             const now = new Date();
             const dd = String(now.getDate()).padStart(2, '0');
@@ -370,7 +432,6 @@
                 try { 
                     koordinatToko = JSON.parse(cachedKoordinat); 
                     if (koordinatToko.lat && koordinatToko.lng) {
-                        // Render peta secara instan dari cache sebelum menunggu server
                         setTimeout(() => {
                             initAtauUpdatePetaPromotor(Number(koordinatToko.lat), Number(koordinatToko.lng), Number(koordinatToko.radius) || 50, null, null);
                         }, 50);
@@ -905,7 +966,6 @@
             });
         }
 
-        // FUNGSI INISIALISASI & UPDATE PETA MINI (OPTIMAL & INSTAN)
         function initAtauUpdatePetaPromotor(latToko, lngToko, radiusToko, latUser, lngUser) {
             if (!latToko || !lngToko || isNaN(latToko) || isNaN(lngToko)) return;
 
