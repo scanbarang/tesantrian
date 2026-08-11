@@ -5,26 +5,134 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Antrian Walk-In Promotor - UFO Kebonsari</title>
     <link rel="shortcut icon" href="#">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Mengganti font Google Fonts menjadi Roboto sesuai permintaan -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     
     <!-- Leaflet CSS untuk Peta Visual Check-in -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
+        /* CSS Reset dan Gaya Dasar yang Anda berikan */
+        html {
+            font-family: sans-serif;
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+            font-size: 16px;
+        }
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            line-height: 1.5em;
+            color: #f86b1c;
+            font-weight: 300;
+            background: #fff;
+            background-attachment: fixed;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {
+            display: block;
+        }
+        audio, canvas, progress, video {
+            display: inline-block;
+            vertical-align: baseline;
+        }
+        audio:not([controls]) {
+            display: none;
+            height: 0;
+        }
+        [hidden], template {
+            display: none;
+        }
+        a {
+            background: transparent;
+        }
+        a:active, a:hover {
+            outline: 0;
+        }
+        abbr[title] {
+            border-bottom: 1px dotted;
+        }
+        b, strong {
+            font-weight: bold;
+        }
+        dfn {
+            font-style: italic;
+        }
+        h1 {
+            font-size: 2em;
+            margin: 20px 0 30px 0;
+            font-weight: 300;
+            line-height: 1.4em;
+            color: #999999;
+            text-align: center;
+        }
+        mark {
+            background: #ff0;
+            color: #000;
+        }
+        small {
+            font-size: 80%;
+        }
+        sub, sup {
+            font-size: 75%;
+            line-height: 0;
+            position: relative;
+            vertical-align: baseline;
+        }
+        sup { top: -0.5em; }
+        sub { bottom: -0.25em; }
+        img { border: 0; }
+        svg:not(:root) { overflow: hidden; }
+        figure { margin: 1em 40px; }
+        hr { box-sizing: content-box; height: 0; }
+        pre { overflow: auto; }
+        code, kbd, pre, samp {
+            font-family: monospace, monospace;
+            font-size: 1em;
+        }
+        button, input, optgroup, select, textarea {
+            color: inherit;
+            font: inherit;
+            margin: 0;
+        }
+        button { overflow: visible; text-transform: none; }
+        button, html input[type="button"], input[type="reset"], input[type="submit"] {
+            -webkit-appearance: button;
+            cursor: pointer;
+        }
+        button[disabled], html input[disabled] { cursor: default; }
+        button::-moz-focus-inner, input::-moz-focus-inner { border: 0; padding: 0; }
+        input { line-height: normal; }
+        input[type="checkbox"], input[type="radio"] { box-sizing: border-box; padding: 0; }
+        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { height: auto; }
+        input[type="search"] { -webkit-appearance: textfield; box-sizing: content-box; }
+        input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; }
+        fieldset { border: 1px solid #c0c0c0; margin: 0 2px; padding: 0.35em 0.625em 0.75em; }
+        legend { border: 0; padding: 0; }
+        textarea { overflow: auto; }
+        optgroup { font-weight: bold; }
+        table { border-collapse: collapse; border-spacing: 0; }
+        td, th { padding: 0; }
+
+        /* Variabel dan Penyesuaian Komponen Aplikasi Antrian */
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
+            --primary: #f86b1c;
+            --primary-dark: #d95a12;
             --success: #059669;
-            --customer-blue: #0284c7;
+            --customer-blue: #f86b1c;
             --closing-red: #dc2626;
             --purple-cs: #7c3aed;
             --teal-cs: #0f766e;
             --amber-rest: #d97706;
             --indigo-ibadah: #4338ca;
-            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --bg-gradient: #fff;
             --card-bg: #ffffff;
-            --text-main: #0f172a;
+            --text-main: #f86b1c;
             --text-muted: #64748b;
             --border: #e2e8f0;
             --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
@@ -32,22 +140,11 @@
         }
 
         body.dark-mode {
-            --bg-gradient: linear-gradient(135deg, #090204 0%, #000000 100%) !important;
+            --bg-gradient: #000000 !important;
             --card-bg: #120306 !important;
             --text-main: #f8fafc !important;
             --text-muted: #fda4af !important;
             --border: #f43f5e !important;
-        }
-
-        body { 
-            background: var(--bg-gradient); 
-            background-attachment: fixed;
-            color: var(--text-main); 
-            margin: 0; 
-            padding: 16px; 
-            display: flex; 
-            justify-content: center; 
-            min-height: 100vh; 
         }
         
         .app-container { 
@@ -59,12 +156,11 @@
             border: 1px solid var(--border); 
             box-shadow: var(--shadow-md); 
             text-align: center; 
-            backdrop-filter: blur(10px);
         }
 
         body.dark-mode .app-container { 
             border: 2px solid #f43f5e !important; 
-            box-shadow: 0 0 50px rgba(244, 63, 94, 0.25), inset 0 0 20px rgba(244, 63, 94, 0.1) !important; 
+            box-shadow: 0 0 50px rgba(244, 63, 94, 0.25); 
         }
 
         .top-controls { display: flex; justify-content: flex-end; margin-bottom: 14px; }
@@ -79,15 +175,11 @@
             padding: 8px 14px;
             cursor: pointer;
             box-shadow: var(--shadow-sm);
-            transition: all 0.2s ease;
         }
-        .dark-mode-btn:hover { background: #e2e8f0; }
-
         body.dark-mode .dark-mode-btn { 
             background: #1f050a !important; 
             color: #fda4af !important; 
             border: 1px solid #f43f5e !important; 
-            box-shadow: 0 0 15px rgba(244, 63, 94, 0.3) !important; 
         }
 
         .gradient-header { 
@@ -96,36 +188,9 @@
             padding: 22px 16px; 
             color: white; 
             margin-bottom: 18px; 
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12); 
         }
-        .gradient-header h2 { 
-            margin: 0; 
-            font-size: 20px; 
-            font-weight: 800; 
-            letter-spacing: -0.5px;
-        }
-        .gradient-header p { 
-            margin: 6px 0 0 0; 
-            font-size: 12px; 
-            font-weight: 600; 
-            color: #94a3b8; 
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        body.dark-mode .gradient-header { 
-            background: linear-gradient(135deg, #1f050a 0%, #090204 100%) !important; 
-            border: 2px solid #f43f5e !important; 
-            box-shadow: 0 0 30px rgba(244, 63, 94, 0.4) !important;
-        }
-        body.dark-mode .gradient-header h2 {
-            color: #ffffff !important;
-            text-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
-        }
-        body.dark-mode .gradient-header p {
-            color: #fda4af !important;
-        }
+        .gradient-header h2 { margin: 0; font-size: 20px; font-weight: 800; color: #fff; }
+        .gradient-header p { margin: 6px 0 0 0; font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; }
 
         .status-badge-sistem { 
             display: inline-block; 
@@ -135,21 +200,12 @@
             font-weight: 800; 
             text-transform: uppercase; 
             margin-bottom: 18px; 
-            letter-spacing: 0.8px; 
-            box-shadow: var(--shadow-sm);
         }
         .status-open { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .status-closed { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
 
-        body.dark-mode .status-badge-sistem {
-            background: #2a080f !important;
-            color: #f43f5e !important;
-            border: 2px solid #f43f5e !important;
-            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4) !important;
-        }
-
         .input-group { margin-bottom: 16px; text-align: left; }
-        .input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
 
         select, input[type="text"] { 
             width: 100%; 
@@ -161,27 +217,6 @@
             font-weight: 600; 
             color: var(--text-main); 
             outline: none; 
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            background-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        select:focus, input[type="text"]:focus {
-            border-color: var(--primary);
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
-        }
-
-        body.dark-mode select, body.dark-mode input[type="text"] { 
-            background: #090204 !important; 
-            color: #ffffff !important; 
-            border: 2px solid #f43f5e !important; 
-            box-shadow: 0 0 15px rgba(244, 63, 94, 0.2) !important;
         }
 
         .user-badge { 
@@ -193,14 +228,6 @@
             text-align: left; 
             font-size: 13px; 
             font-weight: 600; 
-            box-shadow: var(--shadow-sm);
-        }
-
-        body.dark-mode .user-badge { 
-            background: #1f050a !important; 
-            border: 2px solid #f43f5e !important; 
-            color: #ffffff !important; 
-            box-shadow: 0 0 20px rgba(244, 63, 94, 0.3) !important;
         }
 
         #section-akun-locked {
@@ -211,114 +238,53 @@
             margin-top: 10px;
             margin-bottom: 16px;
             text-align: left;
-            box-shadow: var(--shadow-sm);
         }
-        body.dark-mode #section-akun-locked {
-            background: #2a080f !important;
-            border: 2px solid #f43f5e !important;
-            box-shadow: 0 0 25px rgba(244, 63, 94, 0.4) !important;
-        }
-        body.dark-mode #section-akun-locked .locked-title { color: #f43f5e !important; }
-        body.dark-mode #section-akun-locked #teks-alasan-lock { color: #fda4af !important; }
 
         .timer-box-wrapper { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-        .timer-card-admin { background: #f8fafc; border-radius: 16px; padding: 16px; text-align: center; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; box-shadow: var(--shadow-sm); }
-        
-        body.dark-mode .timer-card-admin.ha,
-        body.dark-mode .timer-card-admin.av {
-            background: #1f050a !important;
-            border: 2px solid #f43f5e !important;
-            box-shadow: 0 0 25px rgba(244, 63, 94, 0.3) !important;
-        }
-
-        .timer-badge-title { font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.8px; }
-        .ha .timer-badge-title { color: #0284c7; } 
-        .av .timer-badge-title { color: #7c3aed; } 
-
-        body.dark-mode .timer-card-admin.ha .timer-badge-title,
-        body.dark-mode .timer-card-admin.av .timer-badge-title { color: #fda4af !important; text-shadow: 0 0 8px rgba(244, 63, 94, 0.5); }
-
-        .promotor-nama-aktif { font-size: 20px; font-weight: 800; color: var(--text-main); margin-top: 2px; line-height: 1.3; min-height: 32px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
-        
-        body.dark-mode .timer-card-admin.ha .promotor-nama-aktif,
-        body.dark-mode .timer-card-admin.av .promotor-nama-aktif { color: #ffffff !important; text-shadow: 0 0 12px rgba(244, 63, 94, 0.6); }
+        .timer-card-admin { background: #f8fafc; border-radius: 16px; padding: 16px; text-align: center; border: 1px solid var(--border); }
+        .timer-badge-title { font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; display: block; color: #f86b1c; }
+        .promotor-nama-aktif { font-size: 20px; font-weight: 800; color: var(--text-main); margin-top: 2px; }
 
         .list-antrian { list-style: none; padding: 0; margin: 8px 0 0 0; text-align: left; }
-        .list-antrian li { padding: 14px 16px; background: #f8fafc; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); font-size: 14px; font-weight: 700; box-shadow: var(--shadow-sm); transition: transform 0.1s ease; }
-        .list-antrian li:hover { transform: translateY(-1px); }
+        .list-antrian li { padding: 14px 16px; background: #f8fafc; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); font-size: 14px; font-weight: 700; }
 
-        body.dark-mode .list-antrian li { 
-            background: #1f050a !important; 
-            border: 1.5px solid #f43f5e !important; 
-            color: #ffffff !important; 
-            box-shadow: 0 0 15px rgba(244, 63, 94, 0.25) !important;
+        button { 
+            width: 100%; 
+            padding: 13px 16px; 
+            border-radius: 14px; 
+            font-size: 12px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            border: none; 
+            text-transform: uppercase; 
+            display: inline-flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 8px; 
+            box-shadow: var(--shadow-sm); 
         }
-
-        body.dark-mode .modal-box { 
-            background: #120306 !important; 
-            border: 2px solid #f43f5e !important; 
-            color: #ffffff !important; 
-            box-shadow: 0 0 40px rgba(244, 63, 94, 0.5) !important;
-        }
-
-        body.dark-mode .btn-cancel {
-            background: #1f050a !important;
-            color: #fda4af !important;
-            border: 1px solid #f43f5e !important;
-        }
-
-        body.dark-mode .btn-success,
-        body.dark-mode .btn-customer,
-        body.dark-mode .btn-closing,
-        body.dark-mode .btn-purple,
-        body.dark-mode .btn-teal,
-        body.dark-mode .btn-indigo,
-        body.dark-mode .btn-amber,
-        body.dark-mode .wa-report-btn {
-            background: #e11d48 !important;
-            color: #ffffff !important;
-            border: 1px solid #ff8095 !important;
-            box-shadow: 0 0 20px rgba(244, 63, 94, 0.5) !important;
-        }
-
-        @keyframes pulseGlow {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
-            70% { transform: scale(1.01); box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
-        }
-        .btn-pulse { animation: pulseGlow 2.5s infinite; }
-        .wa-pulse { animation: pulseGlow 2.5s infinite; }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s ease-in-out infinite; vertical-align: middle; margin-right: 6px; }
-
-        *, body, button, select, input { font-family: 'Plus Jakarta Sans', sans-serif !important; box-sizing: border-box; }
-        
-        button { width: 100%; padding: 13px 16px; border-radius: 14px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; text-transform: uppercase; transition: all 0.2s ease; display: inline-flex; justify-content: center; align-items: center; gap: 8px; letter-spacing: 0.5px; box-shadow: var(--shadow-sm); }
-        button:active { transform: scale(0.97); }
 
         .btn-success { background: #0d9488; color: white; }
-        .btn-customer { background: #2563eb; color: white; }
+        .btn-customer { background: #f86b1c; color: white; }
         .btn-closing { background: #dc2626; color: white; }
         .btn-purple { background: #7c3aed; color: white; }
         .btn-teal { background: #0f766e; color: white; }
         .btn-amber { background: #d97706; color: white; }
         .btn-indigo { background: #4338ca; color: white; }
-        .btn-disabled { background: #e2e8f0 !important; color: #94a3b8 !important; cursor: not-allowed !important; box-shadow: none !important; animation: none !important; transform: none !important; pointer-events: none !important; }
+        .btn-disabled { background: #e2e8f0 !important; color: #94a3b8 !important; cursor: not-allowed !important; }
 
-        .badge-status-item { font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 8px; white-space: nowrap; letter-spacing: 0.3px; }
+        .badge-status-item { font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 8px; white-space: nowrap; }
         .badge-giliran-anda { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .badge-standby { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
         .badge-melayani { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
         .badge-cs { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
         .badge-ibadah { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
 
-        .wa-report-btn { margin-top: 18px; background: #059669; border: none; color: white; font-size: 12px; padding: 13px; border-radius: 14px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 8px; font-weight: 700; box-shadow: var(--shadow-sm); transition: filter 0.2s; }
-        .wa-report-btn:hover { filter: brightness(1.05); }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.25s ease; padding: 16px; }
+        .wa-report-btn { margin-top: 18px; background: #059669; border: none; color: white; font-size: 12px; padding: 13px; border-radius: 14px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 8px; font-weight: 700; }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.25s ease; padding: 16px; }
         .modal-overlay.active { opacity: 1; visibility: visible; }
-        .modal-box { background: white; width: 100%; max-width: 380px; padding: 24px; border-radius: 20px; text-align: center; border: 1px solid var(--border); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-box { background: white; width: 100%; max-width: 380px; padding: 24px; border-radius: 20px; text-align: center; border: 1px solid var(--border); }
         .modal-title { font-size: 17px; font-weight: 800; margin-bottom: 8px; color: var(--text-main); }
         .modal-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; font-weight: 600; text-align: left; }
         .modal-actions { display: flex; gap: 10px; }
@@ -347,7 +313,7 @@
                 <label>Pilih Nama Anda (Kunci Perangkat)</label>
                 <select id="pilih-sales"><option value="">-- Pilih Nama Anda --</option></select>
             </div>
-            <button type="button" id="btn-simpan-hp" class="btn-customer btn-pulse" onclick="simpanAkunHP()">Simpan & Kunci di HP Ini</button>
+            <button type="button" id="btn-simpan-hp" class="btn-customer" onclick="simpanAkunHP()">Simpan & Kunci di HP Ini</button>
         </div>
 
         <!-- PANEL MENU UTAMA -->
@@ -372,7 +338,7 @@
                 </div>
             </div>
 
-            <!-- CHECK-IN KEDATANGAN (PETA GPS HANYA MUNCUL DI SINI SAAT BELUM CHECK-IN) -->
+            <!-- CHECK-IN KEDATANGAN -->
             <div id="section-checkin-awal" style="display: none;">
                 <div class="input-group">
                     <label>Peta Posisi Toko & Radius Check-In</label>
@@ -385,7 +351,7 @@
                         <option value="AV">AV (Audio Video)</option>
                     </select>
                 </div>
-                <button type="button" id="btn-hadir" class="btn-success btn-pulse" onclick="aksiHadirKerja()">Konfirmasi Kehadiran & Masuk Antri</button>
+                <button type="button" id="btn-hadir" class="btn-success" onclick="aksiHadirKerja()">Konfirmasi Kehadiran & Masuk Antri</button>
             </div>
 
             <!-- SISTEM NORMAL -->
@@ -398,8 +364,7 @@
                     </select>
                 </div>
 
-                <!-- TOMBOL DAFTAR ANTRIAN & BOX ALASAN LOCKED DI BAWAHNYA -->
-                <button type="button" id="btn-daftar-antrian" class="btn-success btn-pulse" onclick="aksiDaftarAntrianNormal()" style="display: none; margin-top: 4px;">Daftar Antrian</button>
+                <button type="button" id="btn-daftar-antrian" class="btn-success" onclick="aksiDaftarAntrianNormal()" style="display: none; margin-top: 4px;">Daftar Antrian</button>
                 
                 <div id="section-akun-locked" style="display: none;">
                     <div class="locked-title" style="color: #991b1b; font-weight: 800; font-size: 13px; margin-bottom: 4px; text-transform: uppercase;">
@@ -410,27 +375,24 @@
                     </div>
                 </div>
 
-                <button type="button" id="btn-utama-customer" class="btn-customer btn-pulse" onclick="aksiUtamaCustomer()" style="display: none; margin-top: 10px;">Sudah Membawa Customer</button>
+                <button type="button" id="btn-utama-customer" class="btn-customer" onclick="aksiUtamaCustomer()" style="display: none; margin-top: 10px;">Sudah Membawa Customer</button>
                 <button type="button" id="btn-selesai-closing" class="btn-closing" onclick="aksiSelesaiClosing()" style="display: none; margin-top: 10px;">SELESAI MELAYANI (DEAL / CLOSING)</button>
                 <button type="button" id="btn-utama-cs" class="btn-purple" onclick="aksiToggleCS()" style="display: none; margin-top: 10px;">DIPANGGIL CS/GUDANG (KUNCI POSISI)</button>
-                
                 <button type="button" id="btn-utama-ibadah" class="btn-indigo" onclick="aksiToggleIbadah()" style="display: none; margin-top: 10px;">SEDANG IBADAH (KUNCI POSISI)</button>
-
                 <button type="button" id="btn-keluar-istirahat" class="btn-amber" onclick="bukaModalKeluarIstirahat()" style="display: none; margin-top: 10px;">KELUAR ANTRIAN (ISTIRAHAT)</button>
             </div>
         </div>
 
         <!-- LIVE URUTAN KATEGORI HA & AV -->
         <div style="margin-top: 24px; text-align: left;">
-            <div style="font-size: 12px; font-weight: 800; color: var(--text-muted); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.8px;">LIVE URUTAN KATEGORI HA</div>
+            <div style="font-size: 12px; font-weight: 800; color: var(--text-muted); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 10px; text-transform: uppercase;">LIVE URUTAN KATEGORI HA</div>
             <ul id="list-HA" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
-            <div style="font-size: 12px; font-weight: 800; color: var(--text-muted); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 24px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.8px;">LIVE URUTAN KATEGORI AV</div>
+            <div style="font-size: 12px; font-weight: 800; color: var(--text-muted); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 24px; margin-bottom: 10px; text-transform: uppercase;">LIVE URUTAN KATEGORI AV</div>
             <ul id="list-AV" class="list-antrian"><li><span>Memuat...</span></li></ul>
         </div>
 
-        <a href="https://wa.me/6289524391002" target="_blank" class="wa-report-btn wa-pulse">
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="fill: #ffffff; stroke: none;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+        <a href="https://wa.me/6289524391002" target="_blank" class="wa-report-btn">
             Laporkan via WhatsApp
         </a>
     </div>
@@ -679,7 +641,6 @@
                 koordinatToko.lat = koordinatServer.lat;
                 koordinatToko.lng = koordinatServer.lng;
                 koordinatToko.radius = Number(koordinatServer.radius) || 50;
-                
                 localStorage.setItem('ufo_koordinat_toko_cache', JSON.stringify(koordinatToko));
             }
 
@@ -736,15 +697,12 @@
             const sectionNormal = document.getElementById('section-normal');
             const sectionLocked = document.getElementById('section-akun-locked');
 
-            // --- CEK KOLOM B (LOCKED) DAN KOLOM C (ALASAN) DARI MASTER SALES ---
             let isDilockAdmin = false;
             let pesanLockAdmin = "Akun Anda sedang dibekukan oleh Admin.";
-            
             const dataSalesSaya = masterSalesGlobal.find(s => String(s.nama).trim().toLowerCase() === akunSaya);
             
             if (dataSalesSaya) {
                 let statusLockVal = dataSalesSaya.locked !== undefined ? dataSalesSaya.locked : (dataSalesSaya.status_lock !== undefined ? dataSalesSaya.status_lock : dataSalesSaya.is_locked);
-                
                 if (statusLockVal === true || String(statusLockVal).trim().toUpperCase() === "TRUE" || String(statusLockVal).trim().toUpperCase() === "LOCKED" || String(statusLockVal).trim().toUpperCase() === "YA" || String(statusLockVal).trim() === "1") {
                     isDilockAdmin = true;
                     pesanLockAdmin = dataSalesSaya.alasan || dataSalesSaya.pesan_lock || dataSalesSaya.alasan_lock || dataSalesSaya.keterangan || pesanLockAdmin;
@@ -760,7 +718,6 @@
             const btnIbadah = document.getElementById('btn-utama-ibadah');
             const btnKeluar = document.getElementById('btn-keluar-istirahat');
 
-            // --- JIKA AKUN DILOCK ADMIN: TOMBOL DAFTAR JADI "OTOMATIS TERKUNCI" (ABU2) & MUNCUL BOX ALASAN DI BAWAHNYA ---
             if (isDilockAdmin) {
                 sectionCheckinAwal.style.display = 'none';
                 sectionNormal.style.display = 'block';
@@ -787,7 +744,6 @@
                 if (sectionLocked) sectionLocked.style.display = 'none';
                 if (btnDaftar) btnDaftar.innerText = "Daftar Antrian";
             }
-            // ---------------------------------------------------------------------------------------------------------
 
             let sudahCheckinPernahHariIni = localStorage.getItem('ufo_checkin_hari_ini') === 'true';
 
@@ -798,7 +754,6 @@
                 sectionCheckinAwal.style.display = 'block';
                 sectionNormal.style.display = 'none';
                 
-                // Munculkan peta khusus saat check-in awal
                 if (navigator.geolocation && koordinatToko.lat) {
                     navigator.geolocation.getCurrentPosition(pos => {
                         initAtauUpdatePetaPromotor(Number(koordinatToko.lat), Number(koordinatToko.lng), Number(koordinatToko.radius) || 50, pos.coords.latitude, pos.coords.longitude);
@@ -821,7 +776,7 @@
                 if (statusSistemGlobal === "TUTUP") {
                     btnDaftar.disabled = true; btnDaftar.className = "btn-success btn-disabled";
                 } else {
-                    btnDaftar.disabled = false; btnDaftar.className = "btn-success btn-pulse";
+                    btnDaftar.disabled = false; btnDaftar.className = "btn-success";
                 }
             } else {
                 groupPilihKat.style.display = "none";
@@ -845,7 +800,7 @@
                         let apakahSayaBisaAmbil = (indexSaya >= 0 && indexSaya <= 2);
 
                         btnCustomer.disabled = !apakahSayaBisaAmbil; 
-                        btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer btn-pulse" : "btn-customer btn-disabled";
+                        btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer" : "btn-customer btn-disabled";
                         btnCS.disabled = false; btnCS.className = "btn-purple";
                         btnIbadah.disabled = false; btnIbadah.className = "btn-indigo";
                         btnKeluar.disabled = false; btnKeluar.className = "btn-amber";
@@ -937,7 +892,7 @@
             if (isLoading) {
                 btnElement.disabled = true;
                 btnElement.classList.add('btn-disabled');
-                btnElement.innerHTML = `<span class="spinner"></span> Memeriksa Lokasi GPS...`;
+                btnElement.innerHTML = `Memeriksa Lokasi GPS...`;
             } else {
                 btnElement.disabled = false;
                 btnElement.classList.remove('btn-disabled');
@@ -969,10 +924,9 @@
 
                         if (jarakMeter > (batasRadius + 30)) {
                             if (typeof callbackBatal === 'function') callbackBatal();
-                            tampilkanModal("Di Luar Radius Toko", `Gagal melakukan check-in!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal: ${batasRadius} meter.\n\nAnda harus berada di area toko untuk absen.`);
+                            tampilkanModal("Di Luar Radius Toko", `Gagal melakukan check-in!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal: ${batasRadius} meter.`);
                             return; 
                         }
-                        
                         if (typeof callbackBerhasil === 'function') callbackBerhasil();
                     },
                     function(error) {
@@ -1072,8 +1026,8 @@
 
             if (!circleTokoPeta) {
                 circleTokoPeta = L.circle([latToko, lngToko], {
-                    color: '#2563eb',
-                    fillColor: '#3b82f6',
+                    color: '#f86b1c',
+                    fillColor: '#f86b1c',
                     fillOpacity: 0.2,
                     radius: radiusToko || 50
                 }).addTo(mapPromotor);
@@ -1090,7 +1044,7 @@
                 if (!markerSayaPeta) {
                     markerSayaPeta = L.circleMarker([latUser, lngUser], {
                         radius: 8,
-                        fillColor: "#2563eb",
+                        fillColor: "#f86b1c",
                         color: "#ffffff",
                         weight: 2.5,
                         fillOpacity: 1
@@ -1122,7 +1076,7 @@
             document.getElementById('modal-title').innerText = judul;
             document.getElementById('modal-desc').innerText = desc;
             document.getElementById('modal-actions').innerHTML = `
-                <button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button>
+                <button type="button" class="btn-customer" style="background:#64748b;" onclick="tutupModal()">Batal</button>
                 <button type="button" class="btn-customer" id="btn-modal-ya">Ya</button>
             `;
             document.getElementById('custom-modal').classList.add('active');
