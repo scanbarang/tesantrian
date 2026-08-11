@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Antrian Walk-In Promotor - UFO Kebonsari</title>
     <link rel="shortcut icon" href="#">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Leaflet CSS untuk Peta Visual Check-in -->
+    <!-- Leaflet CSS untuk Peta Visual -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -16,9 +16,10 @@
             --primary: #4f46e5;
             --primary-dark: #4338ca;
             --success: #059669;
+            --customer-blue: #4f46e5;
             --closing-red: #dc2626;
             --purple-cs: #7c3aed;
-            --teal-cs: #0f766e;
+            --teal-cs: #0d9488;
             --amber-rest: #d97706;
             --indigo-ibadah: #4338ca;
             --bg: #f8fafc;
@@ -30,6 +31,7 @@
             --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
         }
 
+        /* STYLING MODE GELAP MODERN TECH INDIGO */
         body.dark-mode {
             --bg: #0f172a !important;
             --card-bg: #1e293b !important;
@@ -74,6 +76,9 @@
             padding: 8px 14px;
             cursor: pointer;
             box-shadow: var(--shadow-sm);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .gradient-header { 
@@ -125,16 +130,6 @@
             font-weight: 600; 
         }
 
-        #section-akun-locked {
-            background: #fee2e2;
-            border: 2px solid #f87171;
-            border-radius: 14px;
-            padding: 16px;
-            margin-top: 10px;
-            margin-bottom: 16px;
-            text-align: left;
-        }
-
         .timer-box-wrapper { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
         .timer-card-admin { background: var(--bg); border-radius: 16px; padding: 16px; text-align: center; border: 1px solid var(--border); }
         .timer-badge-title { font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; display: block; color: var(--primary); }
@@ -167,7 +162,7 @@
         .btn-purple { background: #7c3aed; color: white; }
         .btn-teal { background: #0f766e; color: white; }
         .btn-amber { background: #d97706; color: white; }
-        .btn-indigo { background: #4338ca; color: white; }
+        .btn-cancel { background: var(--border); color: var(--text-main); }
         .btn-disabled { background: var(--border) !important; color: var(--text-muted) !important; cursor: not-allowed !important; box-shadow: none !important; }
 
         .badge-status-item { font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 8px; white-space: nowrap; }
@@ -175,7 +170,6 @@
         .badge-standby { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
         .badge-melayani { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
         .badge-cs { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
-        .badge-ibadah { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
 
         .wa-report-btn { margin-top: 18px; background: #059669; border: none; color: white; font-size: 12px; padding: 13px; border-radius: 14px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 8px; font-weight: 700; box-shadow: var(--shadow-sm); }
         
@@ -186,13 +180,14 @@
         .modal-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; font-weight: 600; text-align: left; }
         .modal-actions { display: flex; gap: 10px; }
         .modal-actions button { flex: 1; padding: 11px; font-size: 12px; }
+        .sub-section-title { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 16px; margin-bottom: 6px; text-align: left; display: block; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
         <div class="top-controls">
-            <button type="button" class="dark-mode-btn" id="btn-toggle-dark" onclick="toggleDarkMode()">🌙 Mode Gelap</button>
+            <button type="button" class="dark-mode-btn" id="btn-toggle-dark" onclick="toggleDarkMode()">🌙 Gelap</button>
         </div>
 
         <div class="gradient-header">
@@ -216,76 +211,55 @@
         <!-- PANEL MENU UTAMA -->
         <div id="panel-menu-utama" style="display: none;">
             <div class="user-badge">
-                <span style="color: var(--text-muted);">Promotor Aktif:</span> <strong id="label-user-aktif" style="color:var(--primary); font-size: 14px;">-</strong>
+                <span style="color: var(--text-muted);">Promotor:</span> <strong id="label-user-aktif" style="color:var(--primary); font-size: 14px;">-</strong>
             </div>
 
-            <!-- KOTAK GILIRAN HA & AV -->
-            <div class="timer-box-wrapper">
-                <div class="timer-card-admin ha">
-                    <div>
-                        <span class="timer-badge-title">GILIRAN HA SAAT INI</span>
-                        <div id="promotor-nama-ha" class="promotor-nama-aktif">Memuat...</div>
-                    </div>
-                </div>
-                <div class="timer-card-admin av">
-                    <div>
-                        <span class="timer-badge-title">GILIRAN AV SAAT INI</span>
-                        <div id="promotor-nama-av" class="promotor-nama-aktif">Memuat...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CHECK-IN KEDATANGAN -->
+            <!-- CHECK-IN KEDATANGAN (HANYA MUNCUL SEKALI DI AWAL HADIR KERJA) -->
             <div id="section-checkin-awal" style="display: none;">
                 <div class="input-group">
-                    <label>Peta Posisi Toko & Radius Check-In</label>
-                    <div id="map-promotor" style="width: 100%; height: 160px; border-radius: 14px; border: 1.5px solid var(--border); margin-bottom: 14px; z-index: 1;"></div>
-                    
                     <label>Check-in Kehadiran (Awal Masuk Kerja)</label>
                     <p style="font-size: 11px; color: var(--text-muted); margin: 0 0 6px 0; text-align: left; font-weight: 600;">Silakan pilih kategori utama Anda untuk hari ini:</p>
                     <select id="pilih-kategori-hadir">
-                        <option value="HA">HA (Home Appliance)</option>
+                        <option value="Mesin Cuci & Lemari Es">Mesin Cuci & Lemari Es</option>
+                        <option value="AC">AC</option>
                         <option value="AV">AV (Audio Video)</option>
                     </select>
                 </div>
                 <button type="button" id="btn-hadir" class="btn-success" onclick="aksiHadirKerja()">Konfirmasi Kehadiran & Masuk Antri</button>
             </div>
 
-            <!-- SISTEM NORMAL -->
+            <!-- SISTEM NORMAL KEMBALI SEPERTI SEMULA -->
             <div id="section-normal" style="display: none;">
                 <div class="input-group" id="group-pilih-kategori-normal">
                     <label>Pilih Kategori Antrian</label>
                     <select id="pilih-kategori-normal">
-                        <option value="HA">HA (Home Appliance)</option>
+                        <option value="Mesin Cuci & Lemari Es">Mesin Cuci & Lemari Es</option>
+                        <option value="AC">AC</option>
                         <option value="AV">AV (Audio Video)</option>
                     </select>
                 </div>
 
                 <button type="button" id="btn-daftar-antrian" class="btn-success" onclick="aksiDaftarAntrianNormal()" style="display: none; margin-top: 4px;">Daftar Antrian</button>
-                
-                <div id="section-akun-locked" style="display: none;">
-                    <div class="locked-title" style="color: #991b1b; font-weight: 800; font-size: 13px; margin-bottom: 4px; text-transform: uppercase;">
-                        ⚠️ AKUN ANDA TERKUNCI
-                    </div>
-                    <div id="teks-alasan-lock" style="color: #7f1d1d; font-size: 12px; font-weight: 600; line-height: 1.4;">
-                        -
-                    </div>
-                </div>
-
                 <button type="button" id="btn-utama-customer" class="btn-customer" onclick="aksiUtamaCustomer()" style="display: none; margin-top: 10px;">Sudah Membawa Customer</button>
                 <button type="button" id="btn-selesai-closing" class="btn-closing" onclick="aksiSelesaiClosing()" style="display: none; margin-top: 10px;">SELESAI MELAYANI (DEAL / CLOSING)</button>
                 <button type="button" id="btn-utama-cs" class="btn-purple" onclick="aksiToggleCS()" style="display: none; margin-top: 10px;">DIPANGGIL CS/GUDANG (KUNCI POSISI)</button>
-                <button type="button" id="btn-utama-ibadah" class="btn-indigo" onclick="aksiToggleIbadah()" style="display: none; margin-top: 10px;">SEDANG IBADAH (KUNCI POSISI)</button>
                 <button type="button" id="btn-keluar-istirahat" class="btn-amber" onclick="bukaModalKeluarIstirahat()" style="display: none; margin-top: 10px;">KELUAR ANTRIAN (ISTIRAHAT)</button>
             </div>
         </div>
 
-        <!-- LIVE URUTAN KATEGORI HA & AV -->
+        <!-- LIVE URUTAN 3 KELOMPOK -->
         <div style="margin-top: 24px; text-align: left;">
             <div style="font-size: 12px; font-weight: 800; color: var(--text-muted); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 10px; text-transform: uppercase;">LIVE URUTAN KATEGORI HA</div>
-            <ul id="list-HA" class="list-antrian"><li><span>Memuat...</span></li></ul>
+            
+            <span class="sub-section-title">MESIN CUCI & LEMARI ES</span>
+            <ul id="list-Mesin Cuci & Lemari Es" class="list-antrian"><li><span>Memuat...</span></li></ul>
 
-            <div style="font-size: 12px; font-weight: 800; color: var(--text-muted); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 24px; margin-bottom: 10px; text-transform: uppercase;">LIVE URUTAN KATEGORI AV</div>
+            <span class="sub-section-title">AC</span>
+            <ul id="list-AC" class="list-antrian"><li><span>Memuat...</span></li></ul>
+
+            <div style="font-size: 12px; font-weight: 800; color: var(--text-muted); border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-top: 20px; margin-bottom: 10px; text-transform: uppercase;">LIVE URUTAN KATEGORI AV</div>
+
+            <span class="sub-section-title">AUDIO VIDEO (AV)</span>
             <ul id="list-AV" class="list-antrian"><li><span>Memuat...</span></li></ul>
         </div>
 
@@ -314,36 +288,10 @@
         let koordinatToko = { lat: "", lng: "", radius: 50 }; 
         let localActionActive = false;
 
-        let mapPromotor = null;
-        let markerTokoPeta = null;
-        let circleTokoPeta = null;
-        let markerSayaPeta = null;
-
-        function getTanggalIndo() {
-            const now = new Date();
-            const dd = String(now.getDate()).padStart(2, '0');
-            const mm = String(now.getMonth() + 1).padStart(2, '0');
-            const yyyy = now.getFullYear();
-            return `${dd}-${mm}-${yyyy}`;
-        }
-
         window.onload = function() {
             initDarkMode();
-            
-            const cachedKoordinat = localStorage.getItem('ufo_koordinat_toko_cache');
-            if (cachedKoordinat) {
-                try { koordinatToko = JSON.parse(cachedKoordinat); } catch(e) {}
-            }
-
             muatMasterSalesInstant();
             muatCacheAntrianInstan();
-            
-            const tanggalHariIni = getTanggalIndo();
-            const tanggalCheckinTerakhir = localStorage.getItem('ufo_checkin_tanggal') || "";
-            if (tanggalCheckinTerakhir !== tanggalHariIni) {
-                localStorage.removeItem('ufo_checkin_hari_ini');
-                localStorage.setItem('ufo_checkin_tanggal', tanggalHariIni);
-            }
             
             const cachedNama = localStorage.getItem('ufo_nama_sales_aktif');
             if (cachedNama) {
@@ -358,12 +306,9 @@
 
             cekServerBg();
             muatMasterSales();
+            mulaiPemantauanGPS();
             
-            setInterval(() => {
-                muatDataAntrian();
-                cekStatusPerangkatSaya();
-                muatMasterSales(); 
-            }, 3000); 
+            setInterval(muatDataAntrian, 3000); 
         };
 
         function toggleDarkMode() {
@@ -374,16 +319,15 @@
         }
 
         function initDarkMode() {
-            const isDark = localStorage.getItem('ufo_dark_mode') === 'true';
-            if (isDark) {
+            if (localStorage.getItem('ufo_dark_mode') === 'true') {
                 document.body.classList.add('dark-mode');
+                updateDarkButtonText(true);
             }
-            updateDarkButtonText(isDark);
         }
 
         function updateDarkButtonText(isDark) {
             const btn = document.getElementById('btn-toggle-dark');
-            if (btn) btn.innerHTML = isDark ? '☀️ Mode Terang' : '🌙 Mode Gelap';
+            if (btn) btn.innerHTML = isDark ? '☀️ Terang' : '🌙 Gelap';
         }
 
         function getDeviceId() {
@@ -427,46 +371,14 @@
             });
         }
 
-        function cekStatusPerangkatSaya() {
-            const namaSaya = localStorage.getItem('ufo_nama_sales_aktif');
-            const deviceId = getDeviceId();
-            if (!namaSaya) return;
-
-            fetch(`${SCRIPT_URL}?aksi=cekBinding&deviceId=${encodeURIComponent(deviceId)}&t=${Date.now()}`)
-            .then(res => res.json())
-            .then(res => {
-                if (res.status !== "terkunci" || !res.nama || res.nama.trim().toLowerCase() !== namaSaya.trim().toLowerCase()) {
-                    localStorage.removeItem('ufo_nama_sales_aktif');
-                    localStorage.removeItem('ufo_checkin_hari_ini');
-                    alert("Perangkat Anda telah di-reset oleh Admin. Silakan pilih ulang nama Anda.");
-                    window.location.reload();
-                }
-            }).catch(() => {});
-        }
-
         function simpanAkunHP() {
             const namaPilih = document.getElementById('pilih-sales').value;
             const deviceId = getDeviceId();
-            if(!namaPilih) {
-                tampilkanModal("Perhatian", "Silakan pilih nama Anda!");
-                return;
-            }
-
-            const btn = document.getElementById('btn-simpan-hp');
-            setButtonLoading(btn, true, "Menyimpan Perangkat...");
-
-            validasiGpsDanJalankan(function() {
-                lanjutkanSimpanAkun(namaPilih, deviceId, btn);
-            }, function() {
-                setButtonLoading(btn, false, "Simpan & Kunci di HP Ini");
-            });
-        }
-
-        function lanjutkanSimpanAkun(namaPilih, deviceId, btnElement) {
-            fetch(`${SCRIPT_URL}?aksi=kunciPerangkat&namaSales=${encodeURIComponent(namaPilih)}&deviceId=${encodeURIComponent(deviceId)}&t=${Date.now()}`)
+            if(!namaPilih) return tampilkanModal("Perhatian", "Silakan pilih nama Anda!");
+            
+            fetch(`${SCRIPT_URL}?aksi=kunciPerangkat&namaSales=${encodeURIComponent(namaPilih)}&deviceId=${encodeURIComponent(deviceId)}`)
             .then(res => res.json())
             .then(res => {
-                setButtonLoading(btnElement, false, "Simpan & Kunci di HP Ini");
                 if(res.status === "sukses") {
                     namaSalesAktifGlobal = namaPilih;
                     localStorage.setItem('ufo_nama_sales_aktif', namaPilih);
@@ -474,12 +386,7 @@
                     document.getElementById('panel-menu-utama').style.display = 'block';
                     document.getElementById('label-user-aktif').innerText = namaPilih;
                     muatDataAntrian();
-                } else { 
-                    tampilkanModal("Akses Ditolak", res.pesan); 
-                }
-            }).catch(() => {
-                setButtonLoading(btnElement, false, "Simpan & Kunci di HP Ini");
-                tampilkanModal("Gagal", "Terjadi gangguan jaringan saat menyimpan perangkat.");
+                } else { tampilkanModal("Akses Ditolak", res.pesan); }
             });
         }
 
@@ -507,16 +414,9 @@
                 if(res.status === "sukses" && res.data) {
                     masterSalesGlobal = res.data;
                     localStorage.setItem('ufo_master_sales_cache', JSON.stringify(res.data));
-                    
-                    if (document.getElementById('pilih-sales').options.length <= 1) {
-                        let html = '<option value="">-- Pilih Nama Anda --</option>';
-                        res.data.forEach(item => { html += `<option value="${item.nama}">${item.nama}</option>`; });
-                        document.getElementById('pilih-sales').innerHTML = html;
-                    }
-                    
-                    if (daftarAntrianGlobal.length > 0 || getAkunAktif()) {
-                        renderUIRental(daftarAntrianGlobal, statusSistemGlobal, koordinatToko);
-                    }
+                    let html = '<option value="">-- Pilih Nama Anda --</option>';
+                    res.data.forEach(item => { html += `<option value="${item.nama}">${item.nama}</option>`; });
+                    document.getElementById('pilih-sales').innerHTML = html;
                 }
             });
         }
@@ -533,193 +433,119 @@
 
             daftarAntrianGlobal = dataAntrian || [];
             statusSistemGlobal = statusSistem || "BUKA";
-            
-            if (koordinatServer && koordinatServer.lat && koordinatServer.lng) {
-                koordinatToko.lat = koordinatServer.lat;
-                koordinatToko.lng = koordinatServer.lng;
+            if (koordinatServer) {
+                koordinatToko.lat = koordinatServer.lat || "";
+                koordinatToko.lng = koordinatServer.lng || "";
                 koordinatToko.radius = Number(koordinatServer.radius) || 50;
-                localStorage.setItem('ufo_koordinat_toko_cache', JSON.stringify(koordinatToko));
             }
 
             const badge = document.getElementById('badge-status-sistem');
             badge.innerText = statusSistemGlobal === "BUKA" ? "STATUS ANTRIAN: OPEN" : "STATUS ANTRIAN: CLOSED";
             badge.className = statusSistemGlobal === "BUKA" ? "status-badge-sistem status-open" : "status-badge-sistem status-closed";
 
-            let listHA = "", listAV = "";
-            let urutHA = 1, urutAV = 1;
+            let listMC = "", listAC = "", listAV = "";
+            let urutMC = 1, urutAC = 1, urutAV = 1;
             const akunSaya = getAkunAktif().trim().toLowerCase();
             let kategoriSayaAktif = "";
 
-            const dataStandby = daftarAntrianGlobal.filter(item => item.status === "Standby");
-            const promotorHA = dataStandby.find(item => String(item.kategori || "").trim().toUpperCase() === "HA") || null;
-            const promotorAV = dataStandby.find(item => String(item.kategori || "").trim().toUpperCase() === "AV") || null;
-
-            document.getElementById('promotor-nama-ha').textContent = promotorHA ? promotorHA.nama : "Belum Ada";
-            document.getElementById('promotor-nama-av').textContent = promotorAV ? promotorAV.nama : "Belum Ada";
-
             if (daftarAntrianGlobal.length > 0) {
                 daftarAntrianGlobal.forEach((item) => {
-                    let kat = item.kategori ? String(item.kategori).trim().toUpperCase() : "HA";
+                    let sub = item.subkategori ? String(item.subkategori).trim() : "Mesin Cuci & Lemari Es";
                     if (String(item.nama).trim().toLowerCase() === akunSaya) {
-                        kategoriSayaAktif = kat;
+                        kategoriSayaAktif = sub;
                     }
 
                     let itemHtml = "";
                     if (item.status === "Standby") {
                         let urut = 1;
-                        if (kat === "HA") urut = urutHA++;
-                        else if (kat === "AV") urut = urutAV++;
+                        if (sub === "Mesin Cuci & Lemari Es") urut = urutMC++;
+                        else if (sub === "AC") urut = urutAC++;
+                        else if (sub === "AV") urut = urutAV++;
 
-                        let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-giliran-anda">Giliran Utama</span>` : `<span class="badge-status-item badge-standby">Standby (${urut})</span>`;
+                        let badgeHtml = (urut === 1) ? `<span class="badge-status-item badge-giliran-anda">Giliran Anda</span>` : `<span class="badge-status-item badge-standby">Standby (${urut})</span>`;
                         itemHtml = `<li><b>${urut}. ${item.nama}</b> ${badgeHtml}</li>`;
                     } else if (item.status === "Melayani") {
                         itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-melayani">Melayani</span></li>`;
                     } else if (item.status === "Dipanggil CS/GUDANG" || item.status === "Dipanggil CS") {
                         itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-cs">Dipanggil CS/Gudang</span></li>`;
-                    } else if (item.status === "Ibadah") {
-                        itemHtml = `<li><b>${item.nama}</b> <span class="badge-status-item badge-ibadah">Sedang Ibadah</span></li>`;
                     }
 
-                    if (kat === "HA") listHA += itemHtml;
-                    else if (kat === "AV") listAV += itemHtml;
+                    if (sub === "Mesin Cuci & Lemari Es") listMC += itemHtml;
+                    else if (sub === "AC") listAC += itemHtml;
+                    else if (sub === "AV") listAV += itemHtml;
                 });
             }
 
             const kosongHtml = "<li><span style='color:var(--text-muted); font-style:italic;'>Belum ada antrian</span></li>";
-            document.getElementById('list-HA').innerHTML = listHA || kosongHtml;
+            document.getElementById('list-Mesin Cuci & Lemari Es').innerHTML = listMC || kosongHtml;
+            document.getElementById('list-AC').innerHTML = listAC || kosongHtml;
             document.getElementById('list-AV').innerHTML = listAV || kosongHtml;
 
             let statusSayaNyata = cekStatusSayaDariArray(daftarAntrianGlobal);
             const sectionCheckinAwal = document.getElementById('section-checkin-awal');
             const sectionNormal = document.getElementById('section-normal');
-            const sectionLocked = document.getElementById('section-akun-locked');
-
-            let isDilockAdmin = false;
-            let pesanLockAdmin = "Akun Anda sedang dibekukan oleh Admin.";
-            const dataSalesSaya = masterSalesGlobal.find(s => String(s.nama).trim().toLowerCase() === akunSaya);
             
-            if (dataSalesSaya) {
-                let statusLockVal = dataSalesSaya.locked !== undefined ? dataSalesSaya.locked : (dataSalesSaya.status_lock !== undefined ? dataSalesSaya.status_lock : dataSalesSaya.is_locked);
-                if (statusLockVal === true || String(statusLockVal).trim().toUpperCase() === "TRUE" || String(statusLockVal).trim().toUpperCase() === "LOCKED" || String(statusLockVal).trim().toUpperCase() === "YA" || String(statusLockVal).trim() === "1") {
-                    isDilockAdmin = true;
-                    pesanLockAdmin = dataSalesSaya.alasan || dataSalesSaya.pesan_lock || dataSalesSaya.alasan_lock || dataSalesSaya.keterangan || pesanLockAdmin;
-                }
-            }
-
-            const btnDaftar = document.getElementById('btn-daftar-antrian');
-            const btnHadir = document.getElementById('btn-hadir');
-            const groupPilihKat = document.getElementById('group-pilih-kategori-normal');
-            const btnCustomer = document.getElementById('btn-utama-customer');
-            const btnClosing = document.getElementById('btn-selesai-closing');
-            const btnCS = document.getElementById('btn-utama-cs');
-            const btnIbadah = document.getElementById('btn-utama-ibadah');
-            const btnKeluar = document.getElementById('btn-keluar-istirahat');
-
-            if (isDilockAdmin) {
-                sectionCheckinAwal.style.display = 'none';
-                sectionNormal.style.display = 'block';
-                groupPilihKat.style.display = 'block';
-                
-                if (btnDaftar) { 
-                    btnDaftar.style.display = 'block'; 
-                    btnDaftar.disabled = true; 
-                    btnDaftar.className = "btn-success btn-disabled"; 
-                    btnDaftar.innerText = "OTOMATIS TERKUNCI"; 
-                }
-                
-                sectionLocked.style.display = 'block';
-                document.getElementById('teks-alasan-lock').innerText = pesanLockAdmin;
-
-                if (btnHadir) { btnHadir.disabled = true; btnHadir.className = "btn-success btn-disabled"; }
-                if (btnCustomer) { btnCustomer.style.display = 'none'; }
-                if (btnClosing) { btnClosing.style.display = 'none'; }
-                if (btnCS) { btnCS.style.display = 'none'; }
-                if (btnIbadah) { btnIbadah.style.display = 'none'; }
-                if (btnKeluar) { btnKeluar.style.display = 'none'; }
-                return; 
-            } else {
-                if (sectionLocked) sectionLocked.style.display = 'none';
-                if (btnDaftar) btnDaftar.innerText = "Daftar Antrian";
-            }
-
             let sudahCheckinPernahHariIni = localStorage.getItem('ufo_checkin_hari_ini') === 'true';
 
-            if (statusSayaNyata !== "belum_ada") {
-                sectionCheckinAwal.style.display = 'none';
-                sectionNormal.style.display = 'block';
-            } else if (!sudahCheckinPernahHariIni) {
+            if (!sudahCheckinPernahHariIni) {
                 sectionCheckinAwal.style.display = 'block';
                 sectionNormal.style.display = 'none';
-                
-                if (navigator.geolocation && koordinatToko.lat) {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        initAtauUpdatePetaPromotor(Number(koordinatToko.lat), Number(koordinatToko.lng), Number(koordinatToko.radius) || 50, pos.coords.latitude, pos.coords.longitude);
-                    }, () => {}, {maximumAge: 30000});
-                }
             } else {
                 sectionCheckinAwal.style.display = 'none';
                 sectionNormal.style.display = 'block';
-            }
 
-            if (statusSayaNyata === "belum_ada") {
-                groupPilihKat.style.display = "block";
-                btnDaftar.style.display = "block";
-                btnCustomer.style.display = "none";
-                btnClosing.style.display = "none";
-                btnCS.style.display = "none";
-                btnIbadah.style.display = "none";
-                btnKeluar.style.display = "none";
+                const btnDaftar = document.getElementById('btn-daftar-antrian');
+                const groupPilihKat = document.getElementById('group-pilih-kategori-normal');
+                const btnCustomer = document.getElementById('btn-utama-customer');
+                const btnClosing = document.getElementById('btn-selesai-closing');
+                const btnCS = document.getElementById('btn-utama-cs');
+                const btnKeluar = document.getElementById('btn-keluar-istirahat');
 
-                if (statusSistemGlobal === "TUTUP") {
-                    btnDaftar.disabled = true; btnDaftar.className = "btn-success btn-disabled";
-                } else {
-                    btnDaftar.disabled = false; btnDaftar.className = "btn-success";
-                }
-            } else {
-                groupPilihKat.style.display = "none";
-                btnDaftar.style.display = "none";
-
-                if (statusSayaNyata === "Standby") {
-                    btnCustomer.style.display = "block"; 
-                    btnClosing.style.display = "none";
-                    btnCS.style.display = "block"; btnCS.innerText = "DIPANGGIL CS/GUDANG (KUNCI POSISI)"; btnCS.className = "btn-purple"; btnCS.disabled = false;
-                    btnIbadah.style.display = "block"; btnIbadah.innerText = "SEDANG IBADAH (KUNCI POSISI)"; btnIbadah.className = "btn-indigo"; btnIbadah.disabled = false;
-                    btnKeluar.style.display = "block";
-
-                    if (statusSistemGlobal === "TUTUP") {
-                        btnCustomer.disabled = true; btnCustomer.className = "btn-customer btn-disabled";
-                        btnCS.disabled = true; btnCS.className = "btn-purple btn-disabled";
-                        btnIbadah.disabled = true; btnIbadah.className = "btn-indigo btn-disabled";
-                        btnKeluar.disabled = true; btnKeluar.className = "btn-amber btn-disabled";
-                    } else {
-                        let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && String(it.kategori || "").trim().toUpperCase() === kategoriSayaAktif);
-                        let indexSaya = listSubStandby.findIndex(it => String(it.nama).trim().toLowerCase() === akunSaya);
-                        let apakahSayaBisaAmbil = (indexSaya >= 0 && indexSaya <= 2);
-
-                        btnCustomer.disabled = !apakahSayaBisaAmbil; 
-                        btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer" : "btn-customer btn-disabled";
-                        btnCS.disabled = false; btnCS.className = "btn-purple";
-                        btnIbadah.disabled = false; btnIbadah.className = "btn-indigo";
-                        btnKeluar.disabled = false; btnKeluar.className = "btn-amber";
-                    }
-                } else if (statusSayaNyata === "Melayani") {
-                    btnCustomer.style.display = "none"; btnClosing.style.display = "block";
-                    btnCS.style.display = "none"; btnIbadah.style.display = "none"; btnKeluar.style.display = "none";
-                } else if (statusSayaNyata === "Dipanggil CS/GUDANG" || statusSayaNyata === "Dipanggil CS") {
-                    btnCustomer.style.display = "none"; btnClosing.style.display = "none";
-                    btnCS.style.display = "block"; btnCS.innerText = "SELESAI CS/GUDANG (KEMBALI ANTRI)"; btnCS.className = "btn-teal"; btnCS.disabled = false;
-                    btnIbadah.style.display = "none";
-                    btnKeluar.style.display = "none";
-                } else if (statusSayaNyata === "Ibadah") {
+                if (statusSayaNyata === "belum_ada") {
+                    groupPilihKat.style.display = "block";
+                    btnDaftar.style.display = "block";
                     btnCustomer.style.display = "none";
                     btnClosing.style.display = "none";
                     btnCS.style.display = "none";
                     btnKeluar.style.display = "none";
-                    
-                    btnIbadah.style.display = "block"; 
-                    btnIbadah.innerText = "SELESAI IBADAH (KEMBALI ANTRI)"; 
-                    btnIbadah.className = "btn-teal"; 
-                    btnIbadah.disabled = false;
+
+                    if (statusSistemGlobal === "TUTUP") {
+                        btnDaftar.disabled = true; btnDaftar.className = "btn-success btn-disabled";
+                    } else {
+                        btnDaftar.disabled = false; btnDaftar.className = "btn-success";
+                    }
+                } else {
+                    groupPilihKat.style.display = "none";
+                    btnDaftar.style.display = "none";
+
+                    if (statusSayaNyata === "Standby") {
+                        btnCustomer.style.display = "block"; 
+                        btnClosing.style.display = "none";
+                        btnCS.style.display = "block"; 
+                        btnKeluar.style.display = "block";
+
+                        if (statusSistemGlobal === "TUTUP") {
+                            btnCustomer.disabled = true; btnCustomer.className = "btn-customer btn-disabled";
+                            btnCS.disabled = true; btnCS.className = "btn-purple btn-disabled";
+                            btnKeluar.disabled = true; btnKeluar.className = "btn-amber btn-disabled";
+                        } else {
+                            let listSubStandby = daftarAntrianGlobal.filter(it => it.status === "Standby" && (it.subkategori || "").trim() === kategoriSayaAktif);
+                            let indexSaya = listSubStandby.findIndex(it => String(it.nama).trim().toLowerCase() === akunSaya);
+                            let apakahSayaBisaAmbil = (indexSaya === 0 || indexSaya === 1);
+
+                            btnCustomer.disabled = !apakahSayaBisaAmbil; 
+                            btnCustomer.className = apakahSayaBisaAmbil ? "btn-customer" : "btn-customer btn-disabled";
+                            btnCS.disabled = false; btnCS.className = "btn-purple";
+                            btnKeluar.disabled = false; btnKeluar.className = "btn-amber";
+                        }
+                    } else if (statusSayaNyata === "Melayani") {
+                        btnCustomer.style.display = "none"; btnClosing.style.display = "block";
+                        btnCS.style.display = "none"; btnKeluar.style.display = "none";
+                    } else if (statusSayaNyata === "Dipanggil CS/GUDANG" || statusSayaNyata === "Dipanggil CS") {
+                        btnCustomer.style.display = "none"; btnClosing.style.display = "none";
+                        btnCS.style.display = "block"; btnCS.innerText = "SELESAI CS/GUDANG (KEMBALI ANTRI)"; btnCS.className = "btn-teal"; btnCS.disabled = false;
+                        btnKeluar.style.display = "none";
+                    }
                 }
             }
         }
@@ -736,12 +562,12 @@
             }).catch(() => {});
         }
 
-        function eksekusiAksiInstan(aksiServer, targetStatusSimulasi, katBaru = null) {
+        function eksekusiAksiInstan(aksiServer, targetStatusSimulasi, subKatBaru = null) {
             const namaSales = getAkunAktif().trim();
             if (!namaSales) return;
 
             localActionActive = true;
-            let katAktif = katBaru || document.getElementById('pilih-kategori-normal').value || "HA";
+            let subKatAktif = subKatBaru || document.getElementById('pilih-kategori-normal').value || "Mesin Cuci & Lemari Es";
 
             if (targetStatusSimulasi === "belum_ada") {
                 daftarAntrianGlobal = daftarAntrianGlobal.filter(item => String(item.nama).trim().toLowerCase() !== namaSales.toLowerCase());
@@ -750,12 +576,12 @@
                 daftarAntrianGlobal.forEach(item => {
                     if (String(item.nama).trim().toLowerCase() === namaSales.toLowerCase()) {
                         item.status = targetStatusSimulasi;
-                        if (katBaru) item.kategori = katBaru;
+                        if (subKatBaru) item.subkategori = subKatBaru;
                         ketemu = true;
                     }
                 });
                 if (!ketemu) {
-                    daftarAntrianGlobal.push({ nama: namaSales, status: targetStatusSimulasi, kategori: katAktif });
+                    daftarAntrianGlobal.push({ nama: namaSales, status: targetStatusSimulasi, kategori: "HA", subkategori: subKatAktif });
                 }
             }
 
@@ -763,108 +589,26 @@
             renderUIRental(daftarAntrianGlobal, statusSistemGlobal, koordinatToko);
             localActionActive = true;
 
-            fetch(`${SCRIPT_URL}?aksi=${aksiServer}&namaSales=${encodeURIComponent(namaSales)}&kategori=${encodeURIComponent(katAktif)}&subkategori=${encodeURIComponent(katAktif)}&t=${Date.now()}`)
+            fetch(`${SCRIPT_URL}?aksi=${aksiServer}&namaSales=${encodeURIComponent(namaSales)}&subkategori=${encodeURIComponent(subKatAktif)}&t=${Date.now()}`)
             .then(res => res.json())
             .then(res => {
-                localActionActive = false;
                 if (res && res.status === "sukses" && res.data) {
                     daftarAntrianGlobal = res.data;
-                    renderUIRental(daftarAntrianGlobal, statusSistemGlobal, koordinatToko);
-                } else if (res && (res.status === "locked" || res.status === "terkunci" || res.status === "gagal_lock")) {
-                    muatDataAntrian(); 
-                    muatMasterSales(); 
-                } else if (res && res.status === "gagal") {
-                    muatDataAntrian();
-                    tampilkanModal("Gagal", res.pesan || "Aksi ditolak sistem.");
-                } else {
-                    renderUIRental(daftarAntrianGlobal, statusSistemGlobal, koordinatToko);
                 }
-            }).catch(() => { 
-                localActionActive = false; 
-            });
-        }
-
-        function setButtonLoading(btnElement, isLoading, defaultText) {
-            if (!btnElement) return;
-            if (isLoading) {
-                btnElement.disabled = true;
-                btnElement.classList.add('btn-disabled');
-                btnElement.innerHTML = `Memeriksa Lokasi GPS...`;
-            } else {
-                btnElement.disabled = false;
-                btnElement.classList.remove('btn-disabled');
-                btnElement.innerHTML = defaultText;
-            }
-        }
-
-        function validasiGpsDanJalankan(callbackBerhasil, callbackBatal) {
-            if (!koordinatToko.lat || !koordinatToko.lng) {
-                const cachedKoordinat = localStorage.getItem('ufo_koordinat_toko_cache');
-                if (cachedKoordinat) {
-                    try { koordinatToko = JSON.parse(cachedKoordinat); } catch(e) {}
-                }
-            }
-
-            if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
-                if (typeof callbackBerhasil === 'function') callbackBerhasil();
-                return;
-            }
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        const jarakMeter = hitungJarakHaversine(
-                            position.coords.latitude, position.coords.longitude, 
-                            Number(koordinatToko.lat), Number(koordinatToko.lng)
-                        );
-                        const batasRadius = Number(koordinatToko.radius) || 50;
-
-                        if (jarakMeter > (batasRadius + 30)) {
-                            if (typeof callbackBatal === 'function') callbackBatal();
-                            tampilkanModal("Di Luar Radius Toko", `Gagal melakukan check-in!\n\nJarak Anda: ${Math.round(jarakMeter)} meter\nBatas Maksimal: ${batasRadius} meter.`);
-                            return; 
-                        }
-                        if (typeof callbackBerhasil === 'function') callbackBerhasil();
-                    },
-                    function(error) {
-                        if (typeof callbackBerhasil === 'function') callbackBerhasil();
-                    },
-                    { enableHighAccuracy: false, timeout: 5000, maximumAge: 30000 }
-                );
-            } else {
-                if (typeof callbackBerhasil === 'function') callbackBerhasil();
-            }
+                localActionActive = false;
+                renderUIRental(daftarAntrianGlobal, statusSistemGlobal, koordinatToko);
+            }).catch(() => { localActionActive = false; });
         }
 
         function aksiHadirKerja() {
-            const btn = document.getElementById('btn-hadir');
-            setButtonLoading(btn, true, "Konfirmasi Kehadiran & Masuk Antri");
-
-            validasiGpsDanJalankan(function() {
-                setButtonLoading(btn, false, "Konfirmasi Kehadiran & Masuk Antri");
-                const kategoriPilih = document.getElementById('pilih-kategori-hadir').value;
-                
-                const tanggalHariIni = getTanggalIndo();
-                localStorage.setItem('ufo_checkin_hari_ini', 'true');
-                localStorage.setItem('ufo_checkin_tanggal', tanggalHariIni);
-
-                eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
-            }, function() {
-                setButtonLoading(btn, false, "Konfirmasi Kehadiran & Masuk Antri");
-            });
+            const kategoriPilih = document.getElementById('pilih-kategori-hadir').value;
+            localStorage.setItem('ufo_checkin_hari_ini', 'true');
+            eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
         }
 
         function aksiDaftarAntrianNormal() {
-            const btn = document.getElementById('btn-daftar-antrian');
-            setButtonLoading(btn, true, "Daftar Antrian");
-
-            validasiGpsDanJalankan(function() {
-                setButtonLoading(btn, false, "Daftar Antrian");
-                const kategoriPilih = document.getElementById('pilih-kategori-normal').value;
-                eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
-            }, function() {
-                setButtonLoading(btn, false, "Daftar Antrian");
-            });
+            const kategoriPilih = document.getElementById('pilih-kategori-normal').value;
+            eksekusiAksiInstan('daftarAntri', 'Standby', kategoriPilih);
         }
 
         function aksiUtamaCustomer() {
@@ -890,68 +634,32 @@
             }
         }
 
-        function aksiToggleIbadah() {
-            const statusSekarang = cekStatusSayaDariArray(daftarAntrianGlobal);
-            if (statusSekarang === "Standby") {
-                tampilkanModalKonfirmasi("Ibadah", "Posisi antrian Anda akan dikunci sementara selama ibadah.", function() {
-                    eksekusiAksiInstan('panggilIbadah', 'Ibadah');
-                });
-            } else {
-                eksekusiAksiInstan('selesaiIbadah', 'Standby');
-            }
-        }
-
         function bukaModalKeluarIstirahat() {
             tampilkanModalKonfirmasi("Keluar Antrian", "Yakin ingin keluar dari antrian?", function() {
                 eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
             });
         }
 
-        function initAtauUpdatePetaPromotor(latToko, lngToko, radiusToko, latUser, lngUser) {
-            if (!latToko || !lngToko || isNaN(latToko) || isNaN(lngToko)) return;
+        function mulaiPemantauanGPS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(
+                    function(position) {
+                        if (!koordinatToko.lat || !koordinatToko.lng || koordinatToko.lat === "" || koordinatToko.lng === "") {
+                            return; 
+                        }
 
-            if (!mapPromotor) {
-                const mapContainer = document.getElementById('map-promotor');
-                if (!mapContainer) return;
-                
-                mapPromotor = L.map('map-promotor', { zoomControl: false }).setView([latToko, lngToko], 18);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '© OpenStreetMap'
-                }).addTo(mapPromotor);
+                        const jarakMeter = hitungJarakHaversine(position.coords.latitude, position.coords.longitude, Number(koordinatToko.lat), Number(koordinatToko.lng));
+                        const batasRadius = koordinatToko.radius || 50;
+
+                        if (jarakMeter > batasRadius && cekStatusSayaDariArray(daftarAntrianGlobal) === "Standby") {
+                            eksekusiAksiInstan('selesaiMelayani', 'belum_ada');
+                            tampilkanModal("Auto-Exit GPS", `Anda berada di luar radius ${batasRadius} meter dari toko. Anda otomatis dikeluarkan dari antrean.`);
+                        }
+                    },
+                    function(error) {},
+                    { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+                );
             }
-
-            if (!circleTokoPeta) {
-                circleTokoPeta = L.circle([latToko, lngToko], {
-                    color: '#4f46e5',
-                    fillColor: '#4f46e5',
-                    fillOpacity: 0.2,
-                    radius: radiusToko || 50
-                }).addTo(mapPromotor);
-
-                markerTokoPeta = L.marker([latToko, lngToko]).addTo(mapPromotor)
-                    .bindPopup("<b>Titik Pusat Toko UFO</b>");
-            } else {
-                circleTokoPeta.setLatLng([latToko, lngToko]);
-                circleTokoPeta.setRadius(radiusToko || 50);
-                markerTokoPeta.setLatLng([latToko, lngToko]);
-            }
-
-            if (latUser && lngUser && !isNaN(latUser) && !isNaN(lngUser)) {
-                if (!markerSayaPeta) {
-                    markerSayaPeta = L.circleMarker([latUser, lngUser], {
-                        radius: 8,
-                        fillColor: "#4f46e5",
-                        color: "#ffffff",
-                        weight: 2.5,
-                        fillOpacity: 1
-                    }).addTo(mapPromotor).bindPopup("<b>Posisi Anda Sekarang</b>");
-                } else {
-                    markerSayaPeta.setLatLng([latUser, lngUser]);
-                }
-            }
-            
-            setTimeout(() => { if (mapPromotor) mapPromotor.invalidateSize(); }, 150);
         }
 
         function hitungJarakHaversine(lat1, lon1, lat2, lon2) {
@@ -973,7 +681,7 @@
             document.getElementById('modal-title').innerText = judul;
             document.getElementById('modal-desc').innerText = desc;
             document.getElementById('modal-actions').innerHTML = `
-                <button type="button" class="btn-customer" style="background:#64748b;" onclick="tutupModal()">Batal</button>
+                <button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button>
                 <button type="button" class="btn-customer" id="btn-modal-ya">Ya</button>
             `;
             document.getElementById('custom-modal').classList.add('active');
